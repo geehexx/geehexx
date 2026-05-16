@@ -4,11 +4,11 @@
 
 ### Lead AI Engineer / Engineering Manager
 
-**Production agents · Hybrid retrieval · Distributed platforms · Engineering operating systems**
+**Production agents · Hybrid retrieval · MCP systems · Distributed platforms**
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-andrewcrozier-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/ancrozier/)
 [![GitHub](https://img.shields.io/badge/GitHub-geehexx-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/geehexx)
-[![Location](https://img.shields.io/badge/Location-Australia_%2F_Asia-2563EB?style=for-the-badge)](#reach-me)
+[![AI Systems](https://img.shields.io/badge/Focus-production_AI_systems-7C3AED?style=for-the-badge)](#now)
 [![Open to](https://img.shields.io/badge/Open_to-AU_%2F_EU_%2F_Asia_remote-16A34A?style=for-the-badge)](#reach-me)
 
 </div>
@@ -44,10 +44,15 @@ Building an **AI governance and procurement intelligence platform**.
 
 ## Public Work
 
+A selected set of public repos that reflect the kind of systems I like building: agent interfaces, MCP servers, LLM gateways, retrieval/analysis tools, and reliability hardening.
+
 | Repo / work | What it demonstrates |
 |---|---|
 | [`mcp-web`](https://github.com/geehexx/mcp-web) | MCP server for intelligent web and local-file summarization: extraction, smart chunking, streaming summaries, local/cloud LLM support, caching, security controls, metrics, and tests |
 | [`hitl-mcp-cli`](https://github.com/geehexx/hitl-mcp-cli) | Human-in-the-loop MCP server and terminal UI for agent approvals, choices, confirmations, notifications, interaction logging, and async-first workflows |
+| [`phraseturner`](https://github.com/geehexx/phraseturner) | Text-analysis MCP server with configurable personas, readability/naturalness/tone scoring, AI-detection signals, semantic persona search, and graceful degradation |
+| [`llm-bedrock-converse`](https://github.com/geehexx/llm-bedrock-converse) | `llm` plugin for AWS Bedrock Converse: Claude models, streaming, tool calling, MCP integration, multimodal inputs, embeddings, and automatic retry behavior |
+| [`msteams-mcp`](https://github.com/geehexx/msteams-mcp) | MCP server for Microsoft Teams interaction: message search, replies, thread access, authentication flow, and assistant-facing collaboration workflows |
 | [`kiro-proxy`](https://github.com/geehexx/kiro-proxy) fork work | Gateway reliability work around streaming, model-name preservation, retry behavior, quota classification, RE2/complexity classification, local gates, and failure-mode cleanup |
 
 Recent reliability PRs I care about:
