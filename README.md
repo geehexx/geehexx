@@ -1,39 +1,155 @@
+<div align="center">
+
 # Andrew Crozier
 
-*Building agents that survive contact with production traffic, not just the demo.*
+### Lead AI Engineer / Engineering Manager
 
-Engineering Manager and AI Lead. Fifteen years of distributed systems, now applied to agentic AI. I lead the technical development of an AI governance and procurement intelligence platform — multi-agent on PydanticAI and AWS Bedrock, with human-in-the-loop approval gates and a hybrid retrieval pipeline (pgvector + BM25 + trigram, fused via reciprocal rank). The interesting work is making the agents NOT fall over when traffic actually shows up.
+**Production agents · Hybrid retrieval · Distributed platforms · Engineering operating systems**
 
-## The Short Version
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-andrewcrozier-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/ancrozier/)
+[![GitHub](https://img.shields.io/badge/GitHub-geehexx-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/geehexx)
+[![Location](https://img.shields.io/badge/Location-Australia_%2F_Asia-2563EB?style=for-the-badge)](#reach-me)
+[![Open to](https://img.shields.io/badge/Open_to-AU_%2F_EU_%2F_Asia_remote-16A34A?style=for-the-badge)](#reach-me)
 
-Currently **Lead AI Engineer** at a stealth UK startup. Previously **Engineering Manager** at Agoda B2B Platforms (100K+ RPM booking funnel, 2.4M+ properties), and an Engineering Manager at Toptal for six years building the talent-matching engine. Open to UK / EU / remote.
+</div>
 
-## What I Have Shipped Recently
+---
 
-A few of the harder problems of running agents in production, with the systems I built to solve them:
+```text
+I build the parts of AI systems that keep working after the demo:
+retrieval quality, tool boundaries, stream safety, retry behavior, evaluation loops,
+human approval gates, observability, infrastructure, and the teams/processes around them.
+```
 
-- **Adaptive retry token bucket** — prevents thundering-herd retries under sub-agent fan-out. Refill rate halves on throttle, doubles on success. Bounded; no infinite-loop risk under contention.
-- **Body-content retry classifier** — distinguishes hard quotas (`MONTHLY_REQUEST_COUNT`) from transient throttling so retries do not burn the budget against a wall. Closes the failure mode where status-code-only classification is wrong both ways.
-- **Per-chunk stalled-stream protection** — bounds upstream-hang waits to a known grace period. Surfaces a typed `StalledStreamError` so callers can route to a terminal SSE error event instead of a silent truncation.
-- **SQLite-WAL coord mailbox** — multi-agent coordination layer with advisory scope leases, deterministic agent naming, A2A v1.0 endpoint at port 8771, and a property-based eval that grades how well a fresh agent picks up a session from its handoff document.
-- **Memory-librarian PreToolUse hook** — secret scanner that blocks Write or Edit calls into a research-notes directory when the content carries credential-shaped strings. Closes a regression vector that produced live keys in plaintext four days after a redaction pass.
+I work where **LLMs meet backend engineering**: agent orchestration, RAG, search, evals, governance, distributed systems, and reliability under real production constraints.
 
-## Background
+Demo agents are easy. Agents that survive throttling, retries, stream stalls, partial handoffs, quota walls, governance boundaries, and real users are the interesting problem.
 
-**Agoda B2B Platforms (2023–2024)** — Engineering Manager. Led 15+ engineers across multiple squads on the booking funnel. Scala and Kotlin on Kubernetes with RabbitMQ, Redis, and the Saga pattern. Drove the Scala-to-Kotlin migration across three squads with zero booking-funnel downtime. Onboarded 15+ enterprise white-label clients including Citibank, US Bank, American Airlines, WestJet, and KrisFlyer. Prevented retry-storm failures via Envoy retry budgets in a custom Istio service mesh.
+---
 
-**BaxEnergy (2025–2026)** — Engineering Manager (consulting). Engineering maturity assessment after Yokogawa's June 2024 acquisition. Modernisation roadmap delivered in 8 weeks across 2 squads, ~35% MTTR reduction in the first quarter. DORA metrics, on-call rotation, incident management protocols.
+## Now
 
-**Toptal (2017–2023, 6+ years)** — Engineering Manager and Senior Software Engineer. Distributed teams across booking platforms, affiliate marketing, classifieds, and media. Strong on hands-on diagnosis (Redis circuit breakers, retry storms, distributed transactions), modernisation roadmaps, and partner API design.
+Building an **AI governance and procurement intelligence platform**.
 
-**Toptal (2016, freelance network)** — Two early engagements before joining Toptal's internal team full-time. A greenfield ecommerce build for an Australian equestrian-event booking startup (latest Python and Django backend, Angular 2 SPA, full-stack solo IC delivery). A US engineer-coaching platform that worked with software engineers on offer negotiation and career-leveling (Django, working closely with a non-technical founder). Generalist freelance skills: scoping ambiguous greenfield builds against fixed budget, scope negotiation, weekly status reporting that translates engineering risk into business language.
+| System area | What I am building |
+|---|---|
+| **Agentic architecture** | Multi-agent workflows with 20+ specialist sub-agents, PydanticAI, AWS Bedrock, human-in-the-loop approval gates, and quality validation loops |
+| **Conversation layer** | LangGraph + AG-UI conversational flows with procurement-specific guardrails and SSE streaming |
+| **Retrieval** | Hybrid search over pgvector cosine similarity, BM25, and trigram matching, fused with Reciprocal Rank Fusion |
+| **Discovery** | Entropy / mutual-information guided interactive discovery over an ontology, with graceful degradation for vague queries |
+| **Infrastructure** | AWS CDK Python across ECS Fargate, RDS PostgreSQL, ElastiCache Redis, Cognito, WAF, and cdk-nag controls |
+| **Production hardening** | Typed failure paths, retry classification, stream-stall handling, eval loops, and approval boundaries for high-risk tool use |
 
-## Stack
+---
 
-Python, Kotlin, Scala, TypeScript. AWS (CDK, ECS, RDS, ElastiCache, Bedrock, WAF). PydanticAI, LangGraph, AG-UI. PostgreSQL with pgvector, ParadeDB, Redis. Kubernetes, Istio. RabbitMQ, Saga pattern. Optuna for parameter sweeping.
+## Public Work
 
-## How to Reach Me
+| Repo / work | What it demonstrates |
+|---|---|
+| [`mcp-web`](https://github.com/geehexx/mcp-web) | MCP server for intelligent web and local-file summarization: extraction, smart chunking, streaming summaries, local/cloud LLM support, caching, security controls, metrics, and tests |
+| [`hitl-mcp-cli`](https://github.com/geehexx/hitl-mcp-cli) | Human-in-the-loop MCP server and terminal UI for agent approvals, choices, confirmations, notifications, interaction logging, and async-first workflows |
+| [`kiro-proxy`](https://github.com/geehexx/kiro-proxy) fork work | Gateway reliability work around streaming, model-name preservation, retry behavior, quota classification, RE2/complexity classification, local gates, and failure-mode cleanup |
 
-- Email: andrewcrozier86 at gmail dot com
-- LinkedIn: [linkedin.com/in/ancrozier](https://www.linkedin.com/in/ancrozier)
-- Location: Greater Sydney Area (open to UK / EU / remote)
+Recent reliability PRs I care about:
+
+- [`feat(retry): wire body-content classifier into http_client`](https://github.com/geehexx/kiro-proxy/pull/17) — separates hard quota failures from transient throttling so retries do not burn budget against an unrecoverable wall.
+- [`feat(openai): RE2 + complexity classifier`](https://github.com/geehexx/kiro-proxy/pull/18) — adds safer regex handling and complexity classification to an OpenAI-compatible route.
+- [`feat(routes): preserve client model name in response`](https://github.com/geehexx/kiro-proxy/pull/16) — fixes a subtle client/gateway contract bug where normalized upstream model names leaked back into downstream behavior.
+
+---
+
+## Production Failure Modes I Like Closing
+
+A lot of applied AI engineering is not prompt cleverness. It is removing ambiguity from the failure paths.
+
+- **Adaptive retry token buckets** — prevent thundering-herd retries under sub-agent fan-out; bounded refill/backoff behavior under contention.
+- **Body-content retry classification** — distinguishes hard quota markers from transient throttling and capacity signals.
+- **Per-chunk stalled-stream protection** — bounds upstream-hang waits and emits typed terminal errors instead of silent truncation.
+- **Agent handoff durability** — coordination mailboxes, advisory leases, deterministic agent naming, and handoff evaluation for fresh-agent recovery.
+- **Tool-use safety hooks** — block write/edit paths when credential-shaped strings or unsafe outputs enter protected directories.
+- **Eval-before-autonomy loops** — measure behavior before adding more agency, tools, or orchestration complexity.
+
+---
+
+## Career Snapshot
+
+| Context | Signal |
+|---|---|
+| **Stealth startup** | Lead AI Engineer for a production agentic AI / procurement intelligence platform |
+| **Agoda / Rocket Travel by Agoda** | Engineering Manager for B2B booking platforms; led 15+ engineers; supported 100K+ RPM peak load across 2.4M+ properties; onboarded enterprise partners including Citibank, US Bank, American Airlines, WestJet, KrisFlyer, and JTB |
+| **Toptal** | Engineering Manager / Senior Software Engineer / Product Manager across talent matching, vetting, ETL, enterprise delivery, and remote engineering systems; scaled team from 5 to 15+ engineers |
+| **BaxEnergy / Yokogawa** | Engineering maturity assessment and modernization roadmap across two squads; DORA metrics, incident protocols, on-call design, and MTTR reduction |
+| **Dubizzle / OLX Group** | Built jobs.dubizzle.com from scratch, rebuilt the core ad-placement workflow, and helped move a Django monolith toward service-oriented architecture |
+
+<details>
+<summary><strong>Earlier systems work</strong></summary>
+
+- **Coins.ph** — Python/Django payments-platform modernization, KYC identity verification, WebRTC video capture, facial recognition/liveness workflows, and growth integrations during pre-Series A.
+- **Insydo** — CTO/co-founder; semantic recommendation systems using word2vec/Gensim, TF-IDF, collaborative filtering, Aerospike, and custom Python infrastructure.
+- **ITP** — CMS/platform work for 40+ Middle East media sites; multi-tier caching with CouchDB, Memcached, and Redis; page-load reduction from 10s+ to under 250ms.
+- **Freelance / early Toptal network** — greenfield Django/Angular builds, founder-facing technical translation, fixed-budget delivery, scope negotiation, and product-risk diagnosis.
+
+</details>
+
+---
+
+## Toolbox
+
+<p align="left">
+  <img src="https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white" alt="Python" />
+  <img src="https://img.shields.io/badge/Kotlin-7F52FF?style=flat&logo=kotlin&logoColor=white" alt="Kotlin" />
+  <img src="https://img.shields.io/badge/Scala-DC322F?style=flat&logo=scala&logoColor=white" alt="Scala" />
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/AWS-232F3E?style=flat&logo=amazonwebservices&logoColor=white" alt="AWS" />
+  <img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=flat&logo=postgresql&logoColor=white" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/Redis-DC382D?style=flat&logo=redis&logoColor=white" alt="Redis" />
+  <img src="https://img.shields.io/badge/Kubernetes-326CE5?style=flat&logo=kubernetes&logoColor=white" alt="Kubernetes" />
+  <img src="https://img.shields.io/badge/OpenTelemetry-000000?style=flat&logo=opentelemetry&logoColor=white" alt="OpenTelemetry" />
+</p>
+
+**AI / agents / retrieval**  
+PydanticAI · LangGraph · AG-UI · AWS Bedrock · LangChain · Hugging Face Transformers · sentence-transformers · ONNX Runtime · FastEmbed · pgvector · ParadeDB · Qdrant · Pinecone · Reciprocal Rank Fusion · Optuna · LangSmith · OpenTelemetry · MCP · Agentic RAG · LLMOps
+
+**Backend / distributed systems**  
+Python · Kotlin · Scala · TypeScript · Ruby · Java · PostgreSQL · Redis · RabbitMQ · Kafka · BigQuery · Elasticsearch · REST · GraphQL · gRPC · Saga pattern · Sidekiq · Docker
+
+**Infrastructure**  
+AWS CDK · ECS Fargate · RDS · ElastiCache · Cognito · WAF · Kubernetes · Istio · Terraform · OpenTofu · CI/CD · cdk-nag
+
+**Leadership / operating systems**  
+Engineering strategy · RFCs / ADRs · hiring · mentorship · performance management · incident management · on-call design · DORA metrics · OKRs · remote-first engineering · technical due diligence · platform modernization
+
+---
+
+## Engineering Biases
+
+- Typed errors over mysterious fallthroughs.
+- Guardrails around irreversible tool actions.
+- Evals before more autonomy.
+- Observability before optimism.
+- Explicit retry budgets; no infinite faith in exponential backoff.
+- Hybrid retrieval when lexical precision and semantic recall both matter.
+- Infrastructure that rolls back cleanly.
+- Teams that write decisions down before they become folklore.
+
+---
+
+## Useful Conversations
+
+I am usually useful for:
+
+- building production AI / agent platforms;
+- taking RAG systems from prototype to measurable quality;
+- hardening distributed systems under real load;
+- designing human-in-the-loop governance for AI workflows;
+- leading backend/platform teams through modernization;
+- diagnosing reliability failures across infra, code, process, and team boundaries.
+
+---
+
+## Reach Me
+
+- **LinkedIn:** [linkedin.com/in/ancrozier](https://www.linkedin.com/in/ancrozier/)
+- **GitHub:** [github.com/geehexx](https://github.com/geehexx)
+- **Location:** Australia-based, currently traveling Asia
+- **Open to:** AU / EU / Asia remote opportunities; relocation or on-site possible for the right role
