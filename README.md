@@ -1,78 +1,80 @@
+<!--
+GitHub profile README for github.com/geehexx
+Last Updated 17th May, 2026
+-->
+
 <div align="center">
 
 # Andrew Crozier
 
-### Lead AI Engineer / Engineering Manager
+### Applied AI & Software Engineering · Hands-on Technical Leadership
 
-**Production agents · Hybrid retrieval · MCP systems · Distributed platforms**
+**Production agents · Hybrid retrieval · MCP systems · Distributed platforms · Reliability engineering**
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-andrewcrozier-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/ancrozier/)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Andrew_Crozier-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/ancrozier/)
 [![GitHub](https://img.shields.io/badge/GitHub-geehexx-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/geehexx)
-[![AI Systems](https://img.shields.io/badge/Focus-production_AI_systems-7C3AED?style=for-the-badge)](#now)
-[![Open to](https://img.shields.io/badge/Open_to-AU_%2F_EU_%2F_Asia_remote-16A34A?style=for-the-badge)](#reach-me)
+[![Focus](https://img.shields.io/badge/Focus-production_AI_systems-7C3AED?style=for-the-badge)](#now)
+[![Open to](https://img.shields.io/badge/Open_to-AI_%2F_platform_%2F_backend_roles-16A34A?style=for-the-badge)](#reach-me)
 
 </div>
 
 ---
 
 ```text
-I build the parts of AI systems that keep working after the demo:
+I build the parts of AI systems that still have to work after the demo:
 retrieval quality, tool boundaries, stream safety, retry behavior, evaluation loops,
-human approval gates, observability, infrastructure, and the teams/processes around them.
+human approval gates, observability, infrastructure, and the engineering habits around them.
 ```
 
-I work where **LLMs meet backend engineering**: agent orchestration, RAG, search, evals, governance, distributed systems, and reliability under real production constraints.
+I work where **LLMs meet backend engineering**: agent orchestration, RAG, search, evals, governance, distributed systems, platform reliability, and the unglamorous failure paths that decide whether an AI product survives real users.
 
-Demo agents are easy. Agents that survive throttling, retries, stream stalls, partial handoffs, quota walls, governance boundaries, and real users are the interesting problem.
+I am not trying to be a pure people manager. I have led teams, hired engineers, run delivery systems, written RFCs, and handled performance management — but my strongest work is still **hands-on technical leadership**: shaping systems, debugging hard edges, and helping teams make better engineering decisions.
 
 ---
 
 ## Now
 
-Building an **AI governance and procurement intelligence platform**.
+Building a **stealth applied-AI platform** in the governance / procurement intelligence space.
 
-| System area | What I am building |
+The public-safe version: I am working on production agentic workflows, hybrid retrieval, human-in-the-loop controls, and cloud infrastructure for enterprise decision support. The private version has more numbers; this README intentionally does not.
+
+| System area | What I am focused on |
 |---|---|
-| **Agentic architecture** | Multi-agent workflows with 20+ specialist sub-agents, PydanticAI, AWS Bedrock, human-in-the-loop approval gates, and quality validation loops |
-| **Conversation layer** | LangGraph + AG-UI conversational flows with procurement-specific guardrails and SSE streaming |
-| **Retrieval** | Hybrid search over pgvector cosine similarity, BM25, and trigram matching, fused with Reciprocal Rank Fusion |
-| **Discovery** | Entropy / mutual-information guided interactive discovery over an ontology, with graceful degradation for vague queries |
-| **Infrastructure** | AWS CDK Python across ECS Fargate, RDS PostgreSQL, ElastiCache Redis, Cognito, WAF, and cdk-nag controls |
-| **Production hardening** | Typed failure paths, retry classification, stream-stall handling, eval loops, and approval boundaries for high-risk tool use |
+| **Agentic architecture** | Multi-step agent workflows, tool boundaries, approval gates, typed failure paths, and quality checks before autonomy expands |
+| **Retrieval & discovery** | Hybrid lexical / semantic retrieval, ranking, query interpretation, and graceful degradation for vague or under-specified requests |
+| **Conversation systems** | Stateful conversational flows, streaming behavior, guarded tool use, and product-facing interaction design |
+| **Platform engineering** | AWS-based service architecture, infrastructure-as-code, data stores, security controls, and rollback-friendly deployment paths |
+| **Reliability hardening** | Retry classification, stalled-stream handling, observability, resource isolation, and explicit operating constraints |
 
 ---
 
-## Public Work
+## Selected Public Work
 
-A selected set of public repos that reflect the kind of systems I like building: agent interfaces, MCP servers, LLM gateways, retrieval/analysis tools, and reliability hardening.
+I use GitHub less as a trophy case and more as a public engineering notebook: tools, experiments, reliability patches, and production-inspired patterns that expose how I think.
 
 | Repo / work | What it demonstrates |
 |---|---|
-| [`mcp-web`](https://github.com/geehexx/mcp-web) | MCP server for intelligent web and local-file summarization: extraction, smart chunking, streaming summaries, local/cloud LLM support, caching, security controls, metrics, and tests |
-| [`hitl-mcp-cli`](https://github.com/geehexx/hitl-mcp-cli) | Human-in-the-loop MCP server and terminal UI for agent approvals, choices, confirmations, notifications, interaction logging, and async-first workflows |
-| [`phraseturner`](https://github.com/geehexx/phraseturner) | Text-analysis MCP server with configurable personas, readability/naturalness/tone scoring, AI-detection signals, semantic persona search, and graceful degradation |
-| [`llm-bedrock-converse`](https://github.com/geehexx/llm-bedrock-converse) | `llm` plugin for AWS Bedrock Converse: Claude models, streaming, tool calling, MCP integration, multimodal inputs, embeddings, and automatic retry behavior |
-| [`msteams-mcp`](https://github.com/geehexx/msteams-mcp) | MCP server for Microsoft Teams interaction: message search, replies, thread access, authentication flow, and assistant-facing collaboration workflows |
-| [`kiro-proxy`](https://github.com/geehexx/kiro-proxy) fork work | Gateway reliability work around streaming, model-name preservation, retry behavior, quota classification, RE2/complexity classification, local gates, and failure-mode cleanup |
+| [`mcp-web`](https://github.com/geehexx/mcp-web) | MCP server for web and local-file summarization: extraction, chunking, streaming summaries, local/cloud LLM support, caching, security controls, metrics, and tests |
+| [`hitl-mcp-cli`](https://github.com/geehexx/hitl-mcp-cli) | Human-in-the-loop MCP server and terminal UI for approvals, choices, confirmations, notifications, interaction logging, and async-first workflows |
+| [`phraseturner`](https://github.com/geehexx/phraseturner) | Text-analysis MCP server with personas, readability/naturalness/tone scoring, semantic persona search, and graceful degradation |
+| [`llm-bedrock-converse`](https://github.com/geehexx/llm-bedrock-converse) | `llm` plugin for AWS Bedrock Converse: streaming, tool calling, MCP integration, multimodal inputs, embeddings, and retry behavior |
+| [`msteams-mcp`](https://github.com/geehexx/msteams-mcp) | MCP server for Microsoft Teams interaction: message search, replies, thread access, authentication, and assistant-facing collaboration workflows |
+| [`kiro-proxy`](https://github.com/geehexx/kiro-proxy) fork work | Gateway reliability work around streaming, retry behavior, quota classification, model-name preservation, regex safety, and failure-mode cleanup |
 
-Recent reliability PRs I care about:
-
-- [`feat(retry): wire body-content classifier into http_client`](https://github.com/geehexx/kiro-proxy/pull/17) — separates hard quota failures from transient throttling so retries do not burn budget against an unrecoverable wall.
-- [`feat(openai): RE2 + complexity classifier`](https://github.com/geehexx/kiro-proxy/pull/18) — adds safer regex handling and complexity classification to an OpenAI-compatible route.
-- [`feat(routes): preserve client model name in response`](https://github.com/geehexx/kiro-proxy/pull/16) — fixes a subtle client/gateway contract bug where normalized upstream model names leaked back into downstream behavior.
+<details>
 
 ---
 
 ## Production Failure Modes I Like Closing
 
-A lot of applied AI engineering is not prompt cleverness. It is removing ambiguity from the failure paths.
+A lot of applied AI engineering is not prompt cleverness. It is removing ambiguity from failure paths.
 
-- **Adaptive retry token buckets** — prevent thundering-herd retries under sub-agent fan-out; bounded refill/backoff behavior under contention.
-- **Body-content retry classification** — distinguishes hard quota markers from transient throttling and capacity signals.
-- **Per-chunk stalled-stream protection** — bounds upstream-hang waits and emits typed terminal errors instead of silent truncation.
-- **Agent handoff durability** — coordination mailboxes, advisory leases, deterministic agent naming, and handoff evaluation for fresh-agent recovery.
-- **Tool-use safety hooks** — block write/edit paths when credential-shaped strings or unsafe outputs enter protected directories.
-- **Eval-before-autonomy loops** — measure behavior before adding more agency, tools, or orchestration complexity.
+- **Retry storms under fan-out** — bounded retry budgets, token buckets, and backoff behavior that does not amplify provider pain.
+- **Hard quota vs transient throttling** — body-content classification so retries do not burn budget against unrecoverable walls.
+- **Silent stream failures** — per-chunk stalled-stream protection and typed terminal errors instead of partial, misleading output.
+- **Unsafe tool autonomy** — approval gates and write-path blocks around irreversible actions, credentials, and protected directories.
+- **Weak retrieval confidence** — hybrid retrieval, rank fusion, query scoping, and evaluation before expanding agent autonomy.
+- **Operational folklore** — ADRs, RFCs, runbooks, and decisions written down before they become archaeology.
 
 ---
 
@@ -80,19 +82,19 @@ A lot of applied AI engineering is not prompt cleverness. It is removing ambigui
 
 | Context | Signal |
 |---|---|
-| **Stealth startup** | Lead AI Engineer for a production agentic AI / procurement intelligence platform |
-| **Agoda / Rocket Travel by Agoda** | Engineering Manager for B2B booking platforms; led 15+ engineers; supported 100K+ RPM peak load across 2.4M+ properties; onboarded enterprise partners including Citibank, US Bank, American Airlines, WestJet, KrisFlyer, and JTB |
-| **Toptal** | Engineering Manager / Senior Software Engineer / Product Manager across talent matching, vetting, ETL, enterprise delivery, and remote engineering systems; scaled team from 5 to 15+ engineers |
-| **BaxEnergy / Yokogawa** | Engineering maturity assessment and modernization roadmap across two squads; DORA metrics, incident protocols, on-call design, and MTTR reduction |
-| **Dubizzle / OLX Group** | Built jobs.dubizzle.com from scratch, rebuilt the core ad-placement workflow, and helped move a Django monolith toward service-oriented architecture |
+| **Stealth applied-AI platform** | Lead AI Engineer for production agentic AI, retrieval, governance workflows, and platform infrastructure |
+| **Agoda / Rocket Travel by Agoda** | Engineering Manager for B2B booking platforms; led 15+ engineers; supported high-scale booking flows across 2.4M+ properties and major enterprise partners |
+| **Toptal** | Senior Software Engineer, Product Manager, and Engineering Manager across talent matching, vetting, ETL, enterprise delivery, and remote engineering systems |
+| **BaxEnergy / Yokogawa** | Engineering maturity assessment and modernization roadmap across delivery practices, incident response, DORA metrics, and cloud-native migration planning |
+| **Dubizzle / OLX Group** | Built and scaled classifieds marketplace systems, rebuilt core ad-placement workflows, and helped move a Django monolith toward service-oriented architecture |
 
 <details>
 <summary><strong>Earlier systems work</strong></summary>
 
-- **Coins.ph** — Python/Django payments-platform modernization, KYC identity verification, WebRTC video capture, facial recognition/liveness workflows, and growth integrations during pre-Series A.
-- **Insydo** — CTO/co-founder; semantic recommendation systems using word2vec/Gensim, TF-IDF, collaborative filtering, Aerospike, and custom Python infrastructure.
-- **ITP** — CMS/platform work for 40+ Middle East media sites; multi-tier caching with CouchDB, Memcached, and Redis; page-load reduction from 10s+ to under 250ms.
-- **Freelance / early Toptal network** — greenfield Django/Angular builds, founder-facing technical translation, fixed-budget delivery, scope negotiation, and product-risk diagnosis.
+- **Coins.ph** — Python / Django payments-platform modernization, KYC identity verification, video capture, liveness workflows, and growth integrations.
+- **Insydo** — CTO / co-founder; semantic recommendation systems using word2vec, TF-IDF, collaborative filtering, Aerospike, and custom Python infrastructure.
+- **ITP Media Group** — CMS and platform work for 40+ Middle East media sites; multi-tier caching with CouchDB, Memcached, and Redis; page-load reduction from 10s+ to under 250ms.
+- **Freelance / early Toptal network** — greenfield Django / Angular builds, founder-facing technical translation, fixed-budget delivery, scope negotiation, and product-risk diagnosis.
 
 </details>
 
@@ -113,16 +115,16 @@ A lot of applied AI engineering is not prompt cleverness. It is removing ambigui
 </p>
 
 **AI / agents / retrieval**  
-PydanticAI · LangGraph · AG-UI · AWS Bedrock · LangChain · Hugging Face Transformers · sentence-transformers · ONNX Runtime · FastEmbed · pgvector · ParadeDB · Qdrant · Pinecone · Reciprocal Rank Fusion · Optuna · LangSmith · OpenTelemetry · MCP · Agentic RAG · LLMOps
+PydanticAI · LangGraph · AWS Bedrock · LangChain · Hugging Face Transformers · sentence-transformers · ONNX Runtime · FastEmbed · pgvector · Qdrant · Pinecone · BM25 · Reciprocal Rank Fusion · Optuna · LangSmith · OpenTelemetry · MCP · Agentic RAG · LLMOps
 
 **Backend / distributed systems**  
-Python · Kotlin · Scala · TypeScript · Ruby · Java · PostgreSQL · Redis · RabbitMQ · Kafka · BigQuery · Elasticsearch · REST · GraphQL · gRPC · Saga pattern · Sidekiq · Docker
+Python · Kotlin · Scala · TypeScript · Ruby · Java · Django · Rails · PostgreSQL · Redis · RabbitMQ · Kafka · BigQuery · Elasticsearch · REST · GraphQL · gRPC · Saga pattern · Sidekiq · Docker
 
 **Infrastructure**  
 AWS CDK · ECS Fargate · RDS · ElastiCache · Cognito · WAF · Kubernetes · Istio · Terraform · OpenTofu · CI/CD · cdk-nag
 
-**Leadership / operating systems**  
-Engineering strategy · RFCs / ADRs · hiring · mentorship · performance management · incident management · on-call design · DORA metrics · OKRs · remote-first engineering · technical due diligence · platform modernization
+**Technical leadership**  
+Architecture decisions · RFCs / ADRs · hiring · mentorship · performance management · incident management · on-call design · DORA metrics · OKRs · remote-first engineering · technical due diligence · platform modernization
 
 ---
 
@@ -135,7 +137,17 @@ Engineering strategy · RFCs / ADRs · hiring · mentorship · performance manag
 - Explicit retry budgets; no infinite faith in exponential backoff.
 - Hybrid retrieval when lexical precision and semantic recall both matter.
 - Infrastructure that rolls back cleanly.
-- Teams that write decisions down before they become folklore.
+- Teams that write decisions down before decisions become folklore.
+
+---
+
+## The Longer Thread
+
+I got here the long way: programming young, learning by building, breaking things, and repeatedly deciding I needed to understand the layer underneath the abstraction.
+
+That meant mIRC scripting, C++, BSD/network programming, GTK+, ncurses, Linux without a GUI for longer than was sensible, Django before it was boring, marketplace systems, fintech workflows, booking platforms, talent-matching systems, and now production AI systems.
+
+The through-line is not a framework. It is systems curiosity plus enough production scar tissue to know where prototypes usually fail.
 
 ---
 
@@ -147,8 +159,9 @@ I am usually useful for:
 - taking RAG systems from prototype to measurable quality;
 - hardening distributed systems under real load;
 - designing human-in-the-loop governance for AI workflows;
-- leading backend/platform teams through modernization;
-- diagnosing reliability failures across infra, code, process, and team boundaries.
+- building MCP and developer workflow tools;
+- leading backend / platform teams without drifting away from the code;
+- diagnosing reliability failures across infrastructure, code, process, and team boundaries.
 
 ---
 
@@ -157,4 +170,4 @@ I am usually useful for:
 - **LinkedIn:** [linkedin.com/in/ancrozier](https://www.linkedin.com/in/ancrozier/)
 - **GitHub:** [github.com/geehexx](https://github.com/geehexx)
 - **Location:** Australia-based, currently traveling Asia
-- **Open to:** AU / EU / Asia remote opportunities; relocation or on-site possible for the right role
+- **Open to:** AI engineering, software engineering, backend/platform engineering, and hands-on technical leadership roles. Remote across AU / EU / Asia preferred; relocation or on-site possible for the right role.
