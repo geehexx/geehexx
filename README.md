@@ -1,8 +1,3 @@
-<!--
-GitHub profile README for github.com/geehexx
-Last Updated 17th May, 2026
--->
-
 <div align="center">
 
 # Andrew Crozier
@@ -34,9 +29,8 @@ I am not trying to be a pure people manager. I have led teams, hired engineers, 
 
 ## Now
 
-Building a **stealth applied-AI platform** in the governance / procurement intelligence space.
-
-The public-safe version: I am working on production agentic workflows, hybrid retrieval, human-in-the-loop controls, and cloud infrastructure for enterprise decision support. The private version has more numbers; this README intentionally does not.
+Building production agentic workflows, hybrid retrieval, human-in-the-loop controls,
+and cloud infrastructure for enterprise decision support.
 
 | System area | What I am focused on |
 |---|---|
@@ -62,6 +56,7 @@ I use GitHub less as a trophy case and more as a public engineering notebook: to
 | [`kiro-proxy`](https://github.com/geehexx/kiro-proxy) fork work | Gateway reliability work around streaming, retry behavior, quota classification, model-name preservation, regex safety, and failure-mode cleanup |
 
 <details>
+<summary><strong>More background</strong></summary>
 
 ---
 
@@ -114,16 +109,16 @@ A lot of applied AI engineering is not prompt cleverness. It is removing ambigui
   <img src="https://img.shields.io/badge/OpenTelemetry-000000?style=flat&logo=opentelemetry&logoColor=white" alt="OpenTelemetry" />
 </p>
 
-**AI / agents / retrieval**  
+**AI / agents / retrieval**
 PydanticAI · LangGraph · AWS Bedrock · LangChain · Hugging Face Transformers · sentence-transformers · ONNX Runtime · FastEmbed · pgvector · Qdrant · Pinecone · BM25 · Reciprocal Rank Fusion · Optuna · LangSmith · OpenTelemetry · MCP · Agentic RAG · LLMOps
 
-**Backend / distributed systems**  
+**Backend / distributed systems**
 Python · Kotlin · Scala · TypeScript · Ruby · Java · Django · Rails · PostgreSQL · Redis · RabbitMQ · Kafka · BigQuery · Elasticsearch · REST · GraphQL · gRPC · Saga pattern · Sidekiq · Docker
 
-**Infrastructure**  
+**Infrastructure**
 AWS CDK · ECS Fargate · RDS · ElastiCache · Cognito · WAF · Kubernetes · Istio · Terraform · OpenTofu · CI/CD · cdk-nag
 
-**Technical leadership**  
+**Technical leadership**
 Architecture decisions · RFCs / ADRs · hiring · mentorship · performance management · incident management · on-call design · DORA metrics · OKRs · remote-first engineering · technical due diligence · platform modernization
 
 ---
@@ -162,6 +157,8 @@ I am usually useful for:
 - building MCP and developer workflow tools;
 - leading backend / platform teams without drifting away from the code;
 - diagnosing reliability failures across infrastructure, code, process, and team boundaries.
+
+</details>
 
 ---
 
