@@ -1,0 +1,32 @@
+# Generated resume/profile artifacts
+dist/
+
+# Private/internal material
+handoff/
+docs/checkpoints/
+docs/superpowers/
+docs/internal/
+AGENTS.md
+**/AGENTS.md
+resume/
+.private/
+.local/
+*.zip
+*.docx
+*.pdf
+*.tmp
+*.bak
+notes/
+research-notes/
+planning/
+*.local.md
+*.private.md
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+*.egg-info/
