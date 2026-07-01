@@ -1,0 +1,79 @@
+name: ci
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: [main, development]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  UV_VERSION: "0.10.0"
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: |
+            pyproject.toml
+            .python-version
+      - name: Install Python
+        run: uv python install
+      - name: Install system tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends pandoc poppler-utils libreoffice
+      - name: Install project
+        run: uv sync --extra dev
+      - name: Validate canonical source
+        run: uv run profile-cv validate
+      - name: Check generated README
+        run: uv run profile-cv render-profile --check
+      - name: Lint
+        run: |
+          uv run ruff check .
+          uv run ruff format --check .
+          uv run mypy
+      - name: Unit tests
+        run: uv run pytest
+      - name: Integration tests
+        run: |
+          uv run pytest -o addopts="" tests/test_build_pipeline.py::test_full_build_pipeline_outputs_all_distribution_formats
+          uv run pytest -o addopts="" tests/test_build_pipeline.py::test_theme_comparison_is_small_but_meaningful
+      - name: Repository policy checks
+        run: |
+          uv run python scripts/check_workflows.py
+          uv run python scripts/check_public_surface.py
+          uv run python scripts/lint_readme.py README.md
+      - name: Build artifacts
+        run: uv run profile-cv build --clean --no-profile-check
+      - name: Upload resume artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: resume-artifacts
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            dist/Andrew_Crozier_Resume.pdf
+            dist/Andrew_Crozier_Resume.docx
+            dist/Andrew_Crozier_Resume.md
+            dist/Andrew_Crozier_Resume.html
+            dist/Andrew_Crozier_Resume.json
+            dist/profile.schemaorg.json
+            dist/theme-comparison.md

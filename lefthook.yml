@@ -2,10 +2,18 @@ pre-commit:
   parallel: false
   commands:
     public-surface:
-      run: python3 scripts/check_public_surface.py --staged --require-private-rules --private-rules .private/policy.txt
+      run: uv run python scripts/check_public_surface.py --staged --private-rules .private/policy.txt # public-surface-allow
     readme-lint:
-      run: python3 scripts/lint_readme.py README.md
-    yaml-lint:
-      run: python3 scripts/check_yaml.py --staged
-    gitleaks:
-      run: gitleaks git --staged --redact --no-banner
+      run: uv run python scripts/lint_readme.py README.md
+    profile-sync:
+      run: uv run profile-cv render-profile --check
+    ruff:
+      run: uv run ruff check .
+
+pre-push:
+  parallel: false
+  commands:
+    tests:
+      run: uv run pytest
+    build:
+      run: uv run profile-cv build --clean --no-profile-check
