@@ -1,0 +1,121 @@
+# {{ view.profile.title }}
+
+### {{ view.profile.subtitle }}
+
+**{{ view.profile.tagline }}**
+
+{% for badge in view.profile_badges -%}
+[![{{ badge.alt }}]({{ badge.src }})]({{ badge.url }})
+{% endfor %}
+---
+
+```text
+{{ view.profile.opener }}
+```
+
+{% for paragraph in view.profile.positioning -%}
+{{ paragraph }}
+
+{% endfor -%}
+---
+
+## Now
+
+{{ view.profile.now.summary }}
+
+| System area | Current focus |
+| --- | --- |
+{% for area in view.profile.now.areas -%}
+| **{{ area.system }}** | {{ area.focus }} |
+{% endfor %}
+---
+
+## Selected Public Work
+
+{{ view.profile.publicWorkIntro }}
+
+| Repo / work | What it demonstrates |
+| --- | --- |
+{% for project in view.featured_projects -%}
+| [`{{ project.name }}`]({{ project.url }}){% if project.type == 'fork work' %} fork work{% endif %} | {{ project.description }} |
+{% endfor %}
+---
+
+## Production Failure Modes I Like Closing
+
+{{ view.profile.failureModesIntro }}
+
+{% for mode in view.profile.failureModes -%}
+- **{{ mode.name }}** - {{ mode.detail }}
+{% endfor %}
+---
+
+## Career Snapshot
+
+| Context | Signal |
+| --- | --- |
+{% for item in view.career_snapshot -%}
+| **{{ item.context }}** | {{ item.signal }} |
+{% endfor %}
+
+Earlier systems work:
+
+{% for item in view.early_work -%}
+- **{{ item.name }}** - {{ item.highlights[0] }}
+{% endfor %}
+---
+
+## Toolbox
+
+**AI / agents / retrieval**
+{% for chunk in view.skill_chunks.get('Applied AI & Retrieval', []) -%}
+- {{ chunk }}
+{% endfor %}
+
+**Backend / distributed systems**
+{% for chunk in view.skill_chunks.get('Backend & Distributed Systems', []) -%}
+- {{ chunk }}
+{% endfor %}
+
+**Infrastructure**
+{% for chunk in view.skill_chunks.get('Infrastructure & Platform', []) -%}
+- {{ chunk }}
+{% endfor %}
+
+**Technical leadership**
+{% for chunk in view.skill_chunks.get('Technical Leadership', []) -%}
+- {{ chunk }}
+{% endfor %}
+
+---
+
+## Engineering Biases
+
+{% for item in view.profile.engineeringBiases -%}
+- {{ item }}
+{% endfor %}
+---
+
+## The Longer Thread
+
+{% for paragraph in view.profile.longerThread -%}
+{{ paragraph }}
+
+{% endfor -%}
+---
+
+## Useful Conversations
+
+I am usually useful for:
+
+{% for item in view.profile.usefulConversations -%}
+- {{ item }};
+{% endfor %}
+---
+
+## Reach Me
+
+- **LinkedIn:** [linkedin.com/in/{{ view.linkedin_user }}]({{ view.linkedin_url }})
+- **GitHub:** [github.com/{{ view.github_user }}]({{ view.github_url }})
+- **Location:** {{ view.public_location }}
+- **Open to:** {{ view.profile.openTo }}

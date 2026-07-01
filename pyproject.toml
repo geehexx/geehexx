@@ -1,0 +1,73 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "geehexx-profile-cv"
+version = "0.3.1"
+description = "Single-source JSON Resume pipeline for the geehexx GitHub profile and CV artifacts."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "Andrew Crozier" }]
+dependencies = [
+  "Jinja2>=3.1,<4",
+  "jsonschema>=4.23,<5",
+  "PyYAML>=6,<7",
+  "python-docx>=1.1,<2",
+  "rendercv[full]>=2.8,<3",
+]
+
+[project.optional-dependencies]
+dev = [
+  "commitizen>=4,<5",
+  "mypy>=1.16,<2",
+  "pre-commit>=4,<5",
+  "pytest>=8,<9",
+  "ruff>=0.15,<1",
+  "types-jsonschema>=4,<5",
+  "types-PyYAML>=6,<7",
+]
+
+[project.scripts]
+profile-cv = "profile_cv.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/profile_cv"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests", "scripts"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "C4", "ARG", "PL"]
+ignore = ["PLR0911", "PLR0912", "PLR0913", "PLR2004"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["src", "tests"]
+warn_unused_ignores = true
+warn_return_any = true
+
+[[tool.mypy.overrides]]
+module = ["docx", "docx.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+addopts = ["-q", "-m", "not integration"]
+testpaths = ["tests"]
+markers = ["integration: builds profile and resume artifacts with external tools"]
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "0.3.1"
+tag_format = "v$version"
+version_files = ["pyproject.toml:version", "src/profile_cv/__init__.py"]
+update_changelog_on_bump = true
+major_version_zero = true

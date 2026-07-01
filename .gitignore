@@ -1,24 +1,23 @@
 # Generated resume/profile artifacts
 dist/
-
-# Private/internal material
-handoff/
-docs/checkpoints/
-docs/superpowers/
-docs/internal/
-AGENTS.md
-**/AGENTS.md
-resume/
-.private/
-.local/
+site/
+_qa*/
 *.zip
-*.docx
 *.pdf
+*.docx
+!styles/reference.docx
 *.tmp
 *.bak
+
+# Private/internal material
+.private/
+.local/
+source/
+handoff/
 notes/
 research-notes/
 planning/
+resume/
 *.local.md
 *.private.md
 
@@ -29,4 +28,13 @@ __pycache__/
 .ruff_cache/
 .mypy_cache/
 .venv/
+.venv
 *.egg-info/
+
+# OS/editor
+.DS_Store
+.idea/
+.vscode/
+
+# Local resolver output can capture private package-index mirrors.
+uv.lock

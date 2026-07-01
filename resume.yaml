@@ -1,0 +1,686 @@
+# JSON Resume-compatible canonical source for generated profile/CV artifacts.
+$schema: https://jsonresume.org/schema/
+basics:
+  name: Andrew Crozier
+  label: Applied AI & Software Engineering Leader - Production Agents - Hybrid Retrieval - Distributed
+    Platforms
+  email: andrewcrozier86@gmail.com
+  summary: 'Hands-on software engineering and applied AI leader with 15+ years building backend, platform,
+    and data systems across AI agents, retrieval, marketplaces, travel, fintech, and talent matching.
+    Current focus: production agent workflows, RAG/search quality, governance controls, AWS infrastructure,
+    and reliability. Led teams of 15+ engineers while staying close to architecture and delivery; shipped
+    systems supporting 100K+ RPM booking flows, millions of properties, 200K+ annual applicants, and enterprise
+    decision-support products.'
+  location:
+    address: Bangkok, Thailand
+    city: Bangkok
+    countryCode: TH
+    region: APAC
+  profiles:
+  - network: LinkedIn
+    username: ancrozier
+    url: https://linkedin.com/in/ancrozier
+  - network: GitHub
+    username: geehexx
+    url: https://github.com/geehexx
+  x_contact:
+    remote: Remote (Australia/APAC/EU/UK overlap)
+    relocation: Open to Australia relocation
+    publicLocation: Thailand-based Australian citizen; remote Australia/APAC/EU/UK overlap; open to Australia
+      relocation
+    publicEmail: false
+    workAuthorization: Australian citizen
+work:
+- name: Stealth Startup
+  position: Lead AI Engineer
+  location: Remote / UK client
+  startDate: 2026-02
+  summary: ''
+  highlights:
+  - Designed and implemented a production multi-agent AI platform using PydanticAI and AWS Bedrock, with
+    specialist sub-agents, human-in-the-loop approval gates, typed failure paths, and quality checks before
+    autonomous actions.
+  - Architected the LangGraph and AG-UI conversational layer for procurement workflows, including guardrails,
+    stateful discovery flows, and SSE streaming for product-facing interaction.
+  - Built a hybrid retrieval pipeline combining pgvector, ParadeDB BM25 full-text search, trigram matching,
+    Reciprocal Rank Fusion, and Optuna-tuned ranking parameters; improved relevance tuning and runtime
+    memory use through embedding and ranking optimization.
+  - Designed interactive discovery over a structured procurement ontology, using mutual-information scoring
+    to prioritize follow-up questions and graceful degradation for vague or under-specified queries.
+  - Architected AWS CDK Python infrastructure across ECS Fargate, RDS PostgreSQL, ElastiCache Redis, Cognito,
+    WAF, and cdk-nag controls, moving deployments from scripts toward CloudFormation-managed state and
+    rollback-friendly delivery.
+  x_display:
+    dateLabel: Feb 2026 - Present
+  x_profile:
+    signal: Lead AI Engineer for production agentic AI, retrieval, governance workflows, and platform
+      infrastructure
+- name: BaxEnergy (a Yokogawa Company)
+  position: Engineering Manager
+  location: Remote / Italy
+  startDate: 2025-09
+  summary: ''
+  highlights:
+  - Conducted an engineering maturity assessment across multiple squads, evaluating delivery velocity,
+    code-quality practices, incident response, team health, modernization risk, and post-acquisition operating
+    constraints.
+  - Delivered a prioritized modernization roadmap covering CI/CD, test strategy, incident-management protocols,
+    architecture evolution, observability, and cloud-native migration planning.
+  - Introduced sprint planning, retrospectives, DORA metrics tracking, incident-management protocols,
+    and on-call design across multiple squads to make reliability and delivery work visible and repeatable.
+  - Mapped a modernization path from legacy monolithic systems toward containerized cloud-native architecture,
+    including deployment-cycle, cost, and migration-risk tradeoffs for the target stack.
+  x_display:
+    dateLabel: Sep 2025 - Feb 2026
+  endDate: 2026-02
+  x_profile:
+    signal: Engineering maturity assessment and modernization roadmap across delivery practices, incident
+      response, DORA metrics, and cloud-native migration planning
+- name: Toptal
+  position: Freelance Software Engineer
+  location: Remote
+  startDate: 2024-12
+  summary: ''
+  highlights:
+  - Delivered client-facing software engineering and architecture engagements through the Toptal freelancer
+    network, after the earlier internal Toptal leadership role.
+  - Conducted architecture reviews and technical due diligence across enterprise systems, assessing microservices
+    scalability, cloud migration plans, Kubernetes practices, latency bottlenecks, and operational risk.
+  x_display:
+    dateLabel: Dec 2024 - May 2025
+  endDate: 2025-05
+- name: Agoda (Booking Holdings)
+  position: Engineering Manager - B2B Platforms
+  location: Bangkok / Hybrid
+  startDate: 2023-01
+  summary: ''
+  highlights:
+  - Managed 15+ engineers across squads responsible for high-availability Book and Pre-Book funnels handling
+    100K+ RPM peak load across millions of properties.
+  - Led B2B platform work for Rocket Travel by Agoda and enterprise white-label partners including Citi,
+    U.S. Bank, American Airlines, KrisFlyer, and JTB/JAPANiCAN.
+  - Drove migration of critical booking services from Scala to Kotlin across multiple squads with zero
+    booking-funnel downtime and reduced JVM memory pressure per pod.
+  - Worked hands-on with engineers to diagnose and resolve Redis circuit-breaker failures, retry-storm
+    risks, and resilience gaps using proactive testing and Envoy retry-budget patterns in a custom Istio
+    service mesh.
+  - Owned technical roadmap, Agile delivery, stakeholder management, design/code-review standards, hiring,
+    headcount planning, mentorship, and DORA/OKR-driven delivery governance.
+  x_display:
+    dateLabel: Jan 2023 - Nov 2024
+  endDate: 2024-11
+  x_profile:
+    signal: Engineering Manager for B2B booking platforms; led 15+ engineers; supported high-scale booking
+      flows across millions of properties and major enterprise partners
+- name: Toptal
+  position: Engineering Manager / Product Manager / Senior Software Engineer
+  location: Remote
+  startDate: 2017-01
+  summary: ''
+  highlights:
+  - Led engineering for Toptal's talent-matching and acquisition systems, scaling the team from 5 to 15+
+    engineers and promoting 2 engineers into Engineering Manager roles.
+  - Built and managed delivery of semantic talent-matching capabilities using vector embeddings, supply-demand
+    balancing, and workflow automation to reduce manual recruiter workload.
+  - Directed delivery of custom software solutions for Fortune 500 enterprise clients, coordinating scope,
+    staffing, delivery quality, and stakeholder communication.
+  - Defined async-first communication protocols and a formal RFC process for a distributed team spanning
+    12+ time zones.
+  - Contributed hands-on to Rails, Pandas, Avro, BigQuery, ETL pipelines, vetting workflow backend, and
+    matching-engine integrations supporting approximately 200K+ annual applicants.
+  x_display:
+    dateLabel: Jan 2017 - Jan 2023
+  endDate: 2023-01
+  x_profile:
+    signal: Senior Software Engineer, Product Manager, and Engineering Manager across talent matching,
+      vetting, ETL, enterprise delivery, and remote engineering systems
+- name: Independent Freelance / Contract Engagements
+  position: Software Engineer / Consultant
+  location: Remote
+  startDate: 2015-11
+  summary: ''
+  highlights:
+  - Built a greenfield ecommerce platform for an Australian equestrian-event booking startup using Python,
+    Django, Angular 2, payment flows, admin tooling, and deployment ownership.
+  - Delivered feature work and bug fixes on a Django codebase for a US engineer-coaching platform, translating
+    compensation-negotiation domain logic into clean data-model boundaries.
+  - Scoped and delivered ambiguous fixed-budget projects, managed founder/client communication, negotiated
+    scope and rates, and identified when product hypotheses, rather than engineering, were the limiting
+    factor.
+  x_display:
+    dateLabel: Nov 2015 - Dec 2016
+  endDate: 2016-12
+- name: Coins.ph
+  position: Contract Technical Consultant / Senior Software Engineer
+  location: Remote / Philippines
+  startDate: 2016-03
+  summary: ''
+  highlights:
+  - Led Django 1.8 LTS to 1.10 and Python 2.7 to 3.5.2 modernization across the payment-processing platform.
+  - Developed KYC identity-verification features using WebRTC live video capture, facial recognition,
+    and liveness detection for BSP-aligned compliance workflows.
+  - Built Facebook marketing campaign integrations and growth features during the pre-Series A period,
+    contributing to product growth before the October 2016 Series A.
+  x_display:
+    dateLabel: Mar 2016 - Nov 2016
+  endDate: 2016-11
+- name: Agoda
+  position: Engineering Manager - Affiliates Platform
+  location: Bangkok
+  startDate: 2015-08
+  summary: ''
+  highlights:
+  - Built partner integrations and data pipelines for Agoda's affiliate platform, enabling real-time inventory
+    synchronization and commission tracking across 200+ affiliate partners.
+  - Contributed to an early B2B integration layer that later aligned with Agoda's enterprise white-label
+    platform direction.
+  x_display:
+    dateLabel: Aug 2015 - Jan 2016
+  endDate: 2016-01
+- name: Insydo
+  position: Director of Engineering
+  location: Dubai
+  startDate: 2014-09
+  summary: ''
+  highlights:
+  - Led engineering for a curated Dubai city-guide and recommendation platform across search, recommendations,
+    editorial workflows, and launch delivery.
+  - Built a semantic recommendation engine using word2vec embeddings via Gensim, TF-IDF similarity, and
+    collaborative filtering.
+  - Designed an editorial management system for assignments, reviews, scheduling, collaborative editing,
+    automated distribution, and modification-request tracking.
+  - Led technical delivery across search, recommendation systems, Aerospike NoSQL data architecture, Angular
+    SPA frontend, pre-rendering for SEO, and mobile app architecture.
+  x_display:
+    dateLabel: Sep 2014 - Aug 2015
+  endDate: 2015-08
+- name: Dubizzle (Naspers-backed)
+  position: Software Engineer to Engineering Manager
+  location: Dubai
+  startDate: '2012'
+  summary: ''
+  highlights:
+  - Joined as a Software Engineer and was promoted to Engineering Manager / Team Lead within six months
+    at Dubai's leading classifieds platform during a Naspers-backed growth period.
+  - Designed and built jobs.dubizzle.com from scratch using Flask and GEvent, owning architecture, core
+    listing engine, search functionality, employer dashboard, and early product direction while introducing
+    TDD for the greenfield project.
+  - Rebuilt the central Place An Ad workflow by redesigning UX and rewriting the Python/Django backend
+    into a responsive, mobile-first flow, enabling mobile ad creation and improving submission conversion.
+  - Helped migrate from a Django monolith toward service-oriented architecture across core verticals while
+    supporting rapid marketplace growth and iterative A/B testing.
+  - Reduced server costs by $1,000+/month through a server-side rendering cache strategy deployed in the
+    first month.
+  - Managed and coached 4+ direct reports using Scrum, sprint planning, stakeholder coordination, release
+    management, and full-stack mentorship.
+  x_display:
+    dateLabel: 2012 - Sep 2014
+  endDate: 2014-09
+  x_profile:
+    signal: Built and scaled classifieds marketplace systems, rebuilt core ad-placement workflows, and
+      helped move a Django monolith toward service-oriented architecture
+    context: Dubizzle (Naspers-backed)
+- name: ITP Media Group
+  position: Software Engineer
+  location: Dubai
+  startDate: '2011'
+  summary: ''
+  highlights:
+  - Developed and maintained Django-based CMS platforms powering 40+ websites for the largest publishing
+    house in the Middle East, serving 100+ media brands.
+  - Designed a multi-tier server-side caching architecture using CouchDB, Memcached, and Redis, reducing
+    page-load times from 10+ seconds to under 250ms across high-traffic media sites.
+  x_display:
+    dateLabel: 2011 - 2012
+  endDate: '2012'
+education:
+- institution: Charles Sturt University
+  studyType: Bachelor of Information Technology
+  area: Online Systems
+  startDate: '2009'
+  x_display:
+    dateLabel: 2009 - 2011
+  endDate: '2011'
+skills:
+- name: Applied AI & Retrieval
+  keywords:
+  - Production agentic AI
+  - RAG / Agentic RAG
+  - hybrid search
+  - vector databases
+  - pgvector
+  - Qdrant
+  - Pinecone
+  - BM25
+  - ParadeDB
+  - Reciprocal Rank Fusion
+  - PydanticAI
+  - LangGraph
+  - LangChain
+  - AWS Bedrock
+  - MCP / Model Context Protocol
+  - LLMOps
+  - model evaluation
+  - ONNX Runtime
+  - sentence-transformers
+  - FastEmbed
+  - Optuna
+  - LangSmith
+- name: Backend & Distributed Systems
+  keywords:
+  - Python
+  - Kotlin
+  - Scala
+  - Java
+  - Ruby
+  - Rails
+  - Django
+  - TypeScript
+  - REST APIs
+  - GraphQL
+  - gRPC
+  - PostgreSQL
+  - Redis
+  - RabbitMQ
+  - Kafka
+  - BigQuery
+  - Avro
+  - Pandas
+  - Elasticsearch
+  - Sidekiq
+  - event-driven architecture
+  - Saga pattern
+  - high-availability systems
+  - system design
+- name: Infrastructure & Platform
+  keywords:
+  - AWS
+  - AWS CDK
+  - ECS Fargate
+  - RDS PostgreSQL
+  - ElastiCache Redis
+  - Cognito
+  - WAF
+  - Kubernetes
+  - Istio
+  - Docker
+  - Terraform
+  - OpenTofu
+  - CI/CD
+  - cdk-nag
+  - observability
+  - platform engineering
+  - rollback-friendly deployment
+- name: Technical Leadership
+  keywords:
+  - technical roadmaps
+  - architecture decisions
+  - ADRs
+  - RFCs
+  - engineering maturity assessment
+  - DORA metrics
+  - incident management
+  - on-call design
+  - hiring
+  - headcount planning
+  - mentorship
+  - performance management
+  - stakeholder management
+  - technical due diligence
+  - remote-first delivery
+projects:
+- name: library-ops
+  description: Live Django/PostgreSQL library-operations demo with Work/Edition/Copy modeling, role boundaries,
+    search, circulation state, Render deployment, and a governed multi-agent SDLC case study.
+  url: https://github.com/geehexx/library-ops
+  keywords:
+  - Django
+  - PostgreSQL
+  - governed autonomous SDLC
+  - role boundaries
+  - Render
+  roles:
+  - Owner
+  type: open-source
+  highlights: []
+  x_profile:
+    featured: true
+  x_resume:
+    featured: true
+- name: mcp-web
+  description: 'MCP server for web and local-file summarization: extraction, chunking, streaming summaries,
+    local/cloud LLM support, caching, security controls, metrics, and tests.'
+  url: https://github.com/geehexx/mcp-web
+  keywords:
+  - MCP
+  - web extraction
+  - summarization
+  - security controls
+  - observability
+  roles:
+  - Owner
+  type: open-source
+  highlights: []
+  x_profile:
+    featured: true
+  x_resume:
+    featured: true
+- name: hitl-mcp-cli
+  description: Human-in-the-loop MCP server and terminal UI for approvals, choices, confirmations, notifications,
+    interaction logging, and async-first workflows.
+  url: https://github.com/geehexx/hitl-mcp-cli
+  keywords:
+  - MCP
+  - human-in-the-loop
+  - terminal UI
+  - approvals
+  roles:
+  - Owner
+  type: open-source
+  highlights: []
+  x_profile:
+    featured: true
+  x_resume:
+    featured: true
+- name: phraseturner
+  description: Text-analysis MCP server with personas, readability/naturalness/tone scoring, semantic
+    persona search, and graceful degradation.
+  url: https://github.com/geehexx/phraseturner
+  keywords:
+  - MCP
+  - text analysis
+  - readability
+  - personas
+  roles:
+  - Owner
+  type: open-source
+  highlights: []
+  x_profile:
+    featured: true
+  x_resume:
+    featured: true
+- name: PragmaLens
+  description: Evidence-oriented extraction prototype exploring structured outputs, explicit support spans,
+    uncertainty, and validation-oriented prompt design.
+  url: https://github.com/geehexx/PragmaLens
+  keywords:
+  - evidence extraction
+  - structured outputs
+  - validation
+  - uncertainty
+  roles:
+  - Owner
+  type: open-source
+  highlights: []
+  x_profile:
+    featured: true
+  x_resume:
+    featured: false
+- name: llm-bedrock-converse
+  description: LLM plugin for AWS Bedrock Converse with streaming, tool calling, MCP integration, multimodal
+    inputs, embeddings, and retry behavior.
+  url: https://github.com/geehexx/llm-bedrock-converse
+  keywords:
+  - AWS Bedrock
+  - LLM plugin
+  - tool calling
+  - streaming
+  roles:
+  - Owner
+  type: open-source
+  highlights: []
+  x_profile:
+    featured: true
+  x_resume:
+    featured: true
+- name: msteams-mcp
+  description: 'MCP server for Microsoft Teams interaction: message search, replies, thread access, authentication,
+    and assistant-facing collaboration workflows.'
+  url: https://github.com/geehexx/msteams-mcp
+  keywords:
+  - MCP
+  - Microsoft Teams
+  - collaboration workflows
+  roles:
+  - Owner
+  type: open-source
+  highlights: []
+  x_profile:
+    featured: true
+  x_resume:
+    featured: false
+- name: kiro-proxy
+  description: Fork work around streaming, retry behavior, quota classification, model-name preservation,
+    regex safety, and failure-mode cleanup.
+  url: https://github.com/geehexx/kiro-proxy
+  keywords:
+  - gateway reliability
+  - streaming
+  - retry behavior
+  - quota classification
+  roles:
+  - Fork contributor
+  type: fork work
+  highlights: []
+  x_profile:
+    featured: true
+  x_resume:
+    featured: false
+languages:
+- language: English
+  fluency: Native / professional
+interests: []
+references: []
+meta:
+  canonical: https://github.com/geehexx/geehexx/blob/main/resume.json
+  version: 0.3.1
+  lastModified: '2026-07-01T00:00:00+07:00'
+  x_source:
+    baseRepository: https://github.com/geehexx/geehexx
+    sourceResume: Andrew Crozier - Master Resume v1(3).docx
+    sourceResumeDateReviewed: '2026-07-01'
+    privacy: README intentionally omits direct email; resume outputs include email for job-distribution
+      artifacts.
+  x_profile:
+    title: Andrew Crozier
+    subtitle: Applied AI & Software Engineering · Hands-on Technical Leadership
+    tagline: Production agents · Hybrid retrieval · MCP systems · Distributed platforms · Reliability
+      engineering
+    opener: 'I build the parts of AI systems that still have to work after the demo: retrieval quality,
+      tool boundaries, stream safety, retry behavior, evaluation loops, human approval gates, observability,
+      infrastructure, and the engineering habits around them.'
+    positioning:
+    - 'I work where LLMs meet backend engineering: agent orchestration, RAG, search, evals, governance,
+      distributed systems, platform reliability, and the unglamorous failure paths that decide whether
+      an AI product survives real users.'
+    - 'I am not trying to be a pure people manager. I have led teams, hired engineers, run delivery systems,
+      written RFCs, and handled performance management, but my strongest work is still hands-on technical
+      leadership: shaping systems, debugging hard edges, and helping teams make better engineering decisions.'
+    now:
+      summary: Building production agentic workflows, hybrid retrieval, human-in-the-loop controls, and
+        cloud infrastructure for enterprise decision support.
+      areas:
+      - system: Agentic architecture
+        focus: Multi-step agent workflows, tool boundaries, approval gates, typed failure paths, and quality
+          checks before autonomy expands
+      - system: Retrieval & discovery
+        focus: Hybrid lexical / semantic retrieval, ranking, query interpretation, and graceful degradation
+          for vague or under-specified requests
+      - system: Conversation systems
+        focus: Stateful conversational flows, streaming behavior, guarded tool use, and product-facing
+          interaction design
+      - system: Platform engineering
+        focus: AWS-based service architecture, infrastructure-as-code, data stores, security controls,
+          and rollback-friendly deployment paths
+      - system: Reliability hardening
+        focus: Retry classification, stalled-stream handling, observability, resource isolation, and explicit
+          operating constraints
+    publicWorkIntro: 'I use GitHub less as a trophy case and more as a public engineering notebook: tools,
+      experiments, reliability patches, and production-inspired patterns that expose how I think.'
+    failureModesIntro: A lot of applied AI engineering is not prompt cleverness. It is removing ambiguity
+      from failure paths.
+    failureModes:
+    - name: Retry storms under fan-out
+      detail: bounded retry budgets, token buckets, and backoff behavior that does not amplify provider
+        pain.
+    - name: Hard quota vs transient throttling
+      detail: body-content classification so retries do not burn budget against unrecoverable walls.
+    - name: Silent stream failures
+      detail: per-chunk stalled-stream protection and typed terminal errors instead of partial, misleading
+        output.
+    - name: Unsafe tool autonomy
+      detail: approval gates and write-path blocks around irreversible actions, credentials, and protected
+        directories.
+    - name: Weak retrieval confidence
+      detail: hybrid retrieval, rank fusion, query scoping, and evaluation before expanding agent autonomy.
+    - name: Operational folklore
+      detail: ADRs, RFCs, runbooks, and decisions written down before they become archaeology.
+    engineeringBiases:
+    - Typed errors over mysterious fallthroughs.
+    - Guardrails around irreversible tool actions.
+    - Evals before more autonomy.
+    - Observability before optimism.
+    - Explicit retry budgets; no infinite faith in exponential backoff.
+    - Hybrid retrieval when lexical precision and semantic recall both matter.
+    - Infrastructure that rolls back cleanly.
+    - Teams that write decisions down before decisions become folklore.
+    longerThread:
+    - 'I got here the long way: programming young, learning by building, breaking things, and repeatedly
+      deciding I needed to understand the layer underneath the abstraction.'
+    - That meant mIRC scripting, C++, BSD/network programming, GTK+, ncurses, Linux without a GUI for
+      longer than was sensible, Django before it was boring, marketplace systems, fintech workflows, booking
+      platforms, talent-matching systems, and now production AI systems.
+    - The through-line is not a framework. It is systems curiosity plus enough production scar tissue
+      to know where prototypes usually fail.
+    usefulConversations:
+    - building production AI / agent platforms
+    - taking RAG systems from prototype to measurable quality
+    - hardening distributed systems under real load
+    - designing human-in-the-loop governance for AI workflows
+    - building MCP and developer workflow tools
+    - leading backend / platform teams without drifting away from the code
+    - diagnosing reliability failures across infrastructure, code, process, and team boundaries
+    openTo: AI engineering, software engineering, backend/platform engineering, and hands-on technical
+      leadership roles. Remote across Australia / APAC / EU / UK overlap preferred; Australia relocation
+      or other on-site arrangements possible for the right role.
+  x_rendercv:
+    design:
+      theme: engineeringresumes
+      page:
+        size: us-letter
+        top_margin: 0.55in
+        bottom_margin: 0.55in
+        left_margin: 0.58in
+        right_margin: 0.58in
+        show_footer: false
+        show_top_note: false
+      colors:
+        body: rgb(0, 0, 0)
+        name: rgb(0, 0, 0)
+        headline: rgb(32, 32, 32)
+        connections: rgb(0, 0, 0)
+        section_titles: rgb(17, 70, 115)
+        links: rgb(17, 70, 115)
+        footer: rgb(105, 105, 105)
+        top_note: rgb(105, 105, 105)
+      typography:
+        line_spacing: 0.62em
+        alignment: left
+        date_and_location_column_alignment: right
+        font_family:
+          body: XCharter
+          name: XCharter
+          headline: XCharter
+          connections: XCharter
+          section_titles: XCharter
+        font_size:
+          body: 10pt
+          name: 22pt
+          headline: 10pt
+          connections: 9.5pt
+          section_titles: 1.08em
+        bold:
+          name: true
+          headline: false
+          connections: false
+          section_titles: true
+      links:
+        underline: true
+        show_external_link_icon: false
+      header:
+        alignment: center
+        space_below_name: 0.18cm
+        space_below_headline: 0.16cm
+        space_below_connections: 0.22cm
+        connections:
+          hyperlink: true
+          show_icons: false
+          display_urls_instead_of_usernames: true
+          separator: '-'
+          space_between_connections: 0.45cm
+      section_titles:
+        type: with_full_line
+        line_thickness: 0.45pt
+        space_above: 0.32cm
+        space_below: 0.18cm
+      sections:
+        allow_page_break: true
+        space_between_regular_entries: 0.30cm
+        space_between_text_based_entries: 0.09cm
+        show_time_spans_in: []
+      entries:
+        date_and_location_width: 3.85cm
+        side_space: 0cm
+        space_between_columns: 0.12cm
+        allow_page_break: false
+        short_second_row: false
+        summary:
+          space_above: 0.04cm
+          space_left: 0cm
+        highlights:
+          bullet: •
+          nested_bullet: '-'
+          space_left: 0cm
+          space_above: 0.05cm
+          space_between_items: 0.045cm
+          space_between_bullet_and_text: 0.25em
+    locale:
+      language: english
+    settings:
+      current_date: '2026-07-01'
+      render_command:
+        output_folder: dist/rendercv
+        design: null
+        locale: null
+        typst_path: OUTPUT_FOLDER/Andrew_Crozier_Resume.typ
+        pdf_path: OUTPUT_FOLDER/Andrew_Crozier_Resume.pdf
+        markdown_path: OUTPUT_FOLDER/Andrew_Crozier_Resume.rendercv.md
+        html_path: OUTPUT_FOLDER/Andrew_Crozier_Resume.rendercv.html
+        png_path: OUTPUT_FOLDER/Andrew_Crozier_Resume.png
+        dont_generate_markdown: false
+        dont_generate_html: false
+        dont_generate_typst: false
+        dont_generate_pdf: false
+        dont_generate_png: false
+      pdf_title: Andrew Crozier - Resume
+      bold_keywords:
+      - production multi-agent AI platform
+      - hybrid retrieval pipeline
+      - 100K+ RPM
+      - millions of properties
+      - 200K+ annual applicants
+      - DORA metrics
+      - AWS CDK
+      - Kotlin
+      - PydanticAI
+      - LangGraph
+    selectedThemes:
+    - engineeringresumes
+    - sb2nov
+    - classic
+    - harvard
+  x_outputs:
+    defaultResumeBasename: Andrew_Crozier_Resume
+    profileReadme: README.md
+    siteDir: site
+    distDir: dist
