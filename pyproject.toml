@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "geehexx-profile-cv"
 version = "0.3.1"
-description = "Single-source JSON Resume pipeline for the geehexx GitHub profile and CV artifacts."
+description = "Single-source profile and CV pipeline for the geehexx GitHub profile and resume artifacts."
 readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "MIT" }

@@ -38,16 +38,15 @@ generation because DOCX metadata and visual QA depend on those system tools.
 
 ## Quality Gates
 
-`quality-gates.yaml` owns repo-specific policy:
+`quality-gates.yaml` owns the repository surface boundary:
 
-- public/tracked file allowlists and generated/private path blocks;
-- secret and tool-citation leak patterns;
-- source-required tokens and known fact-risk tokens;
-- artifact text, ATS, and README expectations.
+- public/tracked file allowlists;
+- generated and non-public path blocks;
+- binary suffixes used when reviewing tracked artifacts.
 
-General syntax/format checks should use standard tools such as pre-commit hooks,
-Ruff, mypy, pytest, and GitHub push protection. Keep custom Python gates narrow
-and repo-specific.
+General syntax, formatting, typing, tests, and secret detection should use
+standard tools such as pre-commit hooks, Ruff, mypy, pytest, GitHub protections,
+and CI. Keep custom Python gates narrow and repo-specific.
 
 ## Rendering Decisions
 

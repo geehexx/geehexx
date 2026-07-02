@@ -32,3 +32,22 @@ def test_docs_are_consolidated_into_maintainer_guide() -> None:
     assert not (docs / "tooling-decisions.md").exists()
     assert not (ROOT / "CONTRIBUTING.md").exists()
     assert not (ROOT / "SECURITY.md").exists()
+
+
+def test_pre_commit_uses_standard_secret_scanner() -> None:
+    text = (ROOT / ".pre-commit-config.yaml").read_text(encoding="utf-8")
+    ci = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+
+    assert "https://github.com/Yelp/detect-secrets" in text
+    assert "detect-secrets" in text
+    assert "detect-secrets-hook" in ci
+
+
+def test_pull_request_template_captures_review_evidence() -> None:
+    template = ROOT / ".github" / "pull_request_template.md"
+    text = template.read_text(encoding="utf-8")
+
+    assert "## Summary" in text
+    assert "## Validation" in text
+    assert "## Artifact Review" in text
+    assert "## Local Limitations" in text

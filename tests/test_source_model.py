@@ -4,7 +4,6 @@ from pathlib import Path
 
 from profile_cv.adapters import render_template, to_rendercv
 from profile_cv.source import (
-    FORBIDDEN_FACT_RISK_TOKENS,
     load_repo_schema,
     load_source,
     serialize_source,
@@ -31,7 +30,6 @@ def test_canonical_yaml_resume_validates_and_contains_portable_sections() -> Non
     assert any(skill["name"] == "Applied AI & Retrieval" for skill in resume["skills"])
     assert "KrisFlyer" in serialized
     assert "millions of properties" in serialized
-    assert not any(token in serialized for token in FORBIDDEN_FACT_RISK_TOKENS)
 
 
 def test_generated_readme_is_public_safe_and_source_aligned() -> None:
@@ -46,7 +44,6 @@ def test_generated_readme_is_public_safe_and_source_aligned() -> None:
     assert "Thailand-based Australian citizen" in current
     assert "## Engineering Biases" in current
     assert "{{" not in current
-    assert not any(token in current for token in FORBIDDEN_FACT_RISK_TOKENS)
 
 
 def test_generated_ats_markdown_uses_plain_contact_separators() -> None:

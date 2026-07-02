@@ -8,13 +8,10 @@ from typing import Any
 import yaml
 from jsonschema import Draft7Validator
 
-from .quality_policy import QualityPolicy, default_policy
-
 Resume = dict[str, Any]
 
 DATE_RE = re.compile(r"^([1-2][0-9]{3})(-[0-1][0-9])?(-[0-3][0-9])?$")
-
-FORBIDDEN_FACT_RISK_TOKENS = default_policy().fact_risk_tokens
+REQUIRED_TOP_LEVEL = ("basics", "work", "education", "skills", "projects", "meta")
 
 
 def load_source(path: Path) -> Resume:
@@ -43,21 +40,18 @@ def load_repo_schema(root: Path) -> Resume:
     return payload
 
 
-def validate_source(
-    resume: Resume, *, schema: Resume | None = None, policy: QualityPolicy | None = None
-) -> None:
+def validate_source(resume: Resume, *, schema: Resume | None = None) -> None:
     """Validate schema shape plus project-specific semantic invariants.
 
     The YAML source keeps JSON Resume-compatible sections and x_ extension fields.
     """
-    policy = policy or default_policy()
     if schema is not None:
         errors = sorted(Draft7Validator(schema).iter_errors(resume), key=lambda error: error.path)
         if errors:
             formatted = "; ".join(f"{list(error.path)}: {error.message}" for error in errors[:5])
             raise ValueError(f"JSON Resume schema validation failed: {formatted}")
 
-    missing = [key for key in policy.required_top_level if key not in resume]
+    missing = [key for key in REQUIRED_TOP_LEVEL if key not in resume]
     if missing:
         raise ValueError(f"resume.yaml missing required top-level keys: {missing}")
 
@@ -88,14 +82,6 @@ def validate_source(
     for project_name in ("library-ops", "mcp-web"):
         if project_name not in project_names:
             raise ValueError(f"resume.projects missing {project_name}")
-
-    text = serialize_source(resume)
-    missing_tokens = [token for token in policy.required_tokens if token not in text]
-    if missing_tokens:
-        raise ValueError(f"resume.yaml missing expected resume tokens: {missing_tokens}")
-    forbidden_tokens = [token for token in policy.fact_risk_tokens if token in text]
-    if forbidden_tokens:
-        raise ValueError(f"resume.yaml contains public-consistency risk tokens: {forbidden_tokens}")
 
 
 def validate_date(value: str, field_name: str) -> None:

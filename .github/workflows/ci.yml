@@ -41,6 +41,8 @@ jobs:
           sudo apt-get install -y --no-install-recommends pandoc poppler-utils libreoffice
       - name: Install project
         run: uv sync --extra dev
+      - name: Secret scan
+        run: git ls-files -z | xargs -0 uv run --with detect-secrets detect-secrets-hook --exclude-files '^(vendor/typst/)'
       - name: Validate canonical source
         run: uv run profile-cv validate
       - name: Check generated README

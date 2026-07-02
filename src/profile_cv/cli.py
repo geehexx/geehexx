@@ -8,7 +8,6 @@ from pathlib import Path
 from .build import build_all, compare_themes, render_profile, run_quality_gates
 from .paths import project_root
 from .qa import doctor
-from .quality_policy import load_policy
 from .source import load_repo_schema, load_source, validate_source
 
 
@@ -55,7 +54,6 @@ def main(argv: list[str] | None = None) -> int:
             validate_source(
                 load_source(root / "resume.yaml"),
                 schema=load_repo_schema(root),
-                policy=load_policy(root / "quality-gates.yaml"),
             )
             print("resume.yaml: ok")
             return 0

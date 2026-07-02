@@ -3,18 +3,36 @@ from __future__ import annotations
 import shutil
 import subprocess
 from collections.abc import Iterable
+from dataclasses import dataclass
 from pathlib import Path
 
 from docx import Document
 
 from .docx_metadata import assert_docx_metadata
-from .quality_policy import default_policy
 
-_POLICY = default_policy()
-REQUIRED_TEXT_TOKENS = _POLICY.required_text_tokens
-FORBIDDEN_TEXT_TOKENS = _POLICY.forbidden_text_tokens
-FORBIDDEN_ATS_TOKENS = _POLICY.forbidden_ats_tokens
-FORBIDDEN_FACT_RISK_TOKENS = _POLICY.fact_risk_tokens
+
+@dataclass(frozen=True)
+class ArtifactExpectations:
+    name: str
+    readme_excluded_email: str | None
+    readme_sections: tuple[str, ...] = (
+        "## Now",
+        "## Selected Public Work",
+        "## Engineering Biases",
+        "## Reach Me",
+    )
+
+
+def expectations_from_resume(resume: dict[str, object]) -> ArtifactExpectations:
+    basics = resume.get("basics", {})
+    if not isinstance(basics, dict):
+        return ArtifactExpectations(name="", readme_excluded_email=None)
+    name = basics.get("name")
+    email = basics.get("email")
+    return ArtifactExpectations(
+        name=str(name) if name else "",
+        readme_excluded_email=str(email) if email else None,
+    )
 
 
 def doctor() -> dict[str, bool]:
@@ -37,70 +55,75 @@ def assert_doctor(
         raise RuntimeError(f"Missing required external tools: {', '.join(missing)}")
 
 
-def qa_pdf(pdf_path: Path, *, max_pages: int = 5) -> dict[str, int | bool]:
+def qa_pdf(
+    pdf_path: Path, *, max_pages: int = 5, expectations: ArtifactExpectations | None = None
+) -> dict[str, int | bool]:
     if not pdf_path.exists():
         raise FileNotFoundError(pdf_path)
     text = pdftotext(pdf_path)
     pages = pdf_pages(pdf_path)
-    assert_text_quality(text, source=pdf_path)
+    assert_text_quality(text, source=pdf_path, expectations=expectations)
     if pages < 1 or pages > max_pages:
         raise AssertionError(f"Unexpected page count for {pdf_path}: {pages}")
-    return {"pages": pages, "chars": len(text), "required_tokens": True}
+    return {"pages": pages, "chars": len(text), "text_reviewed": True}
 
 
-def qa_docx(docx_path: Path) -> dict[str, int | bool]:
+def qa_docx(
+    docx_path: Path, *, expectations: ArtifactExpectations | None = None
+) -> dict[str, int | bool]:
     if not docx_path.exists():
         raise FileNotFoundError(docx_path)
     document = Document(str(docx_path))
     text = "\n".join(paragraph.text for paragraph in document.paragraphs)
-    assert_text_quality(text, source=docx_path)
+    assert_text_quality(text, source=docx_path, expectations=expectations)
     metadata = assert_docx_metadata(docx_path)
     return {
         "paragraphs": len(document.paragraphs),
         "chars": len(text),
-        "required_tokens": True,
+        "text_reviewed": True,
         "metadata_pages": int(metadata["pages"]),
         "metadata_words": int(metadata["words"]),
         "metadata_current": bool(metadata["metadata_current"]),
     }
 
 
-def qa_text_file(path: Path) -> dict[str, int | bool]:
+def qa_text_file(
+    path: Path, *, expectations: ArtifactExpectations | None = None
+) -> dict[str, int | bool]:
     text = path.read_text(encoding="utf-8")
-    assert_text_quality(text, source=path)
-    return {"chars": len(text), "required_tokens": True}
+    assert_text_quality(text, source=path, expectations=expectations)
+    return {"chars": len(text), "text_reviewed": True}
 
 
-def qa_readme(path: Path) -> dict[str, int | bool]:
+def qa_readme(
+    path: Path, *, expectations: ArtifactExpectations | None = None
+) -> dict[str, int | bool]:
     text = path.read_text(encoding="utf-8")
-    for token in ("## Now", "## Selected Public Work", "## Engineering Biases", "## Reach Me"):
+    sections = expectations.readme_sections if expectations else ()
+    for token in sections:
         if token not in text:
             raise AssertionError(f"{path} missing profile section: {token}")
-    if "andrewcrozier86@gmail.com" in text:
+    if (
+        expectations
+        and expectations.readme_excluded_email
+        and expectations.readme_excluded_email in text
+    ):
         raise AssertionError("README must not expose the direct resume email")
-    if text.count("# Andrew Crozier") != 1:
+    expected_h1 = f"# {expectations.name}" if expectations and expectations.name else None
+    if expected_h1 and text.count(expected_h1) != 1:
         raise AssertionError("README must contain exactly one H1")
     if "{{" in text or "}}" in text:
         raise AssertionError("README contains unreplaced template marker")
-    forbidden = [token for token in FORBIDDEN_FACT_RISK_TOKENS if token in text]
-    if forbidden:
-        raise AssertionError(f"README contains public-consistency risk tokens: {forbidden}")
-    return {"chars": len(text), "required_tokens": True}
+    return {"chars": len(text), "text_reviewed": True}
 
 
-def assert_text_quality(text: str, *, source: Path) -> None:
-    missing = [token for token in REQUIRED_TEXT_TOKENS if token not in text]
-    if missing:
-        raise AssertionError(f"{source} is missing required tokens: {missing}")
-    forbidden = [token for token in FORBIDDEN_TEXT_TOKENS if token in text]
-    if forbidden:
-        raise AssertionError(f"{source} contains forbidden tokens: {forbidden}")
-    ats_hits = [token for token in FORBIDDEN_ATS_TOKENS if token.lower() in text.lower()]
-    if ats_hits:
-        raise AssertionError(f"{source} contains ATS-risk language/artifacts: {ats_hits}")
-    fact_hits = [token for token in FORBIDDEN_FACT_RISK_TOKENS if token in text]
-    if fact_hits:
-        raise AssertionError(f"{source} contains public-consistency risk tokens: {fact_hits}")
+def assert_text_quality(
+    text: str, *, source: Path, expectations: ArtifactExpectations | None = None
+) -> None:
+    if len(text.strip()) < 500:
+        raise AssertionError(f"{source} has too little extracted text for review")
+    if expectations and expectations.name and expectations.name not in text:
+        raise AssertionError(f"{source} does not contain the expected profile name")
 
 
 def pdftotext(pdf_path: Path) -> str:

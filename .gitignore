@@ -9,7 +9,7 @@ _qa*/
 *.tmp
 *.bak
 
-# Private/internal material
+# Non-public working material
 .private/
 .local/
 source/
@@ -17,7 +17,6 @@ handoff/
 notes/
 research-notes/
 planning/
-resume/
 *.local.md
 *.private.md
 

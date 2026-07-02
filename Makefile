@@ -1,4 +1,4 @@
-.PHONY: install hooks build profile resume qa compare lint policy format test check clean
+.PHONY: install hooks build profile resume qa compare lint policy secrets format test check clean
 
 install:
 	uv sync --extra dev
@@ -31,9 +31,13 @@ test:
 	uv run pytest
 
 policy:
+	$(MAKE) secrets
 	uv run python scripts/check_workflows.py
 	uv run python scripts/check_public_surface.py
 	uv run python scripts/lint_readme.py README.md
+
+secrets:
+	git ls-files -z | xargs -0 uv run --with detect-secrets detect-secrets-hook --exclude-files '^(vendor/typst/)'
 
 check: lint test policy build
 

@@ -13,11 +13,16 @@ repos:
     hooks:
       - id: ruff-check
       - id: ruff-format
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        args: ["--exclude-files", "^(vendor/typst/)"]
   - repo: local
     hooks:
       - id: public-surface
         name: public-surface
-        entry: uv run python scripts/check_public_surface.py --staged --private-rules .private/policy.txt # public-surface-allow
+        entry: uv run python scripts/check_public_surface.py --staged
         language: system
         pass_filenames: false
       - id: profile-readme-sync

@@ -9,8 +9,16 @@ from typing import Any
 from . import __version__
 from .adapters import DEFAULT_BASENAME, render_template, to_json_ld, to_rendercv, write_yaml
 from .docx_metadata import modified_from_resume, normalize_docx_metadata
-from .qa import assert_doctor, pdf_pages, pdftotext, qa_docx, qa_pdf, qa_readme, qa_text_file
-from .quality_policy import load_policy
+from .qa import (
+    assert_doctor,
+    expectations_from_resume,
+    pdf_pages,
+    pdftotext,
+    qa_docx,
+    qa_pdf,
+    qa_readme,
+    qa_text_file,
+)
 from .source import load_repo_schema, load_source, validate_source, write_json
 
 DEFAULT_DIST = Path("dist")
@@ -74,7 +82,7 @@ def build_all(
 def _load_validated_resume(root: Path, resume_path: Path) -> dict[str, Any]:
     schema = load_repo_schema(root)
     resume = load_source(resume_path)
-    validate_source(resume, schema=schema, policy=load_policy(root / "quality-gates.yaml"))
+    validate_source(resume, schema=schema)
     return resume
 
 
@@ -114,6 +122,7 @@ def _build_pandoc_outputs(
         markdown_path,
         html_path=html_path,
         docx_path=docx_path,
+        title=f"{resume['basics']['name']} Resume",
         reference_docx=styles_dir / "reference.docx",
         css_path=styles_dir / "resume.css",
     )
@@ -218,11 +227,12 @@ def run_quality_gates(*, root: Path, outputs: dict[str, Path] | None = None) -> 
         "markdown": root / DEFAULT_DIST / f"{DEFAULT_BASENAME}.md",
         "readme": root / "README.md",
     }
+    expectations = expectations_from_resume(load_source(root / DEFAULT_RESUME))
     return {
-        "pdf": qa_pdf(outputs["pdf"]),
-        "docx": qa_docx(outputs["docx"]),
-        "markdown": qa_text_file(outputs["markdown"]),
-        "readme": qa_readme(outputs["readme"]),
+        "pdf": qa_pdf(outputs["pdf"], expectations=expectations),
+        "docx": qa_docx(outputs["docx"], expectations=expectations),
+        "markdown": qa_text_file(outputs["markdown"], expectations=expectations),
+        "readme": qa_readme(outputs["readme"], expectations=expectations),
     }
 
 
@@ -256,6 +266,7 @@ def run_pandoc(
     *,
     html_path: Path,
     docx_path: Path,
+    title: str,
     reference_docx: Path | None = None,
     css_path: Path | None = None,
 ) -> None:
@@ -270,7 +281,7 @@ def run_pandoc(
         "html5",
         "--standalone",
         "--metadata",
-        "title=Andrew Crozier Resume",
+        f"title={title}",
         "--output",
         str(html_path),
     ]
