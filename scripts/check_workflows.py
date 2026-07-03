@@ -93,6 +93,11 @@ def _checkout_errors(path: Path, index: int, uses: str, step: dict[str, Any]) ->
         return [*errors, f"{path}: checkout step {index} missing with block"]
     if with_block.get("persist-credentials") != "false":
         errors.append(f"{path}: checkout step {index} must set persist-credentials: false")
+    if (
+        path.name == "ci.yml"
+        and with_block.get("ref") != "${{ github.event.pull_request.head.sha || github.sha }}"
+    ):
+        errors.append(f"{path}: checkout step {index} must use PR head SHA for artifacts")
     return errors
 
 
