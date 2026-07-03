@@ -34,6 +34,8 @@ def assert_workflow_policy(path: Path) -> list[str]:
         return [*errors, f"{path}: missing jobs"]
     for job_name, job in jobs.items():
         errors.extend(_job_errors(path, str(job_name), job))
+        if path.name == "ci.yml" and job_name == "quality":
+            errors.extend(_ci_review_package_errors(path, job))
     if data.get("env", {}).get("UV_VERSION") != EXPECTED_UV_VERSION:
         errors.append(f"{path}: env.UV_VERSION must be {EXPECTED_UV_VERSION}")
     return errors
@@ -63,6 +65,11 @@ def _job_errors(path: Path, job_name: str, job: object) -> list[str]:
     for index, step in enumerate(steps, start=1):
         if isinstance(step, dict):
             errors.extend(_step_errors(path, index, step))
+            run = str(step.get("run", ""))
+            if "uv sync" in run and "uv sync --frozen --extra dev" not in run:
+                errors.append(
+                    f"{path}: step {index} must install with uv sync --frozen --extra dev"
+                )
     return errors
 
 
@@ -100,6 +107,9 @@ def _setup_uv_errors(path: Path, index: int, uses: str, step: dict[str, Any]) ->
         errors.append(f"{path}: setup-uv step {index} must use env-pinned uv version")
     if with_block.get("enable-cache") != "true":
         errors.append(f"{path}: setup-uv step {index} must enable cache")
+    cache_glob = str(with_block.get("cache-dependency-glob", ""))
+    if "uv.lock" not in cache_glob:
+        errors.append(f"{path}: setup-uv step {index} cache key must include uv.lock")
     return errors
 
 
@@ -112,9 +122,36 @@ def _upload_artifact_errors(path: Path, index: int, uses: str, step: dict[str, A
         errors.append(f"{path}: upload-artifact step {index} must remain SHA-pinned")
     if with_block.get("if-no-files-found") != "error":
         errors.append(f"{path}: upload-artifact step {index} must fail on missing files")
+    if (
+        with_block.get("name") == "resume-artifacts"
+        and with_block.get("path") != "dist/review-package/"
+    ):
+        errors.append(f"{path}: resume-artifacts upload must use dist/review-package/")
     if "retention-days" not in with_block:
         errors.append(f"{path}: upload-artifact step {index} missing retention-days")
     return errors
+
+
+def _ci_review_package_errors(path: Path, job: object) -> list[str]:
+    if not isinstance(job, dict):
+        return []
+    steps = job.get("steps", [])
+    if not isinstance(steps, list):
+        return []
+    run_text = "\n".join(str(step.get("run", "")) for step in steps if isinstance(step, dict))
+    required_tokens = (
+        "uv sync --frozen --extra dev",
+        "uv run profile-cv build --clean --no-profile-check",
+        "uv run profile-cv compare-themes",
+        "scripts/render_pdf_for_qa.sh dist/Andrew_Crozier_Resume.pdf _qa_pdf",
+        "scripts/render_docx_for_qa.sh dist/Andrew_Crozier_Resume.docx _qa_docx",
+        "uv run profile-cv review-package",
+    )
+    return [
+        f"{path}: quality job must run `{token}`"
+        for token in required_tokens
+        if token not in run_text
+    ]
 
 
 def assert_dependabot_policy() -> list[str]:

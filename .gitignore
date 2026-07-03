@@ -34,6 +34,3 @@ __pycache__/
 .DS_Store
 .idea/
 .vscode/
-
-# Local resolver output can capture private package-index mirrors.
-uv.lock

@@ -1,7 +1,7 @@
-.PHONY: install hooks build profile resume qa compare lint policy secrets format test check clean
+.PHONY: install hooks build profile resume qa compare review-package lint policy secrets format test check clean
 
 install:
-	uv sync --extra dev
+	uv sync --frozen --extra dev
 
 hooks:
 	uv run pre-commit install --install-hooks
@@ -22,6 +22,13 @@ qa:
 compare:
 	uv run profile-cv compare-themes
 
+review-package:
+	uv run profile-cv build --clean --no-profile-check
+	uv run profile-cv compare-themes
+	scripts/render_pdf_for_qa.sh dist/Andrew_Crozier_Resume.pdf _qa_pdf
+	scripts/render_docx_for_qa.sh dist/Andrew_Crozier_Resume.docx _qa_docx
+	uv run profile-cv review-package
+
 lint:
 	uv run ruff check .
 	uv run ruff format --check .
@@ -33,8 +40,8 @@ test:
 policy:
 	$(MAKE) secrets
 	uvx --from actionlint-py actionlint
-	uvx check-jsonschema --builtin-schema vendor.github-workflows .github/workflows/ci.yml .github/workflows/profile-drift.yml
-	uvx check-jsonschema --builtin-schema custom.github-workflows-require-timeout .github/workflows/ci.yml .github/workflows/profile-drift.yml
+	uvx check-jsonschema --builtin-schema vendor.github-workflows .github/workflows/*.yml
+	uvx check-jsonschema --builtin-schema custom.github-workflows-require-timeout .github/workflows/*.yml
 	uvx check-jsonschema --builtin-schema vendor.dependabot .github/dependabot.yml
 	uvx yamllint .github/dependabot.yml .github/workflows quality-gates.yaml resume.yaml .yamllint.yml
 	uvx zizmor --format plain .

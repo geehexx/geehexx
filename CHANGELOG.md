@@ -8,5 +8,6 @@
 - Aligned public-facing resume claims after verification: narrowed partner examples, toned down Insydo title/claims, changed Agoda scale to `millions of properties`, and clarified Dubizzle as Naspers-backed growth-period work.
 - Added `library-ops` and `PragmaLens` to the public-work model with explicit resume/profile inclusion controls.
 - Added DOCX OpenXML metadata normalization and QA checks for current distribution metadata.
-- Expanded public-surface checks for generated/private paths and common credential shapes.
-- Hardened GitHub Actions with pinned uv runtime, timeouts, concurrency, workflow policy checks, artifact-retention controls, Pages configuration, and Dependabot action updates.
+- Expanded public-surface checks for generated/private path boundaries and paired them with standard `detect-secrets` coverage.
+- Hardened GitHub Actions with pinned uv runtime, tracked `uv.lock` installs, timeouts, concurrency, workflow policy checks, artifact-retention controls, no Pages publishing workflow, and Dependabot action updates.
+- Added a generated PR review package with artifact manifests, PDF/DOCX visual previews, theme comparison evidence, and GitHub Actions artifact review links.

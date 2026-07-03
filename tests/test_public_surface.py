@@ -15,7 +15,7 @@ def test_public_surface_allows_sources_but_blocks_generated_and_non_public_paths
     assert is_public_surface(Path("README.md"))
     assert is_public_surface(Path("resume.yaml"))
     assert is_public_surface(Path("AGENTS.md"))
-    assert not is_public_surface(Path("uv.lock"))
+    assert is_public_surface(Path("uv.lock"))
     assert is_public_surface(Path("src/profile_cv/build.py"))
     assert not is_public_surface(Path("source/master.docx"))
     assert not is_public_surface(Path("dist/Andrew_Crozier_Resume.pdf"))
@@ -30,9 +30,10 @@ def test_public_surface_allows_sources_but_blocks_generated_and_non_public_paths
         Path("AGENTS.md"),
     ]
     errors = tracked_path_errors(fixture_paths)
-    assert len(errors) == 4
+    assert len(errors) == 3
     assert not any("resume.yaml" in error for error in errors)
     assert not any("AGENTS.md" in error for error in errors)
+    assert not any("uv.lock" in error for error in errors)
 
 
 def test_public_surface_policy_is_loaded_from_yaml() -> None:
@@ -40,6 +41,7 @@ def test_public_surface_policy_is_loaded_from_yaml() -> None:
 
     assert "AGENTS.md" in policy.public_files
     assert "resume.yaml" in policy.public_files
+    assert "uv.lock" in policy.public_files
     assert any(pattern.pattern == "^dist/" for pattern in policy.blocked_tracked_paths)
 
 

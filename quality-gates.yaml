@@ -16,6 +16,7 @@ public_surface:
     - pyproject.toml
     - quality-gates.yaml
     - resume.yaml
+    - uv.lock
   public_dir_prefixes:
     - .github/
     - docs/
@@ -36,5 +37,4 @@ public_surface:
     - '^research-notes/'
     - '^notes/'
     - '^handoff/'
-    - '^uv\.lock$'
     - '^\.venv(?:/|$)'

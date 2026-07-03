@@ -5,7 +5,13 @@ import json
 import sys
 from pathlib import Path
 
-from .build import build_all, compare_themes, render_profile, run_quality_gates
+from .build import (
+    build_all,
+    build_review_package,
+    compare_themes,
+    render_profile,
+    run_quality_gates,
+)
 from .paths import project_root
 from .qa import doctor
 from .source import load_repo_schema, load_source, validate_source
@@ -39,6 +45,16 @@ def main(argv: list[str] | None = None) -> int:
     compare_parser.add_argument("--json", action="store_true", help="Emit machine-readable rows.")
 
     sub.add_parser("qa", help="Run artifact quality gates against dist/ and README.md.")
+
+    review_parser = sub.add_parser(
+        "review-package", help="Assemble the ignored PR review package under dist/."
+    )
+    review_parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=None,
+        help="Review package directory. Defaults to dist/review-package.",
+    )
 
     args = parser.parse_args(argv)
     root = project_root(args.root)
@@ -87,6 +103,15 @@ def main(argv: list[str] | None = None) -> int:
 
         if args.command == "qa":
             print(json.dumps(run_quality_gates(root=root), indent=2))
+            return 0
+
+        if args.command == "review-package":
+            print(
+                json.dumps(
+                    build_review_package(root=root, package_dir=args.output_dir),
+                    indent=2,
+                )
+            )
             return 0
 
     except Exception as exc:  # noqa: BLE001 - CLI boundary should return a clear non-zero code.

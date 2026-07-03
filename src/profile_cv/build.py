@@ -1,9 +1,13 @@
 from __future__ import annotations
 
 import filecmp
+import hashlib
+import html
+import json
 import shutil
 import subprocess
 import tempfile
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -25,6 +29,9 @@ from .source import load_repo_schema, load_source, validate_source, write_json
 DEFAULT_DIST = Path("dist")
 DEFAULT_SITE = Path("site")
 DEFAULT_RESUME = Path("resume.yaml")
+DEFAULT_REVIEW_PACKAGE = DEFAULT_DIST / "review-package"
+DEFAULT_QA_PDF = Path("_qa_pdf")
+DEFAULT_QA_DOCX = Path("_qa_docx")
 DEFAULT_THEMES = ("engineeringresumes", "sb2nov", "classic")
 
 
@@ -261,13 +268,257 @@ def render_profile(*, root: Path, check: bool = False) -> Path:
     return path
 
 
+def build_review_package(
+    *,
+    root: Path,
+    package_dir: Path | None = None,
+    pdf_preview_dir: Path | None = None,
+    docx_preview_dir: Path | None = None,
+) -> dict[str, Any]:
+    """Assemble the ignored PR review bundle that CI uploads as one artifact."""
+
+    dist_dir = root / DEFAULT_DIST
+    site_dir = root / DEFAULT_SITE
+    package_dir = package_dir or root / DEFAULT_REVIEW_PACKAGE
+    pdf_preview_dir = pdf_preview_dir or root / DEFAULT_QA_PDF
+    docx_preview_dir = docx_preview_dir or root / DEFAULT_QA_DOCX
+
+    if package_dir.exists():
+        shutil.rmtree(package_dir)
+    package_dir.mkdir(parents=True)
+
+    required_files = [
+        (dist_dir / f"{DEFAULT_BASENAME}.pdf", Path("artifacts") / f"{DEFAULT_BASENAME}.pdf"),
+        (dist_dir / f"{DEFAULT_BASENAME}.docx", Path("artifacts") / f"{DEFAULT_BASENAME}.docx"),
+        (dist_dir / f"{DEFAULT_BASENAME}.md", Path("artifacts") / f"{DEFAULT_BASENAME}.md"),
+        (dist_dir / f"{DEFAULT_BASENAME}.html", Path("artifacts") / f"{DEFAULT_BASENAME}.html"),
+        (dist_dir / f"{DEFAULT_BASENAME}.json", Path("artifacts") / f"{DEFAULT_BASENAME}.json"),
+        (dist_dir / "profile.schemaorg.json", Path("artifacts") / "profile.schemaorg.json"),
+        (dist_dir / "README.generated.md", Path("profile") / "README.generated.md"),
+        (dist_dir / "theme-comparison.md", Path("theme-comparison.md")),
+    ]
+    for source, relative_target in required_files:
+        _copy_required_file(source, package_dir / relative_target)
+
+    _copy_required_tree(site_dir, package_dir / "site")
+    _copy_required_tree(dist_dir / "theme-comparison", package_dir / "theme-comparison")
+    _copy_required_matches(
+        pdf_preview_dir,
+        "*.png",
+        package_dir / "visual-review" / "pdf",
+        label="PDF preview PNGs",
+    )
+    _copy_required_matches(
+        docx_preview_dir,
+        "*.png",
+        package_dir / "visual-review" / "docx",
+        label="DOCX preview PNGs",
+    )
+    _copy_required_matches(
+        dist_dir / "rendercv",
+        f"{DEFAULT_BASENAME}_*.png",
+        package_dir / "visual-review" / "rendercv",
+        label="RenderCV preview PNGs",
+    )
+
+    qa = run_quality_gates(root=root)
+    generated_at = datetime.now(UTC).isoformat(timespec="seconds").replace("+00:00", "Z")
+    manifest: dict[str, Any] = {
+        "generated_at_utc": generated_at,
+        "source": {
+            "resume": str(DEFAULT_RESUME),
+            "head_sha": _git_output(root, "rev-parse", "HEAD"),
+            "branch": _git_output(root, "branch", "--show-current"),
+        },
+        "entrypoints": {
+            "markdown": "REVIEW.md",
+            "html": "index.html",
+        },
+        "contact_boundary": {
+            "public_readme_excludes_direct_resume_email": True,
+            "resume_source_and_artifacts_may_include_resume_contact_details": True,
+            "github_pages_publishing_enabled": False,
+        },
+        "qa": qa,
+    }
+
+    (package_dir / "REVIEW.md").write_text(_review_markdown(manifest), encoding="utf-8")
+    (package_dir / "index.html").write_text(_review_index_html(manifest), encoding="utf-8")
+    manifest["files"] = _package_file_records(package_dir)
+    manifest_text = json.dumps(manifest, indent=2) + "\n"
+    (package_dir / "manifest.json").write_text(manifest_text, encoding="utf-8")
+    return manifest
+
+
+def _copy_required_file(source: Path, target: Path) -> None:
+    if not source.is_file():
+        raise FileNotFoundError(f"Review package source is missing: {source}")
+    target.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(source, target)
+
+
+def _copy_required_tree(source: Path, target: Path) -> None:
+    if not source.is_dir():
+        raise FileNotFoundError(f"Review package source directory is missing: {source}")
+    shutil.copytree(source, target, ignore=shutil.ignore_patterns(".*"))
+
+
+def _copy_required_matches(source: Path, pattern: str, target: Path, *, label: str) -> None:
+    if not source.is_dir():
+        raise FileNotFoundError(f"{label} directory is missing: {source}")
+    matches = sorted(path for path in source.glob(pattern) if path.is_file())
+    if not matches:
+        raise FileNotFoundError(f"No {label} matched {source / pattern}")
+    target.mkdir(parents=True, exist_ok=True)
+    for match in matches:
+        shutil.copy2(match, target / match.name)
+
+
+def _package_file_records(package_dir: Path) -> list[dict[str, Any]]:
+    records: list[dict[str, Any]] = []
+    for path in sorted(package_dir.rglob("*")):
+        if not path.is_file() or path.name == "manifest.json":
+            continue
+        relative = path.relative_to(package_dir).as_posix()
+        records.append(
+            {
+                "path": relative,
+                "size_bytes": path.stat().st_size,
+                "sha256": _sha256(path),
+            }
+        )
+    return records
+
+
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _review_markdown(manifest: dict[str, Any]) -> str:
+    qa = manifest["qa"]
+    return "\n".join(
+        [
+            "# Profile/CV Review Package",
+            "",
+            f"Generated: {manifest['generated_at_utc']}",
+            f"Head: `{manifest['source']['head_sha'] or 'unknown'}`",
+            "",
+            "## Review Entrypoints",
+            "",
+            "- Open `index.html` for a local clickable review page.",
+            "- Check `artifacts/` for PDF, DOCX, Markdown, HTML, JSON, and JSON-LD outputs.",
+            "- Check `visual-review/` for PDF and DOCX page PNGs.",
+            "- Check `theme-comparison.md` and `theme-comparison/` for layout comparison evidence.",
+            "",
+            "## Contact Boundary",
+            "",
+            "- Public README must not expose the direct resume email.",
+            "- Resume source and resume artifacts may include resume contact details.",
+            "- GitHub Pages publishing is not enabled by this package.",
+            "",
+            "## Deterministic QA",
+            "",
+            "| Surface | Key evidence |",
+            "| --- | --- |",
+            f"| PDF | pages={qa['pdf']['pages']}, chars={qa['pdf']['chars']}, "
+            f"semantic_required={qa['pdf']['semantic_required_checked']} |",
+            f"| DOCX | paragraphs={qa['docx']['paragraphs']}, chars={qa['docx']['chars']}, "
+            f"metadata_pages={qa['docx']['metadata_pages']}, "
+            f"metadata_words={qa['docx']['metadata_words']} |",
+            f"| Markdown | chars={qa['markdown']['chars']}, "
+            f"semantic_required={qa['markdown']['semantic_required_checked']} |",
+            f"| HTML | chars={qa['html']['chars']}, "
+            f"semantic_required={qa['html']['semantic_required_checked']} |",
+            f"| README | chars={qa['readme']['chars']}, "
+            f"semantic_required={qa['readme']['semantic_required_checked']} |",
+            "",
+        ]
+    )
+
+
+def _review_index_html(manifest: dict[str, Any]) -> str:
+    links = [
+        ("Review notes", "REVIEW.md"),
+        ("Manifest", "manifest.json"),
+        ("PDF resume", f"artifacts/{DEFAULT_BASENAME}.pdf"),
+        ("DOCX resume", f"artifacts/{DEFAULT_BASENAME}.docx"),
+        ("ATS Markdown", f"artifacts/{DEFAULT_BASENAME}.md"),
+        ("Standalone HTML", f"artifacts/{DEFAULT_BASENAME}.html"),
+        ("Generated profile README", "profile/README.generated.md"),
+        ("Local site preview", "site/index.html"),
+        ("Theme comparison", "theme-comparison.md"),
+    ]
+    link_items = "\n".join(
+        f'<li><a href="{html.escape(href)}">{html.escape(label)}</a></li>' for label, href in links
+    )
+    qa = manifest["qa"]
+    return f"""<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Profile/CV Review Package</title>
+  <style>
+    body {{
+      font-family: system-ui, sans-serif;
+      margin: 2rem;
+      max-width: 920px;
+      line-height: 1.45;
+    }}
+    code {{ background: #f3f4f6; padding: 0.1rem 0.25rem; border-radius: 0.2rem; }}
+    table {{ border-collapse: collapse; width: 100%; }}
+    th, td {{ border: 1px solid #d1d5db; padding: 0.45rem; text-align: left; }}
+  </style>
+</head>
+<body>
+  <h1>Profile/CV Review Package</h1>
+  <p>Generated {html.escape(str(manifest["generated_at_utc"]))} from
+  <code>{html.escape(str(manifest["source"]["head_sha"] or "unknown"))}</code>.</p>
+  <h2>Entrypoints</h2>
+  <ul>
+    {link_items}
+  </ul>
+  <h2>QA Summary</h2>
+  <table>
+    <tr><th>Surface</th><th>Evidence</th></tr>
+    <tr><td>PDF</td><td>{qa["pdf"]["pages"]} pages, {qa["pdf"]["chars"]} chars</td></tr>
+    <tr>
+      <td>DOCX</td>
+      <td>{qa["docx"]["paragraphs"]} paragraphs, {qa["docx"]["chars"]} chars</td>
+    </tr>
+    <tr><td>Markdown</td><td>{qa["markdown"]["chars"]} chars</td></tr>
+    <tr><td>HTML</td><td>{qa["html"]["chars"]} chars</td></tr>
+    <tr><td>README</td><td>{qa["readme"]["chars"]} chars</td></tr>
+  </table>
+</body>
+</html>
+"""
+
+
+def _git_output(root: Path, *args: str) -> str | None:
+    try:
+        return subprocess.run(
+            ["git", *args],
+            cwd=root,
+            check=True,
+            text=True,
+            capture_output=True,
+        ).stdout.strip()
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        return None
+
+
 def run_rendercv(input_file: Path, output_dir: Path, *, root: Path) -> None:
     ensure_typst_package_cache(root)
     cmd = ["rendercv", "render", str(input_file), "--output-folder", str(output_dir)]
     try:
         subprocess.run(cmd, check=True, text=True, capture_output=True)
     except FileNotFoundError as exc:
-        raise RuntimeError("RenderCV is not installed. Run `uv sync --extra dev`.") from exc
+        message = "RenderCV is not installed. Run `uv sync --frozen --extra dev`."
+        raise RuntimeError(message) from exc
     except subprocess.CalledProcessError as exc:
         message = f"RenderCV failed for {input_file}\nSTDOUT:\n{exc.stdout}\nSTDERR:\n{exc.stderr}"
         raise RuntimeError(message) from exc

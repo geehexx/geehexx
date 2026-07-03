@@ -34,6 +34,7 @@ jobs:
           enable-cache: true
           cache-dependency-glob: |
             pyproject.toml
+            uv.lock
             .python-version
       - name: Install Python
         run: uv python install
@@ -42,7 +43,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends pandoc poppler-utils libreoffice
       - name: Install project
-        run: uv sync --extra dev
+        run: uv sync --frozen --extra dev
       - name: Secret scan
         run: git ls-files -z | xargs -0 uv run --with detect-secrets detect-secrets-hook --exclude-files '^(vendor/typst/)'
       - name: Validate canonical source
@@ -75,17 +76,32 @@ jobs:
           uv run python scripts/lint_readme.py README.md
       - name: Build artifacts
         run: uv run profile-cv build --clean --no-profile-check
+      - name: Compare resume themes
+        run: uv run profile-cv compare-themes
+      - name: Render visual review previews
+        run: |
+          scripts/render_pdf_for_qa.sh dist/Andrew_Crozier_Resume.pdf _qa_pdf
+          scripts/render_docx_for_qa.sh dist/Andrew_Crozier_Resume.docx _qa_docx
+      - name: Assemble review package
+        run: uv run profile-cv review-package
       - name: Upload resume artifacts
+        id: upload-resume-artifacts
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: resume-artifacts
           if-no-files-found: error
           retention-days: 14
-          path: |
-            dist/Andrew_Crozier_Resume.pdf
-            dist/Andrew_Crozier_Resume.docx
-            dist/Andrew_Crozier_Resume.md
-            dist/Andrew_Crozier_Resume.html
-            dist/Andrew_Crozier_Resume.json
-            dist/profile.schemaorg.json
-            dist/theme-comparison.md
+          path: dist/review-package/
+      - name: Summarize resume artifacts
+        env:
+          ARTIFACT_DIGEST: ${{ steps.upload-resume-artifacts.outputs.artifact-digest }}
+          ARTIFACT_ID: ${{ steps.upload-resume-artifacts.outputs.artifact-id }}
+          ARTIFACT_URL: ${{ steps.upload-resume-artifacts.outputs.artifact-url }}
+        run: |
+          {
+            echo "### Resume artifacts"
+            echo "- Artifact URL: ${ARTIFACT_URL}"
+            echo "- Artifact digest: ${ARTIFACT_DIGEST}"
+            echo "- Artifact ID: ${ARTIFACT_ID}"
+            echo "- Entrypoints inside archive: \`REVIEW.md\`, \`index.html\`, \`manifest.json\`"
+          } >> "$GITHUB_STEP_SUMMARY"

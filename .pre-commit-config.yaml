@@ -27,12 +27,12 @@ repos:
         pass_filenames: false
       - id: workflow-schema
         name: workflow-schema
-        entry: uvx check-jsonschema --builtin-schema vendor.github-workflows .github/workflows/ci.yml .github/workflows/profile-drift.yml
+        entry: bash -c "uvx check-jsonschema --builtin-schema vendor.github-workflows .github/workflows/*.yml"
         language: system
         pass_filenames: false
       - id: workflow-timeouts
         name: workflow-timeouts
-        entry: uvx check-jsonschema --builtin-schema custom.github-workflows-require-timeout .github/workflows/ci.yml .github/workflows/profile-drift.yml
+        entry: bash -c "uvx check-jsonschema --builtin-schema custom.github-workflows-require-timeout .github/workflows/*.yml"
         language: system
         pass_filenames: false
       - id: dependabot-schema

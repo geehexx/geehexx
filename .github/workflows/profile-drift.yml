@@ -33,11 +33,12 @@ jobs:
           enable-cache: true
           cache-dependency-glob: |
             pyproject.toml
+            uv.lock
             .python-version
       - name: Install Python
         run: uv python install
       - name: Install project
-        run: uv sync --extra dev
+        run: uv sync --frozen --extra dev
       - name: Validate canonical source
         run: uv run profile-cv validate
       - name: Check profile drift

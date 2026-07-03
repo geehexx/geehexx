@@ -12,9 +12,9 @@ pre-commit:
     actionlint:
       run: uvx --from actionlint-py actionlint
     workflow-schema:
-      run: uvx check-jsonschema --builtin-schema vendor.github-workflows .github/workflows/ci.yml .github/workflows/profile-drift.yml
+      run: uvx check-jsonschema --builtin-schema vendor.github-workflows .github/workflows/*.yml
     workflow-timeouts:
-      run: uvx check-jsonschema --builtin-schema custom.github-workflows-require-timeout .github/workflows/ci.yml .github/workflows/profile-drift.yml
+      run: uvx check-jsonschema --builtin-schema custom.github-workflows-require-timeout .github/workflows/*.yml
     dependabot-schema:
       run: uvx check-jsonschema --builtin-schema vendor.dependabot .github/dependabot.yml
     yamllint:

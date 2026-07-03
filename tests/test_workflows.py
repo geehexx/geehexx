@@ -52,6 +52,28 @@ def test_hooks_and_ci_use_standard_workflow_tools() -> None:
         assert token in lefthook
         assert token in ci
 
+    assert ".github/workflows/*.yml" in pre_commit
+    assert ".github/workflows/*.yml" in lefthook
+
+
+def test_workflows_use_frozen_lockfile_installs() -> None:
+    for workflow in workflow_paths():
+        text = workflow.read_text(encoding="utf-8")
+        assert "uv.lock" in text
+        assert "uv sync --frozen --extra dev" in text
+
+
+def test_ci_uploads_review_package_artifact() -> None:
+    ci = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+
+    assert "uv run profile-cv compare-themes" in ci
+    assert "scripts/render_pdf_for_qa.sh dist/Andrew_Crozier_Resume.pdf _qa_pdf" in ci
+    assert "scripts/render_docx_for_qa.sh dist/Andrew_Crozier_Resume.docx _qa_docx" in ci
+    assert "uv run profile-cv review-package" in ci
+    assert "path: dist/review-package/" in ci
+    assert "artifact-url" in ci
+    assert "artifact-digest" in ci
+
 
 def test_pull_request_template_captures_review_evidence() -> None:
     template = ROOT / ".github" / "pull_request_template.md"
@@ -59,5 +81,7 @@ def test_pull_request_template_captures_review_evidence() -> None:
 
     assert "## Summary" in text
     assert "## Validation" in text
+    assert "## Source, Artifact, And Contact Boundary" in text
+    assert "## CI / Artifact Evidence" in text
     assert "## Artifact Review" in text
     assert "## Local Limitations" in text
