@@ -18,7 +18,7 @@ def test_full_build_pipeline_outputs_all_distribution_formats(tmp_path: Path) ->
     status = doctor()
     missing = [
         name
-        for name in ("rendercv", "pandoc", "pdfinfo", "pdftotext", "libreoffice")
+        for name in ("rendercv", "pandoc", "pdfinfo", "pdftotext", "libreoffice", "java")
         if not status[name]
     ]
     if missing:

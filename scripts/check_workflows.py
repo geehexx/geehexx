@@ -146,6 +146,8 @@ def _ci_review_package_errors(path: Path, job: object) -> list[str]:
     run_text = "\n".join(str(step.get("run", "")) for step in steps if isinstance(step, dict))
     required_tokens = (
         "uv sync --frozen --extra dev",
+        "libreoffice-java-common",
+        "default-jre-headless",
         "uv run profile-cv build --clean --no-profile-check",
         "uv run profile-cv compare-themes",
         "scripts/render_pdf_for_qa.sh dist/Andrew_Crozier_Resume.pdf _qa_pdf",

@@ -44,12 +44,20 @@ def doctor() -> dict[str, bool]:
         "pdfinfo": "pdfinfo",
         "pdftotext": "pdftotext",
         "libreoffice": "libreoffice",
+        "java": "java",
     }
     return {name: shutil.which(command) is not None for name, command in commands.items()}
 
 
 def assert_doctor(
-    required: Iterable[str] = ("rendercv", "pandoc", "pdfinfo", "pdftotext", "libreoffice"),
+    required: Iterable[str] = (
+        "rendercv",
+        "pandoc",
+        "pdfinfo",
+        "pdftotext",
+        "libreoffice",
+        "java",
+    ),
 ) -> None:
     status = doctor()
     missing = [name for name in required if not status.get(name)]

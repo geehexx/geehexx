@@ -30,13 +30,16 @@
 ## Verification
 
 - Use targeted tests for behavior changes, then run the relevant full gate set
-  before publishing: `profile-cv validate`, `profile-cv render-profile --check`,
-  Ruff, mypy, pytest, actionlint, check-jsonschema, yamllint, zizmor,
-  public-surface checks, workflow checks, README lint, and artifact QA where
-  local system tools are available.
+  before publishing: `profile-cv doctor`, `profile-cv validate`,
+  `profile-cv render-profile --check`, Ruff, mypy, pytest, actionlint,
+  check-jsonschema, yamllint, zizmor, public-surface checks, workflow checks,
+  README lint, and artifact QA where local system tools are available.
 - For PR review, build `dist/review-package/` with `profile-cv review-package`
   after rendering PDF/DOCX previews, then attach it through the CI
   `resume-artifacts` GitHub Actions artifact rather than committing it.
+- Treat Java/JRE availability as part of full DOCX artifact QA. Fix missing
+  LibreOffice Java support or profile setup warnings instead of suppressing
+  them.
 - For final CV/profile review, compare README, ATS Markdown, PDF text, and DOCX
   text for aligned dates, titles, project descriptions, skills, and contact
   boundaries.

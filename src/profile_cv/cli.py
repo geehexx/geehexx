@@ -4,8 +4,10 @@ import argparse
 import json
 import sys
 from pathlib import Path
+from typing import Any
 
 from .build import (
+    DEFAULT_REVIEW_PACKAGE,
     build_all,
     build_review_package,
     compare_themes,
@@ -54,6 +56,11 @@ def main(argv: list[str] | None = None) -> int:
         type=Path,
         default=None,
         help="Review package directory. Defaults to dist/review-package.",
+    )
+    review_parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Emit the full manifest JSON instead of a concise summary.",
     )
 
     args = parser.parse_args(argv)
@@ -106,12 +113,12 @@ def main(argv: list[str] | None = None) -> int:
             return 0
 
         if args.command == "review-package":
-            print(
-                json.dumps(
-                    build_review_package(root=root, package_dir=args.output_dir),
-                    indent=2,
-                )
-            )
+            manifest = build_review_package(root=root, package_dir=args.output_dir)
+            if args.json:
+                print(json.dumps(manifest, indent=2))
+            else:
+                package_dir = args.output_dir or root / DEFAULT_REVIEW_PACKAGE
+                print(_review_package_summary(manifest, root=root, package_dir=package_dir))
             return 0
 
     except Exception as exc:  # noqa: BLE001 - CLI boundary should return a clear non-zero code.
@@ -119,6 +126,19 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     return 1
+
+
+def _review_package_summary(manifest: dict[str, Any], *, root: Path, package_dir: Path) -> str:
+    files = manifest.get("files", [])
+    file_count = len(files) if isinstance(files, list) else 0
+    source = manifest.get("source", {})
+    head_sha = source.get("head_sha") if isinstance(source, dict) else None
+    head = str(head_sha)[:12] if head_sha else "unknown"
+    try:
+        display_path = package_dir.resolve().relative_to(root.resolve())
+    except ValueError:
+        display_path = package_dir
+    return f"review-package: ok path={display_path} files={file_count} head={head}"
 
 
 if __name__ == "__main__":

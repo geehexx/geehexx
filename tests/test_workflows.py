@@ -66,6 +66,8 @@ def test_workflows_use_frozen_lockfile_installs() -> None:
 def test_ci_uploads_review_package_artifact() -> None:
     ci = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
 
+    assert "libreoffice-java-common" in ci
+    assert "default-jre-headless" in ci
     assert "uv run profile-cv compare-themes" in ci
     assert "scripts/render_pdf_for_qa.sh dist/Andrew_Crozier_Resume.pdf _qa_pdf" in ci
     assert "scripts/render_docx_for_qa.sh dist/Andrew_Crozier_Resume.docx _qa_docx" in ci

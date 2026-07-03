@@ -22,6 +22,7 @@
 ## Validation
 
 - [ ] `uv sync --frozen --extra dev`
+- [ ] `uv run profile-cv doctor`
 - [ ] `uv run profile-cv validate`
 - [ ] `uv run profile-cv render-profile --check`
 - [ ] `uv run ruff check .`
@@ -44,6 +45,7 @@
 - [ ] `scripts/render_docx_for_qa.sh dist/Andrew_Crozier_Resume.docx _qa_docx`
 - [ ] `uv run profile-cv review-package`
 - [ ] `uv run profile-cv qa`
+- [ ] PDF/DOCX preview rendering is warning-free; missing LibreOffice Java/JRE support is fixed rather than suppressed.
 - [ ] `uv run pre-commit run --all-files`
 - [ ] `make check`
 
@@ -68,7 +70,7 @@
 
 - [ ] Maintainer docs and `AGENTS.md` still match the implemented workflow.
 - [ ] The changelog describes implemented behavior without overstating custom checks.
-- [ ] Any local limitations list exact missing tools or environment gaps.
+- [ ] Any local limitations list exact missing tools, warning evidence, or environment gaps.
 
 ## Local Limitations
 

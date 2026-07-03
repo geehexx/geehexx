@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_normalize_docx_metadata_updates_shareable_properties(tmp_path: Path) -> None:
-    missing = [name for name in ("libreoffice", "pdfinfo") if not doctor()[name]]
+    missing = [name for name in ("libreoffice", "java", "pdfinfo") if not doctor()[name]]
     if missing:
         pytest.skip(f"missing external tools: {missing}")
 

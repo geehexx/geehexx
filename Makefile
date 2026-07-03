@@ -1,4 +1,4 @@
-.PHONY: install hooks build profile resume qa compare review-package lint policy secrets format test check clean
+.PHONY: install hooks doctor build profile resume qa compare review-package lint policy secrets format test check clean
 
 install:
 	uv sync --frozen --extra dev
@@ -6,6 +6,9 @@ install:
 hooks:
 	uv run pre-commit install --install-hooks
 	command -v lefthook >/dev/null 2>&1 && lefthook install || true
+
+doctor:
+	uv run profile-cv doctor
 
 build:
 	uv run profile-cv build --clean

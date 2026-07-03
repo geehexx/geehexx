@@ -28,6 +28,7 @@ from adapter-side company-name lists.
 
 ```bash
 uv sync --frozen --extra dev
+uv run profile-cv doctor
 uv run profile-cv validate
 uv run profile-cv render-profile --check
 uv run ruff check .
@@ -54,13 +55,22 @@ uv run profile-cv qa
 `uv.lock` is tracked so RenderCV, Pandoc-adjacent Python dependencies, template
 behavior, and QA tooling do not drift between local and CI builds.
 
+`profile-cv doctor` checks the external artifact QA tools used by the full
+pipeline: RenderCV, Pandoc, Poppler, LibreOffice, and Java. On Ubuntu/CI, install
+`pandoc`, `poppler-utils`, `libreoffice`, `libreoffice-java-common`, and
+`default-jre-headless`; use `openjdk-21-jre-headless` only if the default
+headless runtime package is unavailable.
+
 `profile-cv build` emits reviewed artifacts under `dist/` and a local preview
 site under `site/`. `profile-cv review-package` assembles
 `dist/review-package/` from the generated artifacts, site preview, semantic QA
 metrics, PDF/DOCX page previews, and theme comparison evidence. Do not enable or
 publish GitHub Pages unless a future change explicitly revisits the public
-contact boundary. CI installs Pandoc, Poppler, and LibreOffice before artifact
-generation because DOCX metadata and visual QA depend on those system tools.
+contact boundary. CI installs Pandoc, Poppler, LibreOffice, LibreOffice Java
+support, and a headless JRE before artifact generation because DOCX metadata and
+visual QA depend on those system tools. DOCX preview rendering treats unexpected
+LibreOffice stderr as a failure so Java/profile warnings are fixed rather than
+hidden.
 
 ## Quality Gates
 
