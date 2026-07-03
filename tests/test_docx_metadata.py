@@ -65,21 +65,22 @@ def test_normalize_docx_metadata_preserves_package_parts_and_removes_custom_prop
     document.add_paragraph("Andrew Crozier")
     document.add_paragraph("applied AI platform engineering")
     document.save(str(docx_path))
-    with zipfile.ZipFile(docx_path, "a", compression=zipfile.ZIP_DEFLATED) as package:
-        package.writestr("customXml/item1.xml", "<root>preserve me</root>")
-        package.writestr(
-            "docProps/custom.xml",
-            (
-                '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
-                '<Properties xmlns="http://schemas.openxmlformats.org/'
-                'officeDocument/2006/custom-properties" '
-                'xmlns:vt="http://schemas.openxmlformats.org/officeDocument/'
-                '2006/docPropsVTypes">'
-                '<property fmtid="{D5CDD505-2E9C-101B-9397-08002B2CF9AE}" '
-                'pid="2" name="PrivateNote"><vt:lpwstr>remove me</vt:lpwstr></property>'
-                "</Properties>"
+    _write_docx_parts(
+        docx_path,
+        {
+            "customXml/item1.xml": b"<root>preserve me</root>",
+            "docProps/custom.xml": (
+                b'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+                b'<Properties xmlns="http://schemas.openxmlformats.org/'
+                b'officeDocument/2006/custom-properties" '
+                b'xmlns:vt="http://schemas.openxmlformats.org/officeDocument/'
+                b'2006/docPropsVTypes">'
+                b'<property fmtid="{D5CDD505-2E9C-101B-9397-08002B2CF9AE}" '
+                b'pid="2" name="PrivateNote"><vt:lpwstr>remove me</vt:lpwstr></property>'
+                b"</Properties>"
             ),
-        )
+        },
+    )
 
     normalize_docx_metadata(
         docx_path,
@@ -98,3 +99,17 @@ def test_normalize_docx_metadata_preserves_package_parts_and_removes_custom_prop
     metadata = assert_docx_metadata(docx_path)
     assert len(core["keywords"]) <= 255
     assert metadata["custom_properties"] == 0
+
+
+def _write_docx_parts(docx_path: Path, parts: dict[str, bytes]) -> None:
+    tmp_path = docx_path.with_suffix(".tmp.docx")
+    with (
+        zipfile.ZipFile(docx_path) as source,
+        zipfile.ZipFile(tmp_path, "w", compression=zipfile.ZIP_DEFLATED) as target,
+    ):
+        for item in source.infolist():
+            if item.filename not in parts:
+                target.writestr(item, source.read(item.filename))
+        for filename, payload in parts.items():
+            target.writestr(filename, payload)
+    tmp_path.replace(docx_path)
