@@ -67,9 +67,7 @@ jobs:
           uvx yamllint .github/dependabot.yml .github/workflows quality-gates.yaml resume.yaml .yamllint.yml
           uvx zizmor --format plain .
       - name: Integration tests
-        run: |
-          uv run pytest -o addopts="" tests/test_build_pipeline.py::test_full_build_pipeline_outputs_all_distribution_formats
-          uv run pytest -o addopts="" tests/test_build_pipeline.py::test_theme_comparison_is_small_but_meaningful
+        run: uv run pytest -o addopts="" tests/test_build_pipeline.py::test_full_build_pipeline_outputs_all_distribution_formats
       - name: Repository policy checks
         run: |
           uv run python scripts/check_workflows.py
@@ -77,12 +75,6 @@ jobs:
           uv run python scripts/lint_readme.py README.md
       - name: Build artifacts
         run: uv run profile-cv build --clean --no-profile-check
-      - name: Compare resume themes
-        run: uv run profile-cv compare-themes
-      - name: Render visual review previews
-        run: |
-          scripts/render_pdf_for_qa.sh dist/Andrew_Crozier_Resume.pdf _qa_pdf
-          scripts/render_docx_for_qa.sh dist/Andrew_Crozier_Resume.docx _qa_docx
       - name: Assemble review package
         run: uv run profile-cv review-package
       - name: Upload resume artifacts

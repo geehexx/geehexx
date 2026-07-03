@@ -1,4 +1,4 @@
-.PHONY: install hooks doctor build profile resume qa compare review-package lint policy secrets format test check clean
+.PHONY: install hooks doctor build profile resume qa review-package lint policy secrets format test check clean
 
 install:
 	uv sync --frozen --extra dev
@@ -22,14 +22,8 @@ resume:
 qa:
 	uv run profile-cv qa
 
-compare:
-	uv run profile-cv compare-themes
-
 review-package:
 	uv run profile-cv build --clean --no-profile-check
-	uv run profile-cv compare-themes
-	scripts/render_pdf_for_qa.sh dist/Andrew_Crozier_Resume.pdf _qa_pdf
-	scripts/render_docx_for_qa.sh dist/Andrew_Crozier_Resume.docx _qa_docx
 	uv run profile-cv review-package
 
 lint:
@@ -62,4 +56,4 @@ format:
 	uv run ruff check . --fix
 
 clean:
-	rm -rf dist site _qa_pdf _qa_docx .pytest_cache .ruff_cache .mypy_cache
+	rm -rf dist site .pytest_cache .ruff_cache .mypy_cache

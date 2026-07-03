@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "geehexx-profile-cv"
-version = "0.3.1"
+version = "1.0.0"
 description = "Single-source profile and CV pipeline for the geehexx GitHub profile and resume artifacts."
 readme = "README.md"
 requires-python = ">=3.12"
@@ -66,8 +66,7 @@ markers = ["integration: builds profile and resume artifacts with external tools
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "0.3.1"
+version = "1.0.0"
 tag_format = "v$version"
 version_files = ["pyproject.toml:version", "src/profile_cv/__init__.py"]
 update_changelog_on_bump = true
-major_version_zero = true

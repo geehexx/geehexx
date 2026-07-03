@@ -6,7 +6,6 @@ import html
 import json
 import shutil
 import subprocess
-import tempfile
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -17,8 +16,6 @@ from .docx_metadata import modified_from_resume, normalize_docx_metadata
 from .qa import (
     assert_doctor,
     expectations_from_resume,
-    pdf_pages,
-    pdftotext,
     qa_docx,
     qa_pdf,
     qa_readme,
@@ -30,9 +27,6 @@ DEFAULT_DIST = Path("dist")
 DEFAULT_SITE = Path("site")
 DEFAULT_RESUME = Path("resume.yaml")
 DEFAULT_REVIEW_PACKAGE = DEFAULT_DIST / "review-package"
-DEFAULT_QA_PDF = Path("_qa_pdf")
-DEFAULT_QA_DOCX = Path("_qa_docx")
-DEFAULT_THEMES = ("engineeringresumes", "sb2nov", "classic")
 
 
 def build_all(
@@ -272,16 +266,12 @@ def build_review_package(
     *,
     root: Path,
     package_dir: Path | None = None,
-    pdf_preview_dir: Path | None = None,
-    docx_preview_dir: Path | None = None,
 ) -> dict[str, Any]:
     """Assemble the ignored PR review bundle that CI uploads as one artifact."""
 
     dist_dir = root / DEFAULT_DIST
     site_dir = root / DEFAULT_SITE
     package_dir = package_dir or root / DEFAULT_REVIEW_PACKAGE
-    pdf_preview_dir = pdf_preview_dir or root / DEFAULT_QA_PDF
-    docx_preview_dir = docx_preview_dir or root / DEFAULT_QA_DOCX
 
     if package_dir.exists():
         shutil.rmtree(package_dir)
@@ -295,31 +285,11 @@ def build_review_package(
         (dist_dir / f"{DEFAULT_BASENAME}.json", Path("artifacts") / f"{DEFAULT_BASENAME}.json"),
         (dist_dir / "profile.schemaorg.json", Path("artifacts") / "profile.schemaorg.json"),
         (dist_dir / "README.generated.md", Path("profile") / "README.generated.md"),
-        (dist_dir / "theme-comparison.md", Path("theme-comparison.md")),
     ]
     for source, relative_target in required_files:
         _copy_required_file(source, package_dir / relative_target)
 
     _copy_required_tree(site_dir, package_dir / "site")
-    _copy_required_tree(dist_dir / "theme-comparison", package_dir / "theme-comparison")
-    _copy_required_matches(
-        pdf_preview_dir,
-        "*.png",
-        package_dir / "visual-review" / "pdf",
-        label="PDF preview PNGs",
-    )
-    _copy_required_matches(
-        docx_preview_dir,
-        "*.png",
-        package_dir / "visual-review" / "docx",
-        label="DOCX preview PNGs",
-    )
-    _copy_required_matches(
-        dist_dir / "rendercv",
-        f"{DEFAULT_BASENAME}_*.png",
-        package_dir / "visual-review" / "rendercv",
-        label="RenderCV preview PNGs",
-    )
 
     qa = run_quality_gates(root=root)
     generated_at = datetime.now(UTC).isoformat(timespec="seconds").replace("+00:00", "Z")
@@ -363,17 +333,6 @@ def _copy_required_tree(source: Path, target: Path) -> None:
     shutil.copytree(source, target, ignore=shutil.ignore_patterns(".*"))
 
 
-def _copy_required_matches(source: Path, pattern: str, target: Path, *, label: str) -> None:
-    if not source.is_dir():
-        raise FileNotFoundError(f"{label} directory is missing: {source}")
-    matches = sorted(path for path in source.glob(pattern) if path.is_file())
-    if not matches:
-        raise FileNotFoundError(f"No {label} matched {source / pattern}")
-    target.mkdir(parents=True, exist_ok=True)
-    for match in matches:
-        shutil.copy2(match, target / match.name)
-
-
 def _package_file_records(package_dir: Path) -> list[dict[str, Any]]:
     records: list[dict[str, Any]] = []
     for path in sorted(package_dir.rglob("*")):
@@ -411,8 +370,8 @@ def _review_markdown(manifest: dict[str, Any]) -> str:
             "",
             "- Open `index.html` for a local clickable review page.",
             "- Check `artifacts/` for PDF, DOCX, Markdown, HTML, JSON, and JSON-LD outputs.",
-            "- Check `visual-review/` for PDF and DOCX page PNGs.",
-            "- Check `theme-comparison.md` and `theme-comparison/` for layout comparison evidence.",
+            "- Check `profile/` for the generated public profile README.",
+            "- Check `site/` for the local static-site preview.",
             "",
             "## Contact Boundary",
             "",
@@ -450,7 +409,6 @@ def _review_index_html(manifest: dict[str, Any]) -> str:
         ("Standalone HTML", f"artifacts/{DEFAULT_BASENAME}.html"),
         ("Generated profile README", "profile/README.generated.md"),
         ("Local site preview", "site/index.html"),
-        ("Theme comparison", "theme-comparison.md"),
     ]
     link_items = "\n".join(
         f'<li><a href="{html.escape(href)}">{html.escape(label)}</a></li>' for label, href in links
@@ -578,80 +536,6 @@ def inline_css(html_path: Path, css_path: Path) -> None:
     if "</head>" not in html:
         raise RuntimeError(f"Cannot inline CSS into {html_path}: missing </head>")
     html_path.write_text(html.replace("</head>", f"{style_block}\n</head>"), encoding="utf-8")
-
-
-def compare_themes(
-    *,
-    root: Path,
-    themes: tuple[str, ...] = DEFAULT_THEMES,
-    output_dir: Path | None = None,
-    report_path: Path | None = None,
-) -> list[dict[str, Any]]:
-    resume = _load_validated_resume(root, root / DEFAULT_RESUME)
-    out = output_dir or root / DEFAULT_DIST / "theme-comparison"
-    if out.exists():
-        shutil.rmtree(out)
-    rows: list[dict[str, Any]] = []
-    for theme in themes:
-        rows.append(_build_theme(root=root, resume=resume, theme=theme, output_dir=out))
-    write_theme_report(
-        report_path or root / DEFAULT_DIST / "theme-comparison.md",
-        rows,
-        selected_theme="engineeringresumes",
-    )
-    return rows
-
-
-def _build_theme(
-    *, root: Path, resume: dict[str, Any], theme: str, output_dir: Path
-) -> dict[str, Any]:
-    theme_resume = to_rendercv(resume)
-    theme_resume["design"]["theme"] = theme
-    with tempfile.TemporaryDirectory(prefix="profile-cv-theme-") as tmp:
-        input_path = Path(tmp) / f"{DEFAULT_BASENAME}.{theme}.yaml"
-        write_yaml(input_path, theme_resume)
-        theme_dir = output_dir / theme
-        run_rendercv(input_path, theme_dir, root=root)
-    pdf = theme_dir / f"{DEFAULT_BASENAME}.pdf"
-    text = pdftotext(pdf)
-    required_sections = ("Summary", "Experience", "Education")
-    return {
-        "theme": theme,
-        "pages": pdf_pages(pdf),
-        "text_chars": len(text),
-        "has_required_sections": all(token in text for token in required_sections),
-        "pdf": str(pdf.relative_to(root)) if pdf.is_relative_to(root) else str(pdf),
-    }
-
-
-def write_theme_report(path: Path, rows: list[dict[str, Any]], *, selected_theme: str) -> None:
-    lines = [
-        "# Theme comparison",
-        "",
-        "Generated by `profile-cv compare-themes`.",
-        "",
-        f"Selected default: `{selected_theme}`.",
-        "",
-        "| Theme | Pages | Extracted text chars | Required sections | PDF |",
-        "| --- | ---: | ---: | --- | --- |",
-    ]
-    for row in rows:
-        required = "yes" if row["has_required_sections"] else "no"
-        lines.append(
-            f"| `{row['theme']}` | {row['pages']} | {row['text_chars']} | "
-            f"{required} | `{row['pdf']}` |"
-        )
-    lines.extend(
-        [
-            "",
-            "Decision: keep `engineeringresumes` as the default. It preserves a single-column, "
-            "ATS-safe extraction path while giving the PDF a restrained engineering-resume "
-            "visual identity. `classic` is a useful review alternate; `sb2nov` "
-            "remains a compact ATS-style reference.",
-        ]
-    )
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def ensure_typst_package_cache(root: Path) -> None:

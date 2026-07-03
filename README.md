@@ -1,8 +1,8 @@
 # Andrew Crozier
 
-### Applied AI & Software Engineering · Hands-on Technical Leadership
+### Engineering Manager · Applied AI & Platform Systems
 
-**Production agents · Hybrid retrieval · MCP systems · Distributed platforms · Reliability engineering**
+**Technical leadership · Production AI systems · Hybrid retrieval · Distributed platforms · Reliability engineering**
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Andrew_Crozier-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/ancrozier)
 [![GitHub](https://img.shields.io/badge/GitHub-geehexx-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/geehexx)
@@ -41,6 +41,7 @@ I use GitHub less as a trophy case and more as a public engineering notebook: to
 
 | Repo / work | What it demonstrates |
 | --- | --- |
+| [`geehexx`](https://github.com/geehexx/geehexx) | Canonical GitHub profile and CV source repo with typed YAML adapters, RenderCV/Pandoc generation, deterministic artifact QA, CI-uploaded review packages, and public/resume contact-boundary policy. |
 | [`library-ops`](https://github.com/geehexx/library-ops) | Live Django/PostgreSQL library-operations demo with Work/Edition/Copy modeling, role boundaries, search, circulation state, Render deployment, and a governed multi-agent SDLC case study. |
 | [`mcp-web`](https://github.com/geehexx/mcp-web) | MCP server for web and local-file summarization: extraction, chunking, streaming summaries, local/cloud LLM support, caching, security controls, metrics, and tests. |
 | [`hitl-mcp-cli`](https://github.com/geehexx/hitl-mcp-cli) | Human-in-the-loop MCP server and terminal UI for approvals, choices, confirmations, notifications, interaction logging, and async-first workflows. |
@@ -71,7 +72,7 @@ A lot of applied AI engineering is not prompt cleverness. It is removing ambigui
 | --- | --- |
 | **Stealth Startup** | Lead AI Engineer for production agentic AI, retrieval, governance workflows, and platform infrastructure |
 | **BaxEnergy (a Yokogawa Company)** | Engineering maturity assessment and modernization roadmap across delivery practices, incident response, DORA metrics, and cloud-native migration planning |
-| **Agoda (Booking Holdings)** | Engineering Manager for B2B booking platforms; led 15+ engineers; supported high-scale booking flows across millions of properties and major enterprise partners |
+| **Agoda (Booking Holdings)** | Engineering Manager for B2B booking platforms; led multiple squads and supported high-scale booking flows across millions of properties and major enterprise partners |
 | **Toptal** | Senior Software Engineer, Product Manager, and Engineering Manager across talent matching, vetting, ETL, enterprise delivery, and remote engineering systems |
 | **Dubizzle (Naspers-backed)** | Built and scaled classifieds marketplace systems, rebuilt core ad-placement workflows, and helped move a Django monolith toward service-oriented architecture |
 
@@ -148,5 +149,5 @@ I am usually useful for:
 
 - **LinkedIn:** [linkedin.com/in/ancrozier](https://linkedin.com/in/ancrozier)
 - **GitHub:** [github.com/geehexx](https://github.com/geehexx)
-- **Location:** Thailand-based Australian citizen; remote Australia/APAC/EU/UK overlap; open to Australia relocation
-- **Open to:** AI engineering, software engineering, backend/platform engineering, and hands-on technical leadership roles. Remote across Australia / APAC / EU / UK overlap preferred; Australia relocation or other on-site arrangements possible for the right role.
+- **Location:** Thailand-based Australian citizen; remote Australia/APAC/EU/UK overlap
+- **Open to:** Engineering Manager, applied AI, software engineering, backend/platform engineering, and hands-on technical leadership roles. Remote across Australia / APAC / EU / UK overlap preferred; other on-site arrangements possible for the right role.

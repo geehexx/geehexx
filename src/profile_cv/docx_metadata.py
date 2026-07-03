@@ -76,7 +76,7 @@ def normalize_docx_metadata(
     description: str = "Resume for applied AI, platform, backend, and technical leadership roles.",
     modified: datetime | None = None,
     application: str = "profile-cv",
-    app_version: str = "0.3.1",
+    app_version: str = "1.0.0",
 ) -> DocxStats:
     """Normalize shareable DOCX core and extended properties in-place."""
     docx_path = docx_path.resolve()
@@ -115,8 +115,8 @@ def assert_docx_metadata(
     expected_application: str = "profile-cv",
 ) -> dict[str, int | str | bool]:
     # Recompute text statistics from the DOCX package. Page count is checked as a
-    # positive value here and independently rendered in the visual QA gate to avoid
-    # doing two LibreOffice conversions inside every build.
+    # positive value here to avoid doing a second LibreOffice conversion inside
+    # every build.
     stats = compute_docx_stats(docx_path, render_pages=False)
     core = read_core_properties(docx_path)
     app = read_app_properties(docx_path)

@@ -33,12 +33,12 @@ def test_normalize_docx_metadata_updates_shareable_properties(tmp_path: Path) ->
     stats = normalize_docx_metadata(
         docx_path,
         title="Andrew Crozier - Resume",
-        subject="Applied AI Engineering Leader",
+        subject="Engineering Manager - Applied AI & Platform Systems",
         author="Andrew Crozier",
         keywords="resume; applied AI; MCP",
         modified=datetime(2026, 7, 1, tzinfo=UTC),
         application="profile-cv",
-        app_version="0.3.1",
+        app_version="1.0.0",
     )
 
     app = read_app_properties(docx_path)
@@ -49,7 +49,7 @@ def test_normalize_docx_metadata_updates_shareable_properties(tmp_path: Path) ->
     pages = app["Pages"]
     assert isinstance(pages, int)
     assert app["Application"] == "profile-cv"
-    assert app["AppVersion"] == "0.3.1"
+    assert app["AppVersion"] == "1.0.0"
     assert app["Words"] == stats.words
     assert pages >= 1
     assert core["title"] == "Andrew Crozier - Resume"
@@ -85,12 +85,12 @@ def test_normalize_docx_metadata_preserves_package_parts_and_removes_custom_prop
     normalize_docx_metadata(
         docx_path,
         title="Andrew Crozier - Resume",
-        subject="Applied AI Engineering Leader",
+        subject="Engineering Manager - Applied AI & Platform Systems",
         author="Andrew Crozier",
         keywords="; ".join(f"keyword-{index}" for index in range(100)),
         modified=datetime(2026, 7, 1, tzinfo=UTC),
         application="profile-cv",
-        app_version="0.3.1",
+        app_version="1.0.0",
     )
 
     with zipfile.ZipFile(docx_path) as package:

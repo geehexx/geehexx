@@ -149,9 +149,6 @@ def _ci_review_package_errors(path: Path, job: object) -> list[str]:
         "libreoffice-java-common",
         "default-jre-headless",
         "uv run profile-cv build --clean --no-profile-check",
-        "uv run profile-cv compare-themes",
-        "scripts/render_pdf_for_qa.sh dist/Andrew_Crozier_Resume.pdf _qa_pdf",
-        "scripts/render_docx_for_qa.sh dist/Andrew_Crozier_Resume.docx _qa_docx",
         "uv run profile-cv review-package",
     )
     return [

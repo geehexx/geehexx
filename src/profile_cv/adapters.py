@@ -295,7 +295,7 @@ def contact_line(resume: Resume) -> str:
             location,
             contact.get("workAuthorization"),
             contact.get("remote"),
-            contact.get("relocation"),
+            basics.get("phone"),
             basics.get("email"),
         ]
         if part
@@ -311,6 +311,7 @@ def to_rendercv(resume: Resume) -> dict[str, Any]:
         "headline": basics["label"],
         "location": basics.get("location", {}).get("address", ""),
         "email": basics.get("email", ""),
+        "phone": basics.get("phone"),
         "social_networks": [],
         "custom_connections": [],
         "sections": {},
@@ -326,9 +327,8 @@ def to_rendercv(resume: Resume) -> dict[str, Any]:
     connection_icons = {
         "workAuthorization": "passport",
         "remote": "globe",
-        "relocation": "location-arrow",
     }
-    for key in ("workAuthorization", "remote", "relocation"):
+    for key in ("workAuthorization", "remote"):
         if contact.get(key):
             cv["custom_connections"].append(
                 {

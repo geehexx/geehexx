@@ -20,12 +20,15 @@ def test_canonical_yaml_resume_validates_and_contains_portable_sections() -> Non
     serialized = serialize_source(resume)
 
     assert resume["basics"]["name"] == "Andrew Crozier"
+    assert resume["basics"]["label"] == "Engineering Manager - Applied AI & Platform Systems"
+    assert resume["basics"]["phone"] == "+66963780780"
     assert resume["basics"]["profiles"][0]["network"] == "LinkedIn"
     assert resume["basics"]["x_contact"]["workAuthorization"] == "Australian citizen"
-    assert resume["meta"]["version"] == "0.3.1"
+    assert resume["meta"]["version"] == "1.0.0"
     assert resume["meta"]["canonical"].endswith("/resume.yaml")
     assert len(resume["work"]) >= 10
-    assert len(resume["projects"]) >= 8
+    assert len(resume["projects"]) >= 9
+    assert any(project["name"] == "geehexx" for project in resume["projects"])
     assert any(project["name"] == "library-ops" for project in resume["projects"])
     assert any(project["name"] == "mcp-web" for project in resume["projects"])
     assert any(skill["name"] == "Applied AI & Retrieval" for skill in resume["skills"])
@@ -45,9 +48,12 @@ def test_generated_readme_is_public_safe_and_source_aligned() -> None:
 
     assert generated == current
     assert "andrewcrozier86@gmail.com" not in current
+    assert "+66963780780" not in current
     assert "library-ops" in current
     assert "mcp-web" in current
     assert "Thailand-based Australian citizen" in current
+    assert "Australia relocation" not in current
+    assert "open to Australia relocation" not in current
     assert "## Engineering Biases" in current
     assert "{{" not in current
 
@@ -67,12 +73,13 @@ def test_rendercv_adapter_preserves_resume_sections_without_becoming_canonical()
     sections = rendercv["cv"]["sections"]
 
     assert rendercv["design"]["theme"] == "engineeringresumes"
+    assert rendercv["cv"]["phone"] == "+66963780780"
     assert any(
         connection["placeholder"] == "Australian citizen"
         for connection in rendercv["cv"]["custom_connections"]
     )
     assert sections["Experience"][0]["company"] == "Stealth Startup"
-    assert sections["Selected Public Work"][0]["name"].startswith("[library-ops](")
+    assert sections["Selected Public Work"][0]["name"].startswith("[geehexx](")
     assert "data/resume.rendercv.yaml" not in serialize_source(rendercv)
     for item in sections["Experience"]:
         for highlight in item["highlights"]:
@@ -86,6 +93,7 @@ def test_canonical_source_controls_project_inclusion_across_outputs() -> None:
     profile_sections = {item["name"]: item["x_profile"]["section"] for item in resume["work"]}
 
     assert set(resume_projects).issubset(set(readme_projects))
+    assert "geehexx" in resume_projects
     assert "library-ops" in resume_projects
     assert "msteams-mcp" in readme_projects
     assert "msteams-mcp" not in resume_projects

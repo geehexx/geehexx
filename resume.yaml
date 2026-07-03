@@ -2,15 +2,16 @@
 $schema: https://jsonresume.org/schema/
 basics:
   name: Andrew Crozier
-  label: Applied AI & Software Engineering Leader - Production Agents - Hybrid Retrieval - Distributed
-    Platforms
+  label: Engineering Manager - Applied AI & Platform Systems
   email: andrewcrozier86@gmail.com
-  summary: 'Hands-on software engineering and applied AI leader with 15+ years building backend, platform,
-    and data systems across AI agents, retrieval, marketplaces, travel, fintech, and talent matching.
+  phone: '+66963780780'
+  summary: 'Engineering Manager and hands-on software engineer with 15+ years building backend, platform,
+    data, and AI systems across marketplaces, travel, fintech, talent matching, retrieval, and enterprise
+    decision support.
     Current focus: production agent workflows, RAG/search quality, governance controls, AWS infrastructure,
-    and reliability. Led teams of 15+ engineers while staying close to architecture and delivery; shipped
-    systems supporting 100K+ RPM booking flows, millions of properties, 200K+ annual applicants, and enterprise
-    decision-support products.'
+    and reliability. Led multiple teams and dozens of engineers while staying close to architecture and
+    delivery; shipped systems supporting 100K+ RPM booking flows, millions of properties, 200K+ annual
+    applicants, and enterprise decision-support products.'
   location:
     address: Bangkok, Thailand
     city: Bangkok
@@ -25,9 +26,7 @@ basics:
     url: https://github.com/geehexx
   x_contact:
     remote: Remote (Australia/APAC/EU/UK overlap)
-    relocation: Open to Australia relocation
-    publicLocation: Thailand-based Australian citizen; remote Australia/APAC/EU/UK overlap; open to Australia
-      relocation
+    publicLocation: Thailand-based Australian citizen; remote Australia/APAC/EU/UK overlap
     publicEmail: false
     workAuthorization: Australian citizen
 work:
@@ -99,8 +98,8 @@ work:
   startDate: 2023-01
   summary: ''
   highlights:
-  - Managed 15+ engineers across squads responsible for high-availability Book and Pre-Book funnels handling
-    100K+ RPM peak load across millions of properties.
+  - Managed multiple squads responsible for high-availability Book and Pre-Book funnels handling 100K+
+    RPM peak load across millions of properties.
   - Led B2B platform work for Rocket Travel by Agoda and enterprise white-label partners including Citi,
     U.S. Bank, American Airlines, KrisFlyer, and JTB/JAPANiCAN.
   - Drove migration of critical booking services from Scala to Kotlin across multiple squads with zero
@@ -115,16 +114,16 @@ work:
   endDate: 2024-11
   x_profile:
     section: career_snapshot
-    signal: Engineering Manager for B2B booking platforms; led 15+ engineers; supported high-scale booking
-      flows across millions of properties and major enterprise partners
+    signal: Engineering Manager for B2B booking platforms; led multiple squads and supported high-scale
+      booking flows across millions of properties and major enterprise partners
 - name: Toptal
   position: Engineering Manager / Product Manager / Senior Software Engineer
   location: Remote
   startDate: 2017-01
   summary: ''
   highlights:
-  - Led engineering for Toptal's talent-matching and acquisition systems, scaling the team from 5 to 15+
-    engineers and promoting 2 engineers into Engineering Manager roles.
+  - Led engineering for Toptal's talent-matching and acquisition systems, growing a small engineering group
+    into a larger multi-team organization and promoting 2 engineers into Engineering Manager roles.
   - Built and managed delivery of semantic talent-matching capabilities using vector embeddings, supply-demand
     balancing, and workflow automation to reduce manual recruiter workload.
   - Directed delivery of custom software solutions for Fortune 500 enterprise clients, coordinating scope,
@@ -354,6 +353,25 @@ skills:
   - technical due diligence
   - remote-first delivery
 projects:
+- name: geehexx
+  description: Canonical GitHub profile and CV source repo with typed YAML adapters, RenderCV/Pandoc
+    generation, deterministic artifact QA, CI-uploaded review packages, and public/resume contact-boundary
+    policy.
+  url: https://github.com/geehexx/geehexx
+  keywords:
+  - profile automation
+  - resume pipeline
+  - RenderCV
+  - Pandoc
+  - CI quality gates
+  roles:
+  - Owner
+  type: open-source
+  highlights: []
+  x_profile:
+    featured: true
+  x_resume:
+    featured: true
 - name: library-ops
   description: Live Django/PostgreSQL library-operations demo with Work/Edition/Copy modeling, role boundaries,
     search, circulation state, Render deployment, and a governed multi-agent SDLC case study.
@@ -498,7 +516,7 @@ interests: []
 references: []
 meta:
   canonical: https://github.com/geehexx/geehexx/blob/main/resume.yaml
-  version: 0.3.1
+  version: 1.0.0
   lastModified: '2026-07-01T00:00:00+07:00'
   x_source:
     baseRepository: https://github.com/geehexx/geehexx
@@ -508,9 +526,9 @@ meta:
       artifacts.
   x_profile:
     title: Andrew Crozier
-    subtitle: Applied AI & Software Engineering · Hands-on Technical Leadership
-    tagline: Production agents · Hybrid retrieval · MCP systems · Distributed platforms · Reliability
-      engineering
+    subtitle: Engineering Manager · Applied AI & Platform Systems
+    tagline: Technical leadership · Production AI systems · Hybrid retrieval · Distributed platforms
+      · Reliability engineering
     opener: 'I build the parts of AI systems that still have to work after the demo: retrieval quality,
       tool boundaries, stream safety, retry behavior, evaluation loops, human approval gates, observability,
       infrastructure, and the engineering habits around them.'
@@ -585,9 +603,9 @@ meta:
     - building MCP and developer workflow tools
     - leading backend / platform teams without drifting away from the code
     - diagnosing reliability failures across infrastructure, code, process, and team boundaries
-    openTo: AI engineering, software engineering, backend/platform engineering, and hands-on technical
-      leadership roles. Remote across Australia / APAC / EU / UK overlap preferred; Australia relocation
-      or other on-site arrangements possible for the right role.
+    openTo: Engineering Manager, applied AI, software engineering, backend/platform engineering, and hands-on
+      technical leadership roles. Remote across Australia / APAC / EU / UK overlap preferred; other on-site
+      arrangements possible for the right role.
   x_rendercv:
     design:
       theme: engineeringresumes
@@ -686,24 +704,8 @@ meta:
         dont_generate_html: false
         dont_generate_typst: false
         dont_generate_pdf: false
-        dont_generate_png: false
+        dont_generate_png: true
       pdf_title: Andrew Crozier - Resume
-      bold_keywords:
-      - production multi-agent AI platform
-      - hybrid retrieval pipeline
-      - 100K+ RPM
-      - millions of properties
-      - 200K+ annual applicants
-      - DORA metrics
-      - AWS CDK
-      - Kotlin
-      - PydanticAI
-      - LangGraph
-    selectedThemes:
-    - engineeringresumes
-    - sb2nov
-    - classic
-    - harvard
   x_outputs:
     defaultResumeBasename: Andrew_Crozier_Resume
     profileReadme: README.md

@@ -1,7 +1,6 @@
 # Generated resume/profile artifacts
 dist/
 site/
-_qa*/
 *.zip
 *.pdf
 *.docx

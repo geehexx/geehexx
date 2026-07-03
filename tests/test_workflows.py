@@ -68,9 +68,8 @@ def test_ci_uploads_review_package_artifact() -> None:
 
     assert "libreoffice-java-common" in ci
     assert "default-jre-headless" in ci
-    assert "uv run profile-cv compare-themes" in ci
-    assert "scripts/render_pdf_for_qa.sh dist/Andrew_Crozier_Resume.pdf _qa_pdf" in ci
-    assert "scripts/render_docx_for_qa.sh dist/Andrew_Crozier_Resume.docx _qa_docx" in ci
+    assert "profile-cv compare-" not in ci
+    assert "scripts/render_" not in ci
     assert "uv run profile-cv review-package" in ci
     assert "path: dist/review-package/" in ci
     assert "artifact-url" in ci
@@ -86,4 +85,5 @@ def test_pull_request_template_captures_review_evidence() -> None:
     assert "## Source, Artifact, And Contact Boundary" in text
     assert "## CI / Artifact Evidence" in text
     assert "## Artifact Review" in text
+    assert "## Release Readiness" in text
     assert "## Local Limitations" in text

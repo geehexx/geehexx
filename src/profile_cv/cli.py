@@ -10,7 +10,6 @@ from .build import (
     DEFAULT_REVIEW_PACKAGE,
     build_all,
     build_review_package,
-    compare_themes,
     render_profile,
     run_quality_gates,
 )
@@ -42,9 +41,6 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Overwrite README.md instead of checking whether it was already current.",
     )
-
-    compare_parser = sub.add_parser("compare-themes", help="Render configured RenderCV themes.")
-    compare_parser.add_argument("--json", action="store_true", help="Emit machine-readable rows.")
 
     sub.add_parser("qa", help="Run artifact quality gates against dist/ and README.md.")
 
@@ -94,18 +90,6 @@ def main(argv: list[str] | None = None) -> int:
                 profile_check=not args.no_profile_check,
             )
             print(json.dumps(metrics, indent=2))
-            return 0
-
-        if args.command == "compare-themes":
-            rows = compare_themes(root=root)
-            if args.json:
-                print(json.dumps(rows, indent=2))
-            else:
-                for row in rows:
-                    print(
-                        f"{row['theme']}: pages={row['pages']} "
-                        f"chars={row['text_chars']} pdf={row['pdf']}"
-                    )
             return 0
 
         if args.command == "qa":

@@ -44,10 +44,7 @@ uvx zizmor --format plain .
 uv run python scripts/check_public_surface.py
 uv run python scripts/check_workflows.py
 uv run python scripts/lint_readme.py README.md
-uv run profile-cv compare-themes
 uv run profile-cv build --clean --no-profile-check
-scripts/render_pdf_for_qa.sh dist/Andrew_Crozier_Resume.pdf _qa_pdf
-scripts/render_docx_for_qa.sh dist/Andrew_Crozier_Resume.docx _qa_docx
 uv run profile-cv review-package
 uv run profile-cv qa
 ```
@@ -63,14 +60,12 @@ headless runtime package is unavailable.
 
 `profile-cv build` emits reviewed artifacts under `dist/` and a local preview
 site under `site/`. `profile-cv review-package` assembles
-`dist/review-package/` from the generated artifacts, site preview, semantic QA
-metrics, PDF/DOCX page previews, and theme comparison evidence. Do not enable or
-publish GitHub Pages unless a future change explicitly revisits the public
+`dist/review-package/` from the generated artifacts, generated profile README,
+site preview, semantic QA metrics, and a manifest with file hashes. Do not enable
+or publish GitHub Pages unless a future change explicitly revisits the public
 contact boundary. CI installs Pandoc, Poppler, LibreOffice, LibreOffice Java
-support, and a headless JRE before artifact generation because DOCX metadata and
-visual QA depend on those system tools. DOCX preview rendering treats unexpected
-LibreOffice stderr as a failure so Java/profile warnings are fixed rather than
-hidden.
+support, and a headless JRE before artifact generation because PDF text
+extraction and DOCX metadata QA depend on those system tools.
 
 ## Quality Gates
 
@@ -90,9 +85,10 @@ retention, and a CI-uploaded review package.
 ## Rendering Decisions
 
 RenderCV stays the PDF/Typst renderer because it keeps CV content in text and
-handles consistent typography. The default theme is `engineeringresumes`; only
-change theme, font, margins, contact separators, or spacing after comparing
-generated artifacts and confirming no ATS downside.
+handles consistent typography. The default and only supported theme is
+`engineeringresumes`; the old comparison workflow was removed after the visual
+decision was finalized. Only change theme, font, margins, contact separators, or
+spacing after reviewing generated artifacts and confirming no ATS downside.
 
 ATS surfaces should remain single-column, text-based, standard-heading documents
 with readable 10-12pt body text, simple bullets, no icons, no tables used for
@@ -123,10 +119,9 @@ gh run download <run-id> --name resume-artifacts --dir review-artifacts
 
 Inside the archive, start with `REVIEW.md`, `index.html`, and `manifest.json`.
 Those files point to the generated resume formats, generated profile README,
-site preview, PDF/DOCX visual review PNGs, and theme comparison outputs. Artifact
-links expire according to the workflow retention setting, so every PR body must
-record the current run URL, artifact URL, digest, and expiry after the latest
-push.
+and site preview. Artifact links expire according to the workflow retention
+setting, so every PR body must record the current run URL, artifact URL, digest,
+and expiry after the latest push.
 
 ## Manual Release Review
 
@@ -134,8 +129,9 @@ Before distributing a CV/profile build:
 
 - compare `README.md`, ATS Markdown, PDF text, and DOCX text for aligned dates,
   titles, project descriptions, skills, and contact/privacy boundaries;
-- review every PDF and DOCX page rendered to PNG for clipping, overlap, missing
-  glyphs, broken visible links, and unexpected pagination drift;
+- open the generated PDF, DOCX, HTML, and local site when local viewers are
+  available, checking for clipping, overlap, missing glyphs, broken visible
+  links, and unexpected pagination drift;
 - download the current CI `resume-artifacts` package and confirm
   `REVIEW.md`, `index.html`, and `manifest.json` match the current head SHA;
 - keep generated artifacts ignored unless the user explicitly asks to publish

@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 
 from profile_cv import build as build_module
-from profile_cv.build import _build_site_outputs, build_all, build_review_package, compare_themes
+from profile_cv.build import _build_site_outputs, build_all, build_review_package
 from profile_cv.qa import doctor
 from profile_cv.source import load_source
 
@@ -41,24 +41,6 @@ def test_full_build_pipeline_outputs_all_distribution_formats(tmp_path: Path) ->
     assert metrics["qa"]["docx"]["metadata_current"] is True
     assert metrics["qa"]["docx"]["metadata_pages"] >= 1
     assert metrics["qa"]["docx"]["metadata_words"] > 1_000
-
-
-@pytest.mark.integration
-def test_theme_comparison_is_small_but_meaningful(tmp_path: Path) -> None:
-    status = doctor()
-    missing = [name for name in ("rendercv", "pdfinfo", "pdftotext") if not status[name]]
-    if missing:
-        pytest.skip(f"missing external tools: {missing}")
-
-    rows = compare_themes(
-        root=ROOT,
-        themes=("engineeringresumes", "sb2nov"),
-        output_dir=tmp_path / "themes",
-        report_path=tmp_path / "theme-comparison.md",
-    )
-    assert [row["theme"] for row in rows] == ["engineeringresumes", "sb2nov"]
-    assert all(row["has_required_sections"] for row in rows)
-    assert all(row["pages"] >= 1 for row in rows)
 
 
 def test_site_output_is_self_contained(tmp_path: Path) -> None:
@@ -104,10 +86,8 @@ def test_review_package_collects_artifacts_and_review_evidence(
     assert (package / "index.html").exists()
     assert (package / "manifest.json").exists()
     assert (package / "artifacts" / "Andrew_Crozier_Resume.pdf").exists()
+    assert (package / "profile" / "README.generated.md").exists()
     assert (package / "site" / "index.html").exists()
-    assert (package / "visual-review" / "pdf" / "page-1.png").exists()
-    assert (package / "visual-review" / "docx" / "page-1.png").exists()
-    assert (package / "theme-comparison.md").exists()
     assert manifest["contact_boundary"]["public_readme_excludes_direct_resume_email"] is True
 
     written = json.loads((package / "manifest.json").read_text(encoding="utf-8"))
@@ -115,39 +95,32 @@ def test_review_package_collects_artifacts_and_review_evidence(
     assert "REVIEW.md" in paths
     assert "index.html" in paths
     assert "artifacts/Andrew_Crozier_Resume.docx" in paths
-    assert "theme-comparison/engineeringresumes/Andrew_Crozier_Resume.pdf" in paths
+    assert "profile/README.generated.md" in paths
+    assert "site/index.html" in paths
 
 
-def test_review_package_fails_when_visual_evidence_is_missing(
+def test_review_package_fails_when_required_artifact_is_missing(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     _write_review_package_sources(tmp_path)
-    (tmp_path / "_qa_docx" / "page-1.png").unlink()
+    (tmp_path / "dist" / "Andrew_Crozier_Resume.docx").unlink()
     monkeypatch.setattr(build_module, "run_quality_gates", _fake_run_quality_gates)
 
-    with pytest.raises(FileNotFoundError, match="DOCX preview PNGs"):
+    with pytest.raises(FileNotFoundError, match="Review package source is missing"):
         build_review_package(root=tmp_path)
 
 
 def _write_review_package_sources(root: Path) -> None:
     dist = root / "dist"
     site = root / "site"
-    rendercv = dist / "rendercv"
-    theme = dist / "theme-comparison" / "engineeringresumes"
-    for directory in (dist, site, rendercv, theme, root / "_qa_pdf", root / "_qa_docx"):
+    for directory in (dist, site):
         directory.mkdir(parents=True, exist_ok=True)
     for suffix in ("pdf", "docx", "md", "html", "json"):
         (dist / f"Andrew_Crozier_Resume.{suffix}").write_text(suffix, encoding="utf-8")
     (dist / "profile.schemaorg.json").write_text("{}", encoding="utf-8")
     (dist / "README.generated.md").write_text("# README\n", encoding="utf-8")
-    (dist / "theme-comparison.md").write_text("# Theme comparison\n", encoding="utf-8")
     (site / "index.html").write_text("<html></html>\n", encoding="utf-8")
     (site / "resume.css").write_text("body {}\n", encoding="utf-8")
-    (rendercv / "Andrew_Crozier_Resume_1.png").write_bytes(b"png")
-    (theme / "Andrew_Crozier_Resume.pdf").write_text("theme pdf", encoding="utf-8")
-    (theme / "Andrew_Crozier_Resume_1.png").write_bytes(b"theme png")
-    (root / "_qa_pdf" / "page-1.png").write_bytes(b"pdf png")
-    (root / "_qa_docx" / "page-1.png").write_bytes(b"docx png")
 
 
 def _fake_qa() -> dict[str, dict[str, int | bool]]:
