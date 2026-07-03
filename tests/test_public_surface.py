@@ -51,7 +51,6 @@ def test_quality_policy_is_limited_to_repository_surface_boundaries() -> None:
         "public_files",
         "public_dir_prefixes",
         "blocked_tracked_paths",
-        "binary_suffixes",
     }
 
 
@@ -62,5 +61,10 @@ def test_public_surface_policy_does_not_own_secret_or_content_scanning() -> None
         "public_files",
         "public_dir_prefixes",
         "blocked_tracked_paths",
-        "binary_suffixes",
     }
+
+
+def test_public_surface_blocks_unknown_tracked_paths() -> None:
+    errors = tracked_path_errors([Path("unexpected.md")])
+
+    assert errors == ["unexpected.md: tracked path outside public surface allowlist"]

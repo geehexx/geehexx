@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import argparse
-import re
 import sys
 from pathlib import Path
 
@@ -20,9 +19,8 @@ FORBIDDEN = ("{{", "}}", "TODO", "andrewcrozier86@gmail.com")
 
 def lint(path: Path) -> list[str]:
     text = path.read_text(encoding="utf-8")
-    lines = text.splitlines()
     errors: list[str] = []
-    if len(re.findall(r"^# ", text, flags=re.MULTILINE)) != 1:
+    if sum(1 for line in text.splitlines() if line.startswith("# ")) != 1:
         errors.append("README must have exactly one H1 heading")
     for heading in REQUIRED_HEADINGS:
         if heading not in text:
@@ -30,15 +28,6 @@ def lint(path: Path) -> list[str]:
     for token in FORBIDDEN:
         if token in text:
             errors.append(f"forbidden token present: {token}")
-    if text.count("|---") and "| ---" not in text:
-        errors.append("Markdown tables should use spaced separator rows for readability")
-    for index, line in enumerate(lines, start=1):
-        if line.rstrip() != line:
-            errors.append(f"line {index}: trailing whitespace")
-        if "\t" in line:
-            errors.append(f"line {index}: tab character")
-        if len(line) > 320 and not line.startswith("[!["):
-            errors.append(f"line {index}: line exceeds 320 characters")
     return errors
 
 

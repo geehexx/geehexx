@@ -5,10 +5,12 @@ import subprocess
 from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 from docx import Document
 
 from .docx_metadata import assert_docx_metadata
+from .semantic_qa import Surface, assert_semantic_alignment
 
 
 @dataclass(frozen=True)
@@ -56,26 +58,35 @@ def assert_doctor(
 
 
 def qa_pdf(
-    pdf_path: Path, *, max_pages: int = 5, expectations: ArtifactExpectations | None = None
+    pdf_path: Path,
+    *,
+    max_pages: int = 5,
+    expectations: ArtifactExpectations | None = None,
+    resume: dict[str, Any] | None = None,
 ) -> dict[str, int | bool]:
     if not pdf_path.exists():
         raise FileNotFoundError(pdf_path)
     text = pdftotext(pdf_path)
     pages = pdf_pages(pdf_path)
     assert_text_quality(text, source=pdf_path, expectations=expectations)
+    semantic = _semantic(text, resume=resume, surface="pdf")
     if pages < 1 or pages > max_pages:
         raise AssertionError(f"Unexpected page count for {pdf_path}: {pages}")
-    return {"pages": pages, "chars": len(text), "text_reviewed": True}
+    return {"pages": pages, "chars": len(text), "text_reviewed": True, **semantic}
 
 
 def qa_docx(
-    docx_path: Path, *, expectations: ArtifactExpectations | None = None
+    docx_path: Path,
+    *,
+    expectations: ArtifactExpectations | None = None,
+    resume: dict[str, Any] | None = None,
 ) -> dict[str, int | bool]:
     if not docx_path.exists():
         raise FileNotFoundError(docx_path)
     document = Document(str(docx_path))
     text = "\n".join(paragraph.text for paragraph in document.paragraphs)
     assert_text_quality(text, source=docx_path, expectations=expectations)
+    semantic = _semantic(text, resume=resume, surface="docx")
     metadata = assert_docx_metadata(docx_path)
     return {
         "paragraphs": len(document.paragraphs),
@@ -84,19 +95,28 @@ def qa_docx(
         "metadata_pages": int(metadata["pages"]),
         "metadata_words": int(metadata["words"]),
         "metadata_current": bool(metadata["metadata_current"]),
+        **semantic,
     }
 
 
 def qa_text_file(
-    path: Path, *, expectations: ArtifactExpectations | None = None
+    path: Path,
+    *,
+    expectations: ArtifactExpectations | None = None,
+    resume: dict[str, Any] | None = None,
+    surface: Surface = "markdown",
 ) -> dict[str, int | bool]:
     text = path.read_text(encoding="utf-8")
     assert_text_quality(text, source=path, expectations=expectations)
-    return {"chars": len(text), "text_reviewed": True}
+    semantic = _semantic(text, resume=resume, surface=surface)
+    return {"chars": len(text), "text_reviewed": True, **semantic}
 
 
 def qa_readme(
-    path: Path, *, expectations: ArtifactExpectations | None = None
+    path: Path,
+    *,
+    expectations: ArtifactExpectations | None = None,
+    resume: dict[str, Any] | None = None,
 ) -> dict[str, int | bool]:
     text = path.read_text(encoding="utf-8")
     sections = expectations.readme_sections if expectations else ()
@@ -114,7 +134,8 @@ def qa_readme(
         raise AssertionError("README must contain exactly one H1")
     if "{{" in text or "}}" in text:
         raise AssertionError("README contains unreplaced template marker")
-    return {"chars": len(text), "text_reviewed": True}
+    semantic = _semantic(text, resume=resume, surface="readme")
+    return {"chars": len(text), "text_reviewed": True, **semantic}
 
 
 def assert_text_quality(
@@ -150,3 +171,11 @@ def pdf_pages(pdf_path: Path) -> int:
         if line.startswith("Pages:"):
             return int(line.split(":", 1)[1].strip())
     raise RuntimeError(f"Could not read page count from {pdf_path}")
+
+
+def _semantic(
+    text: str, *, resume: dict[str, Any] | None, surface: Surface
+) -> dict[str, int | bool]:
+    if resume is None:
+        return {"semantic_reviewed": False}
+    return assert_semantic_alignment(text, resume=resume, surface=surface).as_dict()

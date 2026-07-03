@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import filecmp
 import shutil
 import subprocess
 import tempfile
@@ -70,7 +71,11 @@ def build_all(
         profile_check=profile_check,
     )
     _build_site_outputs(
-        resume=resume, site_dir=site_dir, template_dir=template_dir, outputs=outputs
+        resume=resume,
+        site_dir=site_dir,
+        template_dir=template_dir,
+        styles_dir=styles_dir,
+        outputs=outputs,
     )
 
     metrics: dict[str, Any] = {"outputs": {key: str(path) for key, path in outputs.items()}}
@@ -210,12 +215,14 @@ def _build_site_outputs(
     resume: dict[str, Any],
     site_dir: Path,
     template_dir: Path,
+    styles_dir: Path,
     outputs: dict[str, Path],
 ) -> None:
     site_dir.mkdir(parents=True, exist_ok=True)
     (site_dir / ".nojekyll").write_text("", encoding="utf-8")
     site_html = render_template(resume, template_dir, "site_index.html.j2", autoescape=True)
     (site_dir / "index.html").write_text(site_html, encoding="utf-8")
+    shutil.copy2(styles_dir / "resume.css", site_dir / "resume.css")
     for key in ("pdf", "docx", "markdown", "html", "json", "json_ld"):
         shutil.copy2(outputs[key], site_dir / outputs[key].name)
 
@@ -225,14 +232,19 @@ def run_quality_gates(*, root: Path, outputs: dict[str, Path] | None = None) -> 
         "pdf": root / DEFAULT_DIST / f"{DEFAULT_BASENAME}.pdf",
         "docx": root / DEFAULT_DIST / f"{DEFAULT_BASENAME}.docx",
         "markdown": root / DEFAULT_DIST / f"{DEFAULT_BASENAME}.md",
+        "html": root / DEFAULT_DIST / f"{DEFAULT_BASENAME}.html",
         "readme": root / "README.md",
     }
-    expectations = expectations_from_resume(load_source(root / DEFAULT_RESUME))
+    resume = load_source(root / DEFAULT_RESUME)
+    expectations = expectations_from_resume(resume)
     return {
-        "pdf": qa_pdf(outputs["pdf"], expectations=expectations),
-        "docx": qa_docx(outputs["docx"], expectations=expectations),
-        "markdown": qa_text_file(outputs["markdown"], expectations=expectations),
-        "readme": qa_readme(outputs["readme"], expectations=expectations),
+        "pdf": qa_pdf(outputs["pdf"], expectations=expectations, resume=resume),
+        "docx": qa_docx(outputs["docx"], expectations=expectations, resume=resume),
+        "markdown": qa_text_file(outputs["markdown"], expectations=expectations, resume=resume),
+        "html": qa_text_file(
+            outputs["html"], expectations=expectations, resume=resume, surface="html"
+        ),
+        "readme": qa_readme(outputs["readme"], expectations=expectations, resume=resume),
     }
 
 
@@ -392,6 +404,13 @@ def write_theme_report(path: Path, rows: list[dict[str, Any]], *, selected_theme
 
 
 def ensure_typst_package_cache(root: Path) -> None:
+    """Sync vendored Typst preview packages into typst-py's global cache.
+
+    The RenderCV Typst package is vendored so CI and local builds do not depend
+    on the preview package registry being reachable. typst-py resolves preview
+    packages from this cache location, so keep writes minimal and only replace a
+    package directory when the vendored copy differs.
+    """
     vendor = root / "vendor" / "typst" / "packages" / "preview"
     if not vendor.exists():
         return
@@ -404,6 +423,17 @@ def ensure_typst_package_cache(root: Path) -> None:
                 continue
             target = cache / package_dir.name / version_dir.name
             target.parent.mkdir(parents=True, exist_ok=True)
+            if target.exists() and _directory_matches(version_dir, target):
+                continue
             if target.exists():
                 shutil.rmtree(target)
             shutil.copytree(version_dir, target)
+
+
+def _directory_matches(left: Path, right: Path) -> bool:
+    if not right.exists():
+        return False
+    comparison = filecmp.dircmp(left, right)
+    if comparison.left_only or comparison.right_only or comparison.diff_files:
+        return False
+    return all(_directory_matches(left / name, right / name) for name in comparison.common_dirs)

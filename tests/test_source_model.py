@@ -23,6 +23,7 @@ def test_canonical_yaml_resume_validates_and_contains_portable_sections() -> Non
     assert resume["basics"]["profiles"][0]["network"] == "LinkedIn"
     assert resume["basics"]["x_contact"]["workAuthorization"] == "Australian citizen"
     assert resume["meta"]["version"] == "0.3.1"
+    assert resume["meta"]["canonical"].endswith("/resume.yaml")
     assert len(resume["work"]) >= 10
     assert len(resume["projects"]) >= 8
     assert any(project["name"] == "library-ops" for project in resume["projects"])
@@ -30,6 +31,11 @@ def test_canonical_yaml_resume_validates_and_contains_portable_sections() -> Non
     assert any(skill["name"] == "Applied AI & Retrieval" for skill in resume["skills"])
     assert "KrisFlyer" in serialized
     assert "millions of properties" in serialized
+    assert all(item["x_profile"]["section"] for item in resume["work"])
+    assert all(
+        item["x_profile"]["section"] == "omit" or item["x_profile"].get("signal")
+        for item in resume["work"]
+    )
 
 
 def test_generated_readme_is_public_safe_and_source_aligned() -> None:
@@ -77,6 +83,7 @@ def test_canonical_source_controls_project_inclusion_across_outputs() -> None:
     resume = load_source(RESUME)
     readme_projects = [p["name"] for p in resume["projects"] if p["x_profile"]["featured"]]
     resume_projects = [p["name"] for p in resume["projects"] if p["x_resume"]["featured"]]
+    profile_sections = {item["name"]: item["x_profile"]["section"] for item in resume["work"]}
 
     assert set(resume_projects).issubset(set(readme_projects))
     assert "library-ops" in resume_projects
@@ -84,3 +91,6 @@ def test_canonical_source_controls_project_inclusion_across_outputs() -> None:
     assert "msteams-mcp" not in resume_projects
     assert "PragmaLens" in readme_projects
     assert "PragmaLens" not in resume_projects
+    assert profile_sections["Toptal"] in {"career_snapshot", "omit"}
+    assert profile_sections["Agoda"] == "omit"
+    assert profile_sections["Independent Freelance / Contract Engagements"] == "earlier_work"

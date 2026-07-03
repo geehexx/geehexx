@@ -8,7 +8,6 @@ sys.path.insert(0, str(ROOT))
 
 from scripts.check_workflows import (  # noqa: E402
     assert_dependabot_policy,
-    assert_pages_workflow,
     assert_workflow_policy,
     workflow_paths,
 )
@@ -18,9 +17,9 @@ def test_github_actions_workflows_keep_security_and_reproducibility_guards() -> 
     paths = workflow_paths()
     assert paths
     errors = [error for path in paths for error in assert_workflow_policy(path)]
-    errors.extend(assert_pages_workflow())
     errors.extend(assert_dependabot_policy())
     assert errors == []
+    assert not (ROOT / ".github" / "workflows" / "pages.yml").exists()
 
 
 def test_docs_are_consolidated_into_maintainer_guide() -> None:
@@ -41,6 +40,17 @@ def test_pre_commit_uses_standard_secret_scanner() -> None:
     assert "https://github.com/Yelp/detect-secrets" in text
     assert "detect-secrets" in text
     assert "detect-secrets-hook" in ci
+
+
+def test_hooks_and_ci_use_standard_workflow_tools() -> None:
+    pre_commit = (ROOT / ".pre-commit-config.yaml").read_text(encoding="utf-8")
+    lefthook = (ROOT / "lefthook.yml").read_text(encoding="utf-8")
+    ci = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+
+    for token in ("actionlint", "check-jsonschema", "yamllint", "zizmor"):
+        assert token in pre_commit
+        assert token in lefthook
+        assert token in ci
 
 
 def test_pull_request_template_captures_review_evidence() -> None:

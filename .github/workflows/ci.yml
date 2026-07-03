@@ -25,7 +25,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          persist-credentials: false
       - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
         with:
           version: ${{ env.UV_VERSION }}
@@ -54,6 +56,14 @@ jobs:
           uv run mypy
       - name: Unit tests
         run: uv run pytest
+      - name: Workflow and YAML validation
+        run: |
+          uvx --from actionlint-py actionlint
+          uvx check-jsonschema --builtin-schema vendor.github-workflows .github/workflows/*.yml
+          uvx check-jsonschema --builtin-schema custom.github-workflows-require-timeout .github/workflows/*.yml
+          uvx check-jsonschema --builtin-schema vendor.dependabot .github/dependabot.yml
+          uvx yamllint .github/dependabot.yml .github/workflows quality-gates.yaml resume.yaml .yamllint.yml
+          uvx zizmor --format plain .
       - name: Integration tests
         run: |
           uv run pytest -o addopts="" tests/test_build_pipeline.py::test_full_build_pipeline_outputs_all_distribution_formats
@@ -66,7 +76,7 @@ jobs:
       - name: Build artifacts
         run: uv run profile-cv build --clean --no-profile-check
       - name: Upload resume artifacts
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: resume-artifacts
           if-no-files-found: error

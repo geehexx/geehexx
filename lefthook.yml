@@ -9,6 +9,18 @@ pre-commit:
       run: uv run python scripts/lint_readme.py README.md
     profile-sync:
       run: uv run profile-cv render-profile --check
+    actionlint:
+      run: uvx --from actionlint-py actionlint
+    workflow-schema:
+      run: uvx check-jsonschema --builtin-schema vendor.github-workflows .github/workflows/ci.yml .github/workflows/profile-drift.yml
+    workflow-timeouts:
+      run: uvx check-jsonschema --builtin-schema custom.github-workflows-require-timeout .github/workflows/ci.yml .github/workflows/profile-drift.yml
+    dependabot-schema:
+      run: uvx check-jsonschema --builtin-schema vendor.dependabot .github/dependabot.yml
+    yamllint:
+      run: uvx yamllint .github/dependabot.yml .github/workflows quality-gates.yaml resume.yaml .yamllint.yml
+    zizmor:
+      run: uvx zizmor --format plain .
     ruff:
       run: uv run ruff check .
 

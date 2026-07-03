@@ -12,6 +12,7 @@ Resume = dict[str, Any]
 
 DATE_RE = re.compile(r"^([1-2][0-9]{3})(-[0-1][0-9])?(-[0-3][0-9])?$")
 REQUIRED_TOP_LEVEL = ("basics", "work", "education", "skills", "projects", "meta")
+PROFILE_SECTIONS = {"career_snapshot", "earlier_work", "omit"}
 
 
 def load_source(path: Path) -> Resume:
@@ -74,6 +75,16 @@ def validate_source(resume: Resume, *, schema: Resume | None = None) -> None:
             validate_date(str(item["endDate"]), f"work[{index}].endDate")
         if not item["highlights"]:
             raise ValueError(f"resume.work[{index}] has no highlights")
+        profile = item.get("x_profile")
+        if not isinstance(profile, dict):
+            raise ValueError(f"resume.work[{index}] missing x_profile section policy")
+        section = profile.get("section")
+        if section not in PROFILE_SECTIONS:
+            raise ValueError(
+                f"resume.work[{index}].x_profile.section must be one of {sorted(PROFILE_SECTIONS)}"
+            )
+        if section != "omit" and not profile.get("signal"):
+            raise ValueError(f"resume.work[{index}].x_profile.signal required for {section}")
 
     projects = require_list(resume, "projects")
     if len(projects) < 8:

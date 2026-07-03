@@ -37,6 +37,9 @@ def tracked_path_errors(paths: list[Path], policy: QualityPolicy = _DEFAULT_POLI
     errors: list[str] = []
     for path in paths:
         path_text = path.as_posix()
+        if not is_public_surface(path, policy):
+            errors.append(f"{path_text}: tracked path outside public surface allowlist")
+            continue
         for pattern in policy.blocked_tracked_paths:
             if pattern.search(path_text):
                 errors.append(f"{path_text}: tracked internal/generated path")

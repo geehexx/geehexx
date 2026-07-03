@@ -10,16 +10,16 @@
 
 ## Technologies
 
-{% for skill in resume.skills -%}
+{% for skill in view.skills -%}
 **{{ skill.name }}:** {{ skill.keywords | join(', ') }}
 
 {% endfor -%}
 ## Experience
 
-{% for item in resume.work -%}
+{% for item in view.resume_work -%}
 ### {{ item.name }} | {{ item.position }}
 
-{{ item.location }} | {{ item.x_display.dateLabel }}
+{{ item.location }} | {{ item.date_label }}
 
 {% for highlight in item.highlights -%}
 - {{ highlight }}
@@ -32,6 +32,6 @@
 {% endfor %}
 ## Education
 
-{% for item in resume.education -%}
-**{{ item.institution }}** - {{ item.studyType }}, {{ item.area }} | {{ item.x_display.dateLabel }}
+{% for item in view.education -%}
+**{{ item.institution }}** - {{ item.study_type }}, {{ item.area }} | {{ item.date_label }}
 {% endfor %}

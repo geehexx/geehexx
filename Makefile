@@ -32,6 +32,12 @@ test:
 
 policy:
 	$(MAKE) secrets
+	uvx --from actionlint-py actionlint
+	uvx check-jsonschema --builtin-schema vendor.github-workflows .github/workflows/ci.yml .github/workflows/profile-drift.yml
+	uvx check-jsonschema --builtin-schema custom.github-workflows-require-timeout .github/workflows/ci.yml .github/workflows/profile-drift.yml
+	uvx check-jsonschema --builtin-schema vendor.dependabot .github/dependabot.yml
+	uvx yamllint .github/dependabot.yml .github/workflows quality-gates.yaml resume.yaml .yamllint.yml
+	uvx zizmor --format plain .
 	uv run python scripts/check_workflows.py
 	uv run python scripts/check_public_surface.py
 	uv run python scripts/lint_readme.py README.md

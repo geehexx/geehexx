@@ -15,7 +15,6 @@ class QualityPolicy:
     public_files: frozenset[str]
     public_dir_prefixes: tuple[str, ...]
     blocked_tracked_paths: tuple[re.Pattern[str], ...]
-    binary_suffixes: frozenset[str]
 
 
 def load_policy(path: Path = DEFAULT_POLICY_PATH) -> QualityPolicy:
@@ -30,7 +29,6 @@ def load_policy(path: Path = DEFAULT_POLICY_PATH) -> QualityPolicy:
         blocked_tracked_paths=tuple(
             re.compile(pattern) for pattern in _string_list(public_surface, "blocked_tracked_paths")
         ),
-        binary_suffixes=frozenset(_string_list(public_surface, "binary_suffixes")),
     )
 
 

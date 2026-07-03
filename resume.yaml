@@ -53,6 +53,7 @@ work:
   x_display:
     dateLabel: Feb 2026 - Present
   x_profile:
+    section: career_snapshot
     signal: Lead AI Engineer for production agentic AI, retrieval, governance workflows, and platform
       infrastructure
 - name: BaxEnergy (a Yokogawa Company)
@@ -74,6 +75,7 @@ work:
     dateLabel: Sep 2025 - Feb 2026
   endDate: 2026-02
   x_profile:
+    section: career_snapshot
     signal: Engineering maturity assessment and modernization roadmap across delivery practices, incident
       response, DORA metrics, and cloud-native migration planning
 - name: Toptal
@@ -89,6 +91,8 @@ work:
   x_display:
     dateLabel: Dec 2024 - May 2025
   endDate: 2025-05
+  x_profile:
+    section: omit
 - name: Agoda (Booking Holdings)
   position: Engineering Manager - B2B Platforms
   location: Bangkok / Hybrid
@@ -110,6 +114,7 @@ work:
     dateLabel: Jan 2023 - Nov 2024
   endDate: 2024-11
   x_profile:
+    section: career_snapshot
     signal: Engineering Manager for B2B booking platforms; led 15+ engineers; supported high-scale booking
       flows across millions of properties and major enterprise partners
 - name: Toptal
@@ -132,6 +137,7 @@ work:
     dateLabel: Jan 2017 - Jan 2023
   endDate: 2023-01
   x_profile:
+    section: career_snapshot
     signal: Senior Software Engineer, Product Manager, and Engineering Manager across talent matching,
       vetting, ETL, enterprise delivery, and remote engineering systems
 - name: Independent Freelance / Contract Engagements
@@ -150,6 +156,10 @@ work:
   x_display:
     dateLabel: Nov 2015 - Dec 2016
   endDate: 2016-12
+  x_profile:
+    section: earlier_work
+    signal: Built a greenfield ecommerce platform for an Australian equestrian-event booking startup using
+      Python, Django, Angular 2, payment flows, admin tooling, and deployment ownership.
 - name: Coins.ph
   position: Contract Technical Consultant / Senior Software Engineer
   location: Remote / Philippines
@@ -164,6 +174,10 @@ work:
   x_display:
     dateLabel: Mar 2016 - Nov 2016
   endDate: 2016-11
+  x_profile:
+    section: earlier_work
+    signal: Led Django 1.8 LTS to 1.10 and Python 2.7 to 3.5.2 modernization across the payment-processing
+      platform.
 - name: Agoda
   position: Engineering Manager - Affiliates Platform
   location: Bangkok
@@ -177,6 +191,8 @@ work:
   x_display:
     dateLabel: Aug 2015 - Jan 2016
   endDate: 2016-01
+  x_profile:
+    section: omit
 - name: Insydo
   position: Director of Engineering
   location: Dubai
@@ -194,6 +210,10 @@ work:
   x_display:
     dateLabel: Sep 2014 - Aug 2015
   endDate: 2015-08
+  x_profile:
+    section: earlier_work
+    signal: Led engineering for a curated Dubai city-guide and recommendation platform across search,
+      recommendations, editorial workflows, and launch delivery.
 - name: Dubizzle (Naspers-backed)
   position: Software Engineer to Engineering Manager
   location: Dubai
@@ -217,6 +237,7 @@ work:
     dateLabel: 2012 - Sep 2014
   endDate: 2014-09
   x_profile:
+    section: career_snapshot
     signal: Built and scaled classifieds marketplace systems, rebuilt core ad-placement workflows, and
       helped move a Django monolith toward service-oriented architecture
     context: Dubizzle (Naspers-backed)
@@ -233,6 +254,10 @@ work:
   x_display:
     dateLabel: 2011 - 2012
   endDate: '2012'
+  x_profile:
+    section: earlier_work
+    signal: Developed and maintained Django-based CMS platforms powering 40+ websites for the largest
+      publishing house in the Middle East, serving 100+ media brands.
 education:
 - institution: Charles Sturt University
   studyType: Bachelor of Information Technology
@@ -472,7 +497,7 @@ languages:
 interests: []
 references: []
 meta:
-  canonical: https://github.com/geehexx/geehexx/blob/main/resume.json
+  canonical: https://github.com/geehexx/geehexx/blob/main/resume.yaml
   version: 0.3.1
   lastModified: '2026-07-01T00:00:00+07:00'
   x_source:

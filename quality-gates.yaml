@@ -3,8 +3,10 @@ public_surface:
   public_files:
     - .editorconfig
     - .gitattributes
+    - .gitignore
     - .pre-commit-config.yaml
     - .python-version
+    - .yamllint.yml
     - AGENTS.md
     - CHANGELOG.md
     - LICENSE
@@ -36,11 +38,3 @@ public_surface:
     - '^handoff/'
     - '^uv\.lock$'
     - '^\.venv(?:/|$)'
-  binary_suffixes:
-    - .docx
-    - .gif
-    - .jpeg
-    - .jpg
-    - .pdf
-    - .png
-    - .zip
