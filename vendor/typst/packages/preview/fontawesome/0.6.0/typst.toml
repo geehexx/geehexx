@@ -1,0 +1,7 @@
+[package]
+name = "fontawesome"
+version = "0.6.0"
+entrypoint = "lib.typ"
+authors = ["duskmoon314", "offline stub adapted for no-icon RenderCV builds"]
+license = "MIT"
+description = "Minimal Font Awesome interface used only when RenderCV imports fontawesome but icons are disabled."

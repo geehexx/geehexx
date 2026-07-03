@@ -1,0 +1,67 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-added-large-files
+        args: ["--maxkb=750"]
+      - id: check-json
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.20
+    hooks:
+      - id: ruff-check
+      - id: ruff-format
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        args: ["--exclude-files", "^(vendor/typst/)"]
+  - repo: local
+    hooks:
+      - id: actionlint
+        name: actionlint
+        entry: uvx --from actionlint-py actionlint
+        language: system
+        pass_filenames: false
+      - id: workflow-schema
+        name: workflow-schema
+        entry: bash -c "uvx check-jsonschema --builtin-schema vendor.github-workflows .github/workflows/*.yml"
+        language: system
+        pass_filenames: false
+      - id: workflow-timeouts
+        name: workflow-timeouts
+        entry: bash -c "uvx check-jsonschema --builtin-schema custom.github-workflows-require-timeout .github/workflows/*.yml"
+        language: system
+        pass_filenames: false
+      - id: dependabot-schema
+        name: dependabot-schema
+        entry: uvx check-jsonschema --builtin-schema vendor.dependabot .github/dependabot.yml
+        language: system
+        pass_filenames: false
+      - id: yamllint
+        name: yamllint
+        entry: uvx yamllint .github/dependabot.yml .github/workflows quality-gates.yaml resume.yaml .yamllint.yml
+        language: system
+        pass_filenames: false
+      - id: zizmor
+        name: zizmor
+        entry: uvx zizmor --format plain .
+        language: system
+        pass_filenames: false
+      - id: public-surface
+        name: public-surface
+        entry: uv run python scripts/check_public_surface.py --staged
+        language: system
+        pass_filenames: false
+      - id: profile-readme-sync
+        name: profile-readme-sync
+        entry: uv run profile-cv render-profile --check
+        language: system
+        pass_filenames: false
+      - id: readme-lint
+        name: readme-lint
+        entry: uv run python scripts/lint_readme.py README.md
+        language: system
+        pass_filenames: false

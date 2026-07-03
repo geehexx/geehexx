@@ -1,0 +1,40 @@
+# Repo-specific repository surface policy.
+public_surface:
+  public_files:
+    - .editorconfig
+    - .gitattributes
+    - .gitignore
+    - .pre-commit-config.yaml
+    - .python-version
+    - .yamllint.yml
+    - AGENTS.md
+    - CHANGELOG.md
+    - LICENSE
+    - Makefile
+    - README.md
+    - lefthook.yml
+    - pyproject.toml
+    - quality-gates.yaml
+    - resume.yaml
+    - uv.lock
+  public_dir_prefixes:
+    - .github/
+    - docs/
+    - schemas/
+    - scripts/
+    - src/
+    - styles/
+    - templates/
+    - tests/
+    - vendor/
+  blocked_tracked_paths:
+    - '^source/'
+    - '^dist/'
+    - '^site/'
+    - '^_qa'
+    - '^\.private/'
+    - '^planning/'
+    - '^research-notes/'
+    - '^notes/'
+    - '^handoff/'
+    - '^\.venv(?:/|$)'
