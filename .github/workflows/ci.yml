@@ -1,0 +1,100 @@
+name: ci
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: [main, development]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  UV_VERSION: "0.10.0"
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: |
+            pyproject.toml
+            uv.lock
+            .python-version
+      - name: Install Python
+        run: uv python install
+      - name: Install system tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends pandoc poppler-utils libreoffice libreoffice-java-common default-jre-headless
+      - name: Install project
+        run: uv sync --frozen --extra dev
+      - name: Secret scan
+        run: git ls-files -z | xargs -0 uv run --with detect-secrets detect-secrets-hook --exclude-files '^(vendor/typst/)'
+      - name: Validate canonical source
+        run: uv run profile-cv validate
+      - name: Check generated README
+        run: uv run profile-cv render-profile --check
+      - name: Lint
+        run: |
+          uv run ruff check .
+          uv run ruff format --check .
+          uv run mypy
+      - name: Unit tests
+        run: uv run pytest
+      - name: Workflow and YAML validation
+        run: |
+          uvx --from actionlint-py actionlint
+          uvx check-jsonschema --builtin-schema vendor.github-workflows .github/workflows/*.yml
+          uvx check-jsonschema --builtin-schema custom.github-workflows-require-timeout .github/workflows/*.yml
+          uvx check-jsonschema --builtin-schema vendor.dependabot .github/dependabot.yml
+          uvx yamllint .github/dependabot.yml .github/workflows quality-gates.yaml resume.yaml .yamllint.yml
+          uvx zizmor --format plain .
+      - name: Integration tests
+        run: uv run pytest -o addopts="" tests/test_build_pipeline.py::test_full_build_pipeline_outputs_all_distribution_formats
+      - name: Repository policy checks
+        run: |
+          uv run python scripts/check_workflows.py
+          uv run python scripts/check_public_surface.py
+          uv run python scripts/lint_readme.py README.md
+      - name: Build artifacts
+        run: uv run profile-cv build --clean --no-profile-check
+      - name: Assemble review package
+        run: uv run profile-cv review-package
+      - name: Upload resume artifacts
+        id: upload-resume-artifacts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: resume-artifacts
+          if-no-files-found: error
+          retention-days: 14
+          path: dist/review-package/
+      - name: Summarize resume artifacts
+        env:
+          ARTIFACT_DIGEST: ${{ steps.upload-resume-artifacts.outputs.artifact-digest }}
+          ARTIFACT_ID: ${{ steps.upload-resume-artifacts.outputs.artifact-id }}
+          ARTIFACT_URL: ${{ steps.upload-resume-artifacts.outputs.artifact-url }}
+        run: |
+          {
+            echo "### Resume artifacts"
+            echo "- Artifact URL: ${ARTIFACT_URL}"
+            echo "- Artifact digest: ${ARTIFACT_DIGEST}"
+            echo "- Artifact ID: ${ARTIFACT_ID}"
+            echo "- Entrypoints inside archive: \`REVIEW.md\`, \`index.html\`, \`manifest.json\`"
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,35 @@
+# Generated resume/profile artifacts
+dist/
+site/
+*.zip
+*.pdf
+*.docx
+!styles/reference.docx
+*.tmp
+*.bak
+
+# Non-public working material
+.private/
+.local/
+source/
+handoff/
+notes/
+research-notes/
+planning/
+*.local.md
+*.private.md
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+.venv
+*.egg-info/
+
+# OS/editor
+.DS_Store
+.idea/
+.vscode/

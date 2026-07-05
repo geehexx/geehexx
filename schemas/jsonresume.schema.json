@@ -1,0 +1,148 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://jsonresume.org/schema/",
+  "title": "JSON Resume schema with repository extension fields",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["basics", "work", "education", "skills", "projects", "meta"],
+  "definitions": {
+    "iso8601": {
+      "type": "string",
+      "pattern": "^([1-2][0-9]{3}-[0-1][0-9]-[0-3][0-9]|[1-2][0-9]{3}-[0-1][0-9]|[1-2][0-9]{3})$"
+    }
+  },
+  "properties": {
+    "$schema": { "type": "string", "format": "uri" },
+    "basics": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["name", "label", "summary", "location", "profiles"],
+      "properties": {
+        "name": { "type": "string" },
+        "label": { "type": "string" },
+        "image": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "url": { "type": "string", "format": "uri" },
+        "summary": { "type": "string" },
+        "location": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "address": { "type": "string" },
+            "postalCode": { "type": "string" },
+            "city": { "type": "string" },
+            "countryCode": { "type": "string" },
+            "region": { "type": "string" }
+          }
+        },
+        "profiles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "network": { "type": "string" },
+              "username": { "type": "string" },
+              "url": { "type": "string", "format": "uri" }
+            }
+          }
+        }
+      }
+    },
+    "work": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["name", "position", "startDate", "highlights"],
+        "properties": {
+          "name": { "type": "string" },
+          "location": { "type": "string" },
+          "description": { "type": "string" },
+          "position": { "type": "string" },
+          "url": { "type": "string", "format": "uri" },
+          "startDate": { "$ref": "#/definitions/iso8601" },
+          "endDate": { "$ref": "#/definitions/iso8601" },
+          "summary": { "type": "string" },
+          "highlights": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "education": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "institution": { "type": "string" },
+          "url": { "type": "string", "format": "uri" },
+          "area": { "type": "string" },
+          "studyType": { "type": "string" },
+          "startDate": { "$ref": "#/definitions/iso8601" },
+          "endDate": { "$ref": "#/definitions/iso8601" },
+          "score": { "type": "string" },
+          "courses": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["name", "keywords"],
+        "properties": {
+          "name": { "type": "string" },
+          "level": { "type": "string" },
+          "keywords": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "projects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["name", "description"],
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "highlights": { "type": "array", "items": { "type": "string" } },
+          "keywords": { "type": "array", "items": { "type": "string" } },
+          "startDate": { "$ref": "#/definitions/iso8601" },
+          "endDate": { "$ref": "#/definitions/iso8601" },
+          "url": { "type": "string", "format": "uri" },
+          "roles": { "type": "array", "items": { "type": "string" } },
+          "entity": { "type": "string" },
+          "type": { "type": "string" }
+        }
+      }
+    },
+    "languages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "language": { "type": "string" },
+          "fluency": { "type": "string" }
+        }
+      }
+    },
+    "interests": { "type": "array" },
+    "references": { "type": "array" },
+    "meta": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["canonical", "version", "lastModified", "x_profile", "x_rendercv"],
+      "properties": {
+        "canonical": { "type": "string", "format": "uri" },
+        "version": { "type": "string" },
+        "lastModified": { "type": "string" },
+        "x_profile": { "type": "object" },
+        "x_rendercv": { "type": "object" }
+      }
+    }
+  }
+}

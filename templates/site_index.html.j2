@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ view.name }} - Resume</title>
+  <link rel="stylesheet" href="resume.css">
+</head>
+<body>
+  <main>
+    <h1>{{ view.name }}</h1>
+    <p><strong>{{ view.label }}</strong></p>
+    <p>{{ view.public_location }}</p>
+    <ul>
+      <li><a href="{{ view.resume_basename }}.pdf">PDF resume</a></li>
+      <li><a href="{{ view.resume_basename }}.docx">DOCX resume</a></li>
+      <li><a href="{{ view.resume_basename }}.md">Markdown resume</a></li>
+      <li><a href="{{ view.resume_basename }}.json">JSON Resume source copy</a></li>
+      <li><a href="profile.schemaorg.json">Schema.org JSON-LD</a></li>
+    </ul>
+    <h2>Selected Public Work</h2>
+    <ul>
+      {% for project in view.featured_projects %}
+      <li><a href="{{ project.url }}">{{ project.name }}</a> - {{ project.description }}</li>
+      {% endfor %}
+    </ul>
+  </main>
+</body>
+</html>

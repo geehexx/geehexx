@@ -1,0 +1,37 @@
+# {{ view.name }}
+
+{{ view.label }}
+
+{{ view.contact_line }} - LinkedIn: {{ view.linkedin_url }} - GitHub: {{ view.github_url }}
+
+## Summary
+
+{{ view.summary }}
+
+## Technologies
+
+{% for skill in view.skills -%}
+**{{ skill.name }}:** {{ skill.keywords | join(', ') }}
+
+{% endfor -%}
+## Experience
+
+{% for item in view.resume_work -%}
+### {{ item.name }} | {{ item.position }}
+
+{{ item.location }} | {{ item.date_label }}
+
+{% for highlight in item.highlights -%}
+- {{ highlight }}
+{% endfor %}
+{% endfor -%}
+## Selected Public Work
+
+{% for project in view.resume_projects -%}
+- **{{ project.name }}:** {{ project.description }}
+{% endfor %}
+## Education
+
+{% for item in view.education -%}
+**{{ item.institution }}** - {{ item.study_type }}, {{ item.area }} | {{ item.date_label }}
+{% endfor %}

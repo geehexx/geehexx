@@ -1,0 +1,33 @@
+pre-commit:
+  parallel: false
+  commands:
+    public-surface:
+      run: uv run python scripts/check_public_surface.py --staged
+    secret-scan:
+      run: git diff --cached --name-only -z | xargs -0 uv run --with detect-secrets detect-secrets-hook --exclude-files '^(vendor/typst/)'
+    readme-lint:
+      run: uv run python scripts/lint_readme.py README.md
+    profile-sync:
+      run: uv run profile-cv render-profile --check
+    actionlint:
+      run: uvx --from actionlint-py actionlint
+    workflow-schema:
+      run: uvx check-jsonschema --builtin-schema vendor.github-workflows .github/workflows/*.yml
+    workflow-timeouts:
+      run: uvx check-jsonschema --builtin-schema custom.github-workflows-require-timeout .github/workflows/*.yml
+    dependabot-schema:
+      run: uvx check-jsonschema --builtin-schema vendor.dependabot .github/dependabot.yml
+    yamllint:
+      run: uvx yamllint .github/dependabot.yml .github/workflows quality-gates.yaml resume.yaml .yamllint.yml
+    zizmor:
+      run: uvx zizmor --format plain .
+    ruff:
+      run: uv run ruff check .
+
+pre-push:
+  parallel: false
+  commands:
+    tests:
+      run: uv run pytest
+    build:
+      run: uv run profile-cv build --clean --no-profile-check
