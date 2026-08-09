@@ -148,5 +148,5 @@ I am usually useful for:
 
 - **LinkedIn:** [linkedin.com/in/ancrozier](https://linkedin.com/in/ancrozier)
 - **GitHub:** [github.com/geehexx](https://github.com/geehexx)
-- **Location:** Thailand-based Australian citizen; remote Australia/APAC/EU/UK overlap
-- **Open to:** Engineering Manager, applied AI, software engineering, backend/platform engineering, and hands-on technical leadership roles. Remote across Australia / APAC / EU / UK overlap preferred; other on-site arrangements possible for the right role.
+- **Location:** Sydney-based Australian citizen
+- **Open to:** Engineering Manager, applied AI, software engineering, backend/platform engineering, and hands-on technical leadership roles. On-site/hybrid across Australia, remote across APAC / EU / UK overlap preferred
