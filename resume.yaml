@@ -4,7 +4,6 @@ basics:
   name: Andrew Crozier
   label: Engineering Manager - Applied AI & Platform Systems
   email: andrewcrozier86@gmail.com
-  phone: '+66963780780'
   summary: 'Engineering Manager and hands-on software engineer with 15+ years building backend, platform,
     data, and AI systems across marketplaces, travel, fintech, talent matching, retrieval, and enterprise
     decision support.
@@ -13,9 +12,9 @@ basics:
     delivery; shipped systems supporting 100K+ RPM booking flows, millions of properties, 200K+ annual
     applicants, and enterprise decision-support products.'
   location:
-    address: Bangkok, Thailand
-    city: Bangkok
-    countryCode: TH
+    address: Sydney, Australia
+    city: Sydney
+    countryCode: AU
     region: APAC
   profiles:
   - network: LinkedIn
@@ -26,7 +25,7 @@ basics:
     url: https://github.com/geehexx
   x_contact:
     remote: Remote (Australia/APAC/EU/UK overlap)
-    publicLocation: Thailand-based Australian citizen; remote Australia/APAC/EU/UK overlap
+    publicLocation: Sydney-based Australian citizen; remote APAC/EU/UK overlap
     publicEmail: false
     workAuthorization: Australian citizen
 work:
