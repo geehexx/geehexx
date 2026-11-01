@@ -64,3 +64,16 @@ def test_validate_cli_rejects_unsupported_build_metadata(
     shutil.copytree(ROOT / "schemas", tmp_path / "schemas")
     assert main(["--root", str(tmp_path), "validate"]) == 1
     assert "error:" in capsys.readouterr().err
+
+
+def test_doctor_cli_rejects_incompatible_renderer(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    monkeypatch.setattr(profile_cv.cli, "doctor", lambda: {"pandoc": True})
+
+    def incompatible() -> None:
+        raise RuntimeError("Reproducible builds require Pandoc 3.1.11.1")
+
+    monkeypatch.setattr(profile_cv.cli, "assert_doctor", incompatible)
+    assert main(["--root", str(ROOT), "doctor"]) == 1
+    assert "require Pandoc" in capsys.readouterr().err

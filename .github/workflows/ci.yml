@@ -19,6 +19,8 @@ defaults:
 
 env:
   UV_VERSION: "0.10.0"
+  PANDOC_VERSION: "3.1.11.1"
+  PANDOC_SHA256: "07635f6953201ee261bf90e821b8fe36c045e5a6fbae2ae6b1c2127715432942" # pragma: allowlist secret
 
 jobs:
   quality:
@@ -44,7 +46,17 @@ jobs:
       - name: Install system tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends pandoc poppler-utils libreoffice libreoffice-java-common default-jre-headless
+          sudo apt-get install -y --no-install-recommends poppler-utils libreoffice libreoffice-java-common default-jre-headless
+      - name: Install pinned Pandoc
+        run: |
+          archive="${RUNNER_TEMP}/pandoc.tar.gz"
+          curl --fail --location --silent --show-error \
+            "https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/pandoc-${PANDOC_VERSION}-linux-amd64.tar.gz" \
+            --output "${archive}"
+          printf '%s  %s\n' "${PANDOC_SHA256}" "${archive}" | sha256sum --check
+          mkdir -p "${RUNNER_TEMP}/pandoc"
+          tar --extract --gzip --file "${archive}" --strip-components=1 --directory "${RUNNER_TEMP}/pandoc"
+          echo "${RUNNER_TEMP}/pandoc/bin" >> "${GITHUB_PATH}"
       - name: Install project
         run: uv sync --frozen --extra dev
       - name: Secret scan

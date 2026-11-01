@@ -149,6 +149,7 @@ def _ci_review_package_errors(path: Path, job: object) -> list[str]:
     required_tokens = (
         "uv sync --frozen --extra dev",
         "libreoffice-java-common",
+        "sha256sum --check",
         "default-jre-headless",
         "uv run profile-cv build --clean --no-profile-check",
         "uv run profile-cv review-package",

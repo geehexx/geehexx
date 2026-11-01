@@ -54,9 +54,10 @@ behavior, and QA tooling do not drift between local and CI builds.
 
 `profile-cv doctor` checks the external artifact QA tools used by the full
 pipeline: RenderCV, Pandoc, Poppler, LibreOffice, and Java. On Ubuntu/CI, install
-`pandoc`, `poppler-utils`, `libreoffice`, `libreoffice-java-common`, and
+`poppler-utils`, `libreoffice`, `libreoffice-java-common`, and
 `default-jre-headless`; use `openjdk-21-jre-headless` only if the default
-headless runtime package is unavailable.
+headless runtime package is unavailable. Install the pinned upstream Pandoc
+release described below rather than relying on a distribution-default version.
 
 `profile-cv build` emits reviewed artifacts under `dist/` and a local preview
 site under `site/`. `profile-cv review-package` assembles
@@ -222,3 +223,17 @@ Custom `build_all(resume_path=...)` inputs are propagated to factual QA. The
 current pipeline intentionally supports only `Andrew_Crozier_Resume` as its
 output basename; unsupported configuration fails before cleanup instead of
 creating mismatched site links.
+
+### Pinned Pandoc renderer
+
+Cross-environment comparison found Ubuntu's Pandoc 3.1.3 and the reviewed local
+3.1.11.1 produce different DOCX defaults and HTML CSS. CI therefore downloads
+[upstream Pandoc 3.1.11.1](https://github.com/jgm/pandoc/releases/tag/3.1.11.1)
+and verifies its Linux amd64 archive SHA-256 before extraction:
+`07635f6953201ee261bf90e821b8fe36c045e5a6fbae2ae6b1c2127715432942`.
+Use the same version locally (upstream provides other platform binaries).
+Build preflight rejects mismatched Pandoc versions before cleaning artifacts.
+The upstream release includes DOCX validity fixes, but this is not evidence that
+the recipient's specific Word/ATS problem has been reproduced or resolved.
+When upgrading, change the reviewed version/hash together and repeat layout,
+extraction and cross-process/cross-environment comparisons.

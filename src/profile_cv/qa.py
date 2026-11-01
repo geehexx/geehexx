@@ -37,6 +37,9 @@ def expectations_from_resume(resume: dict[str, object]) -> ArtifactExpectations:
     )
 
 
+PANDOC_VERSION = "3.1.11.1"
+
+
 def doctor() -> dict[str, bool]:
     commands = {
         "rendercv": "rendercv",
@@ -59,10 +62,23 @@ def assert_doctor(
         "java",
     ),
 ) -> None:
+    required = tuple(required)
     status = doctor()
     missing = [name for name in required if not status.get(name)]
     if missing:
         raise RuntimeError(f"Missing required external tools: {', '.join(missing)}")
+    if "pandoc" in required:
+        assert_pandoc_version()
+
+
+def assert_pandoc_version() -> None:
+    result = subprocess.run(["pandoc", "--version"], check=True, capture_output=True, text=True)
+    first_line = result.stdout.splitlines()[0] if result.stdout else "unknown"
+    if first_line != f"pandoc {PANDOC_VERSION}":
+        raise RuntimeError(
+            f"Reproducible builds require Pandoc {PANDOC_VERSION}; found {first_line}. "
+            "See docs/maintainer-guide.md for the pinned upstream release."
+        )
 
 
 def qa_pdf(

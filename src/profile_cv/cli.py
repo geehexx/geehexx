@@ -15,7 +15,7 @@ from .build import (
     run_quality_gates,
 )
 from .paths import project_root
-from .qa import doctor
+from .qa import assert_doctor, doctor
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -67,7 +67,10 @@ def main(argv: list[str] | None = None) -> int:
             status = doctor()
             for name, ok in status.items():
                 print(f"{name}: {'ok' if ok else 'missing'}")
-            return 0 if all(status.values()) else 1
+            if not all(status.values()):
+                return 1
+            assert_doctor()
+            return 0
 
         if args.command == "validate":
             load_validated_resume(root, root / "resume.yaml")

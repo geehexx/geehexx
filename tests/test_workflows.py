@@ -5,12 +5,15 @@ from pathlib import Path
 
 import pytest
 
+from profile_cv.qa import PANDOC_VERSION
+
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from scripts.check_workflows import (  # noqa: E402
     assert_dependabot_policy,
     assert_workflow_policy,
+    load_yaml,
     workflow_paths,
 )
 
@@ -106,3 +109,14 @@ def test_setup_uv_requires_explicit_cache_pruning(tmp_path: Path, prune_setting:
     errors = assert_workflow_policy(changed)
 
     assert any("must explicitly prune cache" in error for error in errors)
+
+
+def test_ci_uses_checksum_verified_supported_pandoc() -> None:
+    ci = load_yaml(ROOT / ".github/workflows/ci.yml")
+    assert ci["env"]["PANDOC_VERSION"] == PANDOC_VERSION
+    assert len(ci["env"]["PANDOC_SHA256"]) == 64
+    steps = ci["jobs"]["quality"]["steps"]
+    install = next(step["run"] for step in steps if step.get("name") == "Install pinned Pandoc")
+    assert "https://github.com/jgm/pandoc/releases/download/" in install
+    assert install.index("sha256sum --check") < install.index("tar --extract")
+    assert '>> "${GITHUB_PATH}"' in install
