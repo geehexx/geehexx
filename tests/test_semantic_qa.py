@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from profile_cv.adapters import render_template
-from profile_cv.semantic_qa import assert_semantic_alignment
+from profile_cv.semantic_qa import Surface, assert_semantic_alignment
 from profile_cv.source import load_source
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -40,3 +40,14 @@ def test_semantic_policy_catches_public_email_leak() -> None:
         assert_semantic_alignment(
             f"{text}\n{resume['basics']['email']}", resume=resume, surface="readme"
         )
+
+
+@pytest.mark.parametrize("surface", ["markdown", "pdf", "docx", "html"])
+def test_resume_semantics_reject_stale_work_preferences(surface: Surface) -> None:
+    resume = load_source(RESUME)
+    text = render_template(resume, ROOT / "templates", "resume.md.j2")
+    stale = text.replace(
+        resume["basics"]["x_contact"]["remote"], "Remote (Australia/APAC/EU/UK overlap)"
+    )
+    with pytest.raises(AssertionError, match="missing required facts"):
+        assert_semantic_alignment(stale, resume=resume, surface=surface)

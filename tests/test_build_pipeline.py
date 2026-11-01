@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -8,6 +9,7 @@ import pytest
 from profile_cv import build as build_module
 from profile_cv.build import _build_site_outputs, build_all, build_review_package
 from profile_cv.qa import doctor
+from profile_cv.semantic_qa import assert_semantic_alignment
 from profile_cv.source import load_source
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -36,11 +38,26 @@ def test_full_build_pipeline_outputs_all_distribution_formats(tmp_path: Path) ->
     outputs = metrics["outputs"]
     for key in ("pdf", "typ", "markdown", "html", "docx", "json", "json_ld", "readme_generated"):
         assert Path(outputs[key]).exists()
+    html = Path(outputs["html"]).read_text(encoding="utf-8")
+    assert html.count("<h1") == 1
+    assert "<title>Andrew Crozier Resume</title>" in html
+    assert "APAC" not in html
+    assert "overlap" not in html
     assert metrics["qa"]["pdf"]["pages"] >= 1
     assert metrics["qa"]["docx"]["chars"] > 8_000
     assert metrics["qa"]["docx"]["metadata_current"] is True
     assert metrics["qa"]["docx"]["metadata_pages"] >= 1
     assert metrics["qa"]["docx"]["metadata_words"] > 1_000
+    # Standalone extraction includes the semantic Title, not only Pandoc body blocks.
+    extracted = subprocess.run(
+        ["pandoc", outputs["docx"], "--standalone", "--to", "plain"],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout
+    assert_semantic_alignment(extracted, resume=load_source(ROOT / "resume.yaml"), surface="docx")
+    assert "APAC" not in extracted
+    assert "overlap" not in extracted
 
 
 def test_site_output_is_self_contained(tmp_path: Path) -> None:

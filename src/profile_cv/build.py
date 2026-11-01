@@ -12,6 +12,7 @@ from typing import Any
 
 from . import __version__
 from .adapters import DEFAULT_BASENAME, render_template, to_json_ld, to_rendercv, write_yaml
+from .docx_layout import assert_docx_portable_structure, normalize_docx_layout
 from .docx_metadata import modified_from_resume, normalize_docx_metadata
 from .qa import (
     assert_doctor,
@@ -132,6 +133,7 @@ def _build_pandoc_outputs(
         reference_docx=styles_dir / "reference.docx",
         css_path=styles_dir / "resume.css",
     )
+    normalize_docx_layout(docx_path)
     normalize_docx_metadata(
         docx_path,
         title=f"{resume['basics']['name']} - Resume",
@@ -142,6 +144,7 @@ def _build_pandoc_outputs(
         application="profile-cv",
         app_version=__version__,
     )
+    assert_docx_portable_structure(docx_path)
     outputs["html"] = html_path
     outputs["docx"] = docx_path
 
@@ -502,7 +505,7 @@ def run_pandoc(
         "html5",
         "--standalone",
         "--metadata",
-        f"title={title}",
+        f"pagetitle={title}",
         "--output",
         str(html_path),
     ]

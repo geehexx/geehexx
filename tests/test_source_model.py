@@ -53,7 +53,7 @@ def test_generated_readme_is_public_safe_and_source_aligned() -> None:
     assert "mcp-web" in current
     assert "Sydney-based Australian citizen" in current
     assert "Thailand-based" not in current
-    assert "Remote across Australia / APAC / EU / UK overlap preferred" in current
+    assert "Remote preferred" in current
     assert "open to hybrid or on-site roles" in current
     assert "**T3**" in current
     assert "Stealth Startup" not in current
@@ -124,3 +124,32 @@ def test_t3_engagement_has_consistent_completed_dates_across_resume_outputs() ->
     experience = rendercv["cv"]["sections"]["Experience"][0]
     assert experience["company"] == "T3"
     assert experience["date"] == "Feb 2026 - Jun 2026"
+
+
+def test_current_location_and_preferences_do_not_imply_regional_remote_limits() -> None:
+    resume = load_source(RESUME)
+    assert resume["basics"]["location"]["city"] == "Sydney"
+    assert resume["basics"]["location"]["region"] == "New South Wales"
+    preference = "Remote preferred; open to hybrid or on-site roles"
+    assert resume["basics"]["x_contact"]["remote"] == preference
+    for template in ("README.md.j2", "resume.md.j2", "site_index.html.j2"):
+        rendered = render_template(resume, ROOT / "templates", template)
+        assert "Sydney" in rendered
+        assert "APAC" not in rendered
+        assert "overlap" not in rendered
+    markdown = render_template(resume, ROOT / "templates", "resume.md.j2")
+    assert preference in markdown
+    rendercv = to_rendercv(resume)
+    assert any(
+        connection["placeholder"] == preference
+        for connection in rendercv["cv"]["custom_connections"]
+    )
+    assert resume["work"][0]["location"] == "Remote / UK client"
+
+
+def test_ats_markdown_preserves_featured_project_links() -> None:
+    resume = load_source(RESUME)
+    generated = render_template(resume, ROOT / "templates", "resume.md.j2")
+    for project in resume["projects"]:
+        if project["x_resume"]["featured"] and project.get("url"):
+            assert f"[{project['name']}]({project['url']})" in generated

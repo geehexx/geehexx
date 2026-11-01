@@ -23,7 +23,7 @@ I am not trying to be a pure people manager. I have led teams, hired engineers, 
 
 ## Now
 
-Building production agentic workflows, hybrid retrieval, human-in-the-loop controls, and cloud infrastructure for enterprise decision support.
+Focused on production agentic workflows, hybrid retrieval, human-in-the-loop controls, and cloud infrastructure for enterprise decision support.
 
 | System area | Current focus |
 | --- | --- |
@@ -148,5 +148,5 @@ I am usually useful for:
 
 - **LinkedIn:** [linkedin.com/in/ancrozier](https://linkedin.com/in/ancrozier)
 - **GitHub:** [github.com/geehexx](https://github.com/geehexx)
-- **Location:** Sydney-based Australian citizen; remote APAC/EU/UK overlap
-- **Open to:** Engineering Manager, applied AI, software engineering, backend/platform engineering, and hands-on technical leadership roles. Remote across Australia / APAC / EU / UK overlap preferred; open to hybrid or on-site roles.
+- **Location:** Sydney-based Australian citizen
+- **Open to:** Engineering Manager, applied AI, software engineering, backend/platform engineering, and hands-on technical leadership roles. Remote preferred; open to hybrid or on-site roles.

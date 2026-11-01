@@ -17,9 +17,9 @@
 ## Experience
 
 {% for item in view.resume_work -%}
-### {{ item.name }} | {{ item.position }}
+### {{ item.position }}, {{ item.name }} - {{ item.location }}
 
-{{ item.location }} | {{ item.date_label }}
+{{ item.date_label }}
 
 {% for highlight in item.highlights -%}
 - {{ highlight }}
@@ -28,7 +28,7 @@
 ## Selected Public Work
 
 {% for project in view.resume_projects -%}
-- **{{ project.name }}:** {{ project.description }}
+- **{% if project.url %}[{{ project.name }}]({{ project.url }}){% else %}{{ project.name }}{% endif %}:** {{ project.description }}
 {% endfor %}
 ## Education
 

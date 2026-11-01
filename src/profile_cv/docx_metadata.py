@@ -144,6 +144,8 @@ def assert_docx_metadata(
         mismatches.append(
             f"Application: expected {expected_application!r}, got {app.get('Application')!r}"
         )
+    if not re.fullmatch(r"[0-9]{2}\.[0-9]{4}", str(app.get("AppVersion", ""))):
+        mismatches.append("AppVersion: expected Office XX.YYYY numeric format")
     if custom_count:
         mismatches.append(f"custom properties: expected 0, got {custom_count}")
     if mismatches:
@@ -383,8 +385,21 @@ def _patch_app_properties(
     _set(root, f"{{{APP_NS}}}SharedDoc", "false")
     _set(root, f"{{{APP_NS}}}HyperlinksChanged", "false")
     _set(root, f"{{{APP_NS}}}Company", "")
-    _set(root, f"{{{APP_NS}}}AppVersion", app_version)
+    _set(root, f"{{{APP_NS}}}AppVersion", office_app_version(app_version))
     return _xml_bytes(root)
+
+
+def office_app_version(version: str) -> str:
+    """Map application major/minor version to Office's XX.YYYY property format."""
+    if re.fullmatch(r"[0-9]{2}\.[0-9]{4}", version):
+        return version
+    match = re.fullmatch(r"([0-9]+)\.([0-9]+)(?:\.[0-9]+)?", version)
+    if match is None:
+        raise ValueError(f"Invalid application version: {version!r}")
+    major, minor = (int(value) for value in match.groups())
+    if major > 99 or minor > 9999:
+        raise ValueError("Application version exceeds Office XX.YYYY format")
+    return f"{major:02d}.{minor:04d}"
 
 
 def _empty_custom_properties() -> bytes:

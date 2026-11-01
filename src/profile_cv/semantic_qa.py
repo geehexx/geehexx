@@ -58,11 +58,15 @@ def surface_facts(resume: dict[str, Any], *, surface: Surface) -> tuple[list[str
         contact = basics.get("x_contact", {})
         if isinstance(contact, dict):
             required.append(str(contact.get("publicLocation", "")))
+        profile = _mapping(_mapping(resume, "meta"), "x_profile")
+        required.append(str(profile.get("openTo", "")))
         required.extend(_profile_facts(resume))
         required.extend(_project_names(resume, "x_profile"))
         forbidden.append(email)
     elif surface in RESUME_SURFACES:
         required.append(email)
+        required.append(str(_mapping(basics, "location").get("address", "")))
+        required.append(str(_mapping(basics, "x_contact").get("remote", "")))
         required.extend(_resume_work_facts(resume))
         required.extend(_resume_skill_facts(resume))
         required.extend(_project_names(resume, "x_resume"))

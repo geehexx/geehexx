@@ -94,9 +94,20 @@ ATS surfaces should remain single-column, text-based, standard-heading documents
 with readable 10-12pt body text, simple bullets, no icons, no tables used for
 layout, no text boxes, and contact details in the main body.
 
-DOCX output is generated from Markdown through Pandoc and finalized by the
-metadata normalizer. Keep the normalizer only while tests prove Pandoc leaves
-stale or incomplete core/extended properties.
+DOCX output is generated from Markdown through Pandoc, then normalized to an
+explicit US Letter page, single-column semantic paragraphs, native bullets, and
+portable serif typography. Its title, margins, body size, and heading hierarchy
+are aligned with the PDF. RenderCV remains the PDF renderer; different layout
+engines and fonts mean line wrapping and pagination need not be identical.
+The DOCX metadata normalizer fixes stale core/extended properties, including
+an OOXML-compatible numeric application version. ZIP/XML/relationship checks
+reject malformed packages, macros, embedded content, and layout text boxes.
+
+Validate the final DOCX with independent text extraction and actual page renders.
+Successful LibreOffice rendering is not proof that every Microsoft Word version
+or ATS accepts the file. When a recipient reports failure, preserve that exact
+file and obtain the application/version and error before claiming a root cause.
+Do not replace live text with images or add tables to force PDF-like placement.
 
 `profile-cv build` syncs vendored Typst preview packages into
 `~/.cache/typst/packages/preview` because the embedded Typst compiler used by
@@ -106,6 +117,16 @@ package directory when the vendored copy differs.
 Artifact QA includes deterministic semantic checks derived from `resume.yaml`.
 Use optional LLM/LangExtract-style review only as a non-blocking reviewer; do not
 make nondeterministic model output a merge gate.
+
+## Checks outside pull requests
+
+The separate `profile-drift` workflow runs on a schedule or manual dispatch, not
+on pull requests. Its substantive checks are `profile-cv validate` and
+`profile-cv render-profile --check`; both also run in PR CI. Run these explicitly
+along with `uv run pre-commit run --all-files` and `uv run pytest -o addopts=""`
+for a full local review (the default pytest command excludes integration tests).
+A failed historical/default-branch run remains failed until a new run; an
+unmerged PR cannot repair the default branch in place.
 
 ## PR Artifact Review
 

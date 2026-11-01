@@ -15,7 +15,7 @@ basics:
     address: Sydney, Australia
     city: Sydney
     countryCode: AU
-    region: APAC
+    region: New South Wales
   profiles:
   - network: LinkedIn
     username: ancrozier
@@ -24,8 +24,8 @@ basics:
     username: geehexx
     url: https://github.com/geehexx
   x_contact:
-    remote: Remote (Australia/APAC/EU/UK overlap)
-    publicLocation: Sydney-based Australian citizen; remote APAC/EU/UK overlap
+    remote: Remote preferred; open to hybrid or on-site roles
+    publicLocation: Sydney-based Australian citizen
     publicEmail: false
     workAuthorization: Australian citizen
 work:
@@ -496,7 +496,7 @@ references: []
 meta:
   canonical: https://github.com/geehexx/geehexx/blob/main/resume.yaml
   version: 1.0.0
-  lastModified: '2026-07-01T00:00:00+07:00'
+  lastModified: '2026-11-01T00:00:00Z'
   x_source:
     baseRepository: https://github.com/geehexx/geehexx
     sourceResume: Andrew Crozier - Master Resume v1(3).docx
@@ -519,7 +519,7 @@ meta:
       written RFCs, and handled performance management, but my strongest work is still hands-on technical
       leadership: shaping systems, debugging hard edges, and helping teams make better engineering decisions.'
     now:
-      summary: Building production agentic workflows, hybrid retrieval, human-in-the-loop controls, and
+      summary: Focused on production agentic workflows, hybrid retrieval, human-in-the-loop controls, and
         cloud infrastructure for enterprise decision support.
       areas:
       - system: Agentic architecture
@@ -583,8 +583,7 @@ meta:
     - leading backend / platform teams without drifting away from the code
     - diagnosing reliability failures across infrastructure, code, process, and team boundaries
     openTo: Engineering Manager, applied AI, software engineering, backend/platform engineering, and hands-on
-      technical leadership roles. Remote across Australia / APAC / EU / UK overlap preferred; open to
-      hybrid or on-site roles.
+      technical leadership roles. Remote preferred; open to hybrid or on-site roles.
   x_rendercv:
     design:
       theme: engineeringresumes
@@ -669,7 +668,7 @@ meta:
     locale:
       language: english
     settings:
-      current_date: '2026-07-01'
+      current_date: '2026-11-01'
       render_command:
         output_folder: dist/rendercv
         design: null

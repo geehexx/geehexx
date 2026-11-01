@@ -10,6 +10,7 @@ from docx import Document
 from profile_cv.docx_metadata import (
     assert_docx_metadata,
     normalize_docx_metadata,
+    office_app_version,
     read_app_properties,
     read_core_properties,
 )
@@ -49,7 +50,7 @@ def test_normalize_docx_metadata_updates_shareable_properties(tmp_path: Path) ->
     pages = app["Pages"]
     assert isinstance(pages, int)
     assert app["Application"] == "profile-cv"
-    assert app["AppVersion"] == "1.0.0"
+    assert app["AppVersion"] == "01.0000"
     assert app["Words"] == stats.words
     assert pages >= 1
     assert core["title"] == "Andrew Crozier - Resume"
@@ -113,3 +114,16 @@ def _write_docx_parts(docx_path: Path, parts: dict[str, bytes]) -> None:
         for filename, payload in parts.items():
             target.writestr(filename, payload)
     tmp_path.replace(docx_path)
+
+
+@pytest.mark.parametrize(
+    ("version", "expected"), [("1.0.0", "01.0000"), ("2.8", "02.0008"), ("16.0000", "16.0000")]
+)
+def test_application_version_uses_office_numeric_format(version: str, expected: str) -> None:
+    assert office_app_version(version) == expected
+
+
+@pytest.mark.parametrize("version", ["release", "100.0.0", "1.10000.0"])
+def test_application_version_rejects_invalid_values(version: str) -> None:
+    with pytest.raises(ValueError):
+        office_app_version(version)
