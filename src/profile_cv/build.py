@@ -6,6 +6,7 @@ import html
 import json
 import shutil
 import subprocess
+import tempfile
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -14,6 +15,13 @@ from . import __version__
 from .adapters import DEFAULT_BASENAME, render_template, to_json_ld, to_rendercv, write_yaml
 from .docx_layout import assert_docx_portable_structure, normalize_docx_layout
 from .docx_metadata import modified_from_resume, normalize_docx_metadata
+from .paths import (
+    OUTPUT_MARKER,
+    mark_output,
+    paths_overlap,
+    reject_symlink_path,
+    validate_output_directory,
+)
 from .qa import (
     assert_doctor,
     expectations_from_resume,
@@ -44,14 +52,22 @@ def build_all(
     resume_path = resume_path or root / DEFAULT_RESUME
     dist_dir = dist_dir or root / DEFAULT_DIST
     site_dir = site_dir or root / DEFAULT_SITE
+    known_outputs = (root / DEFAULT_DIST, root / DEFAULT_SITE)
+    for output in (dist_dir, site_dir):
+        validate_output_directory(
+            output, root=root, known_outputs=known_outputs, protected=(resume_path,)
+        )
+    if paths_overlap(dist_dir, site_dir):
+        raise ValueError("Build dist and site output directories must not overlap")
     template_dir = root / "templates"
     styles_dir = root / "styles"
     resume = _load_validated_resume(root, resume_path)
 
+    assert_doctor()
     if clean and dist_dir.exists():
         shutil.rmtree(dist_dir)
     dist_dir.mkdir(parents=True, exist_ok=True)
-    assert_doctor()
+    mark_output(dist_dir)
 
     outputs: dict[str, Path] = {}
     _build_rendercv_outputs(root=root, resume=resume, dist_dir=dist_dir, outputs=outputs)
@@ -79,6 +95,8 @@ def build_all(
         styles_dir=styles_dir,
         outputs=outputs,
     )
+
+    mark_output(site_dir)
 
     metrics: dict[str, Any] = {"outputs": {key: str(path) for key, path in outputs.items()}}
     if run_qa:
@@ -276,9 +294,18 @@ def build_review_package(
     site_dir = root / DEFAULT_SITE
     package_dir = package_dir or root / DEFAULT_REVIEW_PACKAGE
 
-    if package_dir.exists():
-        shutil.rmtree(package_dir)
-    package_dir.mkdir(parents=True)
+    validate_output_directory(
+        package_dir,
+        root=root,
+        known_outputs=(dist_dir, site_dir, root / DEFAULT_REVIEW_PACKAGE),
+    )
+    if (
+        package_dir.resolve() == dist_dir.resolve()
+        or package_dir.resolve() in dist_dir.resolve().parents
+    ):
+        raise ValueError("Review package must not contain distribution inputs")
+    if paths_overlap(package_dir, site_dir):
+        raise ValueError("Review package must not overlap site inputs")
 
     required_files = [
         (dist_dir / f"{DEFAULT_BASENAME}.pdf", Path("artifacts") / f"{DEFAULT_BASENAME}.pdf"),
@@ -289,14 +316,65 @@ def build_review_package(
         (dist_dir / "profile.schemaorg.json", Path("artifacts") / "profile.schemaorg.json"),
         (dist_dir / "README.generated.md", Path("profile") / "README.generated.md"),
     ]
-    for source, relative_target in required_files:
-        _copy_required_file(source, package_dir / relative_target)
+    site_names = {
+        "index.html",
+        "resume.css",
+        ".nojekyll",
+        *(source.name for source, _ in required_files if source.name != "README.generated.md"),
+    }
+    for source, _ in required_files:
+        reject_symlink_path(source)
+        if not source.is_file():
+            raise FileNotFoundError(f"Review package source is missing: {source}")
+    reject_symlink_path(site_dir)
+    if not site_dir.is_dir():
+        raise FileNotFoundError(f"Review package source directory is missing: {site_dir}")
+    for source in site_dir.iterdir():
+        if source.name == OUTPUT_MARKER and source.is_file() and not source.is_symlink():
+            continue
+        if source.name not in site_names or not source.is_file() or source.is_symlink():
+            raise ValueError(f"Unexpected review site input: {source}")
+    for name in site_names:
+        if not (site_dir / name).is_file():
+            raise FileNotFoundError(f"Review package source is missing: {site_dir / name}")
+    # Ensure the preview represents the same artifacts, not a stale earlier build.
+    for source, _ in required_files:
+        if source.name in site_names and not filecmp.cmp(
+            source, site_dir / source.name, shallow=False
+        ):
+            raise ValueError(f"Stale review site artifact: {site_dir / source.name}")
 
-    _copy_required_tree(site_dir, package_dir / "site")
+    package_dir.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(
+        prefix=".profile-cv-review-", dir=package_dir.parent
+    ) as temporary:
+        staging = Path(temporary) / "package"
+        staging.mkdir()
+        for source, relative_target in required_files:
+            _copy_required_file(source, staging / relative_target)
+        for name in sorted(site_names - {".nojekyll"}):
+            _copy_required_file(site_dir / name, staging / "site" / name)
+        outputs = {
+            "pdf": staging / "artifacts" / f"{DEFAULT_BASENAME}.pdf",
+            "docx": staging / "artifacts" / f"{DEFAULT_BASENAME}.docx",
+            "markdown": staging / "artifacts" / f"{DEFAULT_BASENAME}.md",
+            "html": staging / "artifacts" / f"{DEFAULT_BASENAME}.html",
+            "readme": staging / "profile" / "README.generated.md",
+        }
+        qa = run_quality_gates(root=root, outputs=outputs)
+        manifest = _write_review_package_metadata(root=root, package_dir=staging, qa=qa)
+        if package_dir.exists():
+            shutil.rmtree(package_dir)
+        staging.rename(package_dir)
+    return manifest
 
-    qa = run_quality_gates(root=root)
+
+def _write_review_package_metadata(
+    *, root: Path, package_dir: Path, qa: dict[str, Any]
+) -> dict[str, Any]:
     generated_at = datetime.now(UTC).isoformat(timespec="seconds").replace("+00:00", "Z")
     manifest: dict[str, Any] = {
+        "generator": "profile-cv review-package",
         "generated_at_utc": generated_at,
         "source": {
             "resume": str(DEFAULT_RESUME),

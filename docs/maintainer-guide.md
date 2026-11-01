@@ -160,3 +160,31 @@ Before distributing a CV/profile build:
 - merge only after current local evidence, current CI evidence, and a recorded
   self-review note. `main` should also require the CI `quality` check through
   branch protection.
+
+## Project selection and build safety
+
+The CV deliberately selects three complementary projects: human approval in
+agent workflows, an AWS Bedrock integration, and a governed delivery case study.
+The GitHub profile retains the full portfolio. Selection and order live in
+`resume.yaml`; project descriptions and highlights must be backed by the linked
+repositories, not invented adoption or impact metrics. This follows
+[Amazon's recruiter guidance](https://www.aboutamazon.com/news/workplace/amazon-job-application-resume-writing-tips)
+on relevance and demonstrated work. Keep text-first, single-column artifacts:
+[Greenhouse documents parsing problems](https://support.greenhouse.io/hc/en-us/articles/200989175-Unsuccessful-resume-parse)
+with complex layouts, image-only documents and contact details in headers or
+text boxes. These choices improve inspectability, not guarantee ATS acceptance.
+
+Semantic QA checks source-derived role highlights, every skill keyword, and
+selected project descriptions/highlights in each CV surface; profile QA checks
+its independently selected copy. Typographic punctuation and whitespace are
+normalized, but substantive missing claims fail. Real calendar dates are
+validated at the supported year, month or day precision.
+
+Output paths are checked before cleanup. Repository/source paths, overlapping
+outputs and symlink paths are rejected. Custom nonempty output directories must
+have build ownership evidence; use a new empty directory for a legacy custom
+output rather than pointing cleanup at arbitrary existing data. Review packaging
+validates an exact staged copy, including the generated README, before replacing
+a previous package. Unexpected site files and site/dist mismatches fail instead
+of being silently published. Successful LibreOffice conversions still fail QA
+when diagnostics report missing Java/JRE or broken profile setup.

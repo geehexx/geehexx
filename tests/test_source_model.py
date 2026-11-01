@@ -87,7 +87,7 @@ def test_rendercv_adapter_preserves_resume_sections_without_becoming_canonical()
         for connection in rendercv["cv"]["custom_connections"]
     )
     assert sections["Experience"][0]["company"] == "T3"
-    assert sections["Selected Public Work"][0]["name"].startswith("[geehexx](")
+    assert sections["Selected Projects"][0]["name"].startswith("[hitl-mcp-cli](")
     assert "data/resume.rendercv.yaml" not in serialize_source(rendercv)
     for item in sections["Experience"]:
         for highlight in item["highlights"]:
@@ -101,8 +101,8 @@ def test_canonical_source_controls_project_inclusion_across_outputs() -> None:
     profile_sections = {item["name"]: item["x_profile"]["section"] for item in resume["work"]}
 
     assert set(resume_projects).issubset(set(readme_projects))
-    assert "geehexx" in resume_projects
-    assert "library-ops" in resume_projects
+    assert "geehexx" not in resume_projects
+    assert resume_projects == ["hitl-mcp-cli", "llm-bedrock-converse", "library-ops"]
     assert "msteams-mcp" in readme_projects
     assert "msteams-mcp" not in resume_projects
     assert "PragmaLens" in readme_projects

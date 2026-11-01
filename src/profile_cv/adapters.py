@@ -11,7 +11,14 @@ from urllib.parse import quote
 import yaml
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
-from .source import Resume, markdown_link, plain_markdown, profile_url, profile_username
+from .source import (
+    Resume,
+    markdown_link,
+    plain_markdown,
+    profile_url,
+    profile_username,
+    validate_date,
+)
 
 DEFAULT_BASENAME = "Andrew_Crozier_Resume"
 
@@ -58,6 +65,7 @@ class ProjectView:
     description: str
     url: str
     type: str
+    highlights: list[str]
 
 
 @dataclass(frozen=True)
@@ -218,6 +226,7 @@ def projects_for_surface(resume: Resume, surface_key: str) -> list[ProjectView]:
                 description=str(project.get("description", "")),
                 url=str(project.get("url", "")),
                 type=str(project.get("type", "")),
+                highlights=clean_highlights(project.get("highlights", [])),
             )
         )
     return projects
@@ -355,10 +364,11 @@ def to_rendercv(resume: Resume) -> dict[str, Any]:
         for item in resume.get("work", [])
         if isinstance(item, dict) and item.get("name") and item.get("position")
     ]
-    cv["sections"]["Selected Public Work"] = [
+    cv["sections"]["Selected Projects"] = [
         {
             "name": markdown_link(project["name"], project["url"]),
             "summary": project["description"],
+            "highlights": clean_highlights(project.get("highlights", [])),
         }
         for project in resume.get("projects", [])
         if isinstance(project, dict)
@@ -418,6 +428,7 @@ def format_date(value: str) -> str:
         return "Present"
     if value == "Present":
         return value
+    validate_date(value, "date")
     parts = value.split("-")
     if len(parts) == 1:
         return parts[0]

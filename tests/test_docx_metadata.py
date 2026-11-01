@@ -9,10 +9,12 @@ from docx import Document
 
 from profile_cv.docx_metadata import (
     assert_docx_metadata,
+    assert_libreoffice_environment,
     normalize_docx_metadata,
     office_app_version,
     read_app_properties,
     read_core_properties,
+    rendered_docx_page_count,
 )
 from profile_cv.qa import doctor
 
@@ -127,3 +129,55 @@ def test_application_version_uses_office_numeric_format(version: str, expected: 
 def test_application_version_rejects_invalid_values(version: str) -> None:
     with pytest.raises(ValueError):
         office_app_version(version)
+
+
+@pytest.mark.parametrize(
+    "diagnostic",
+    [
+        "Warning: failed to launch javaldx - java may not function correctly",
+        "javaldx: Could not find a Java Runtime Environment!",
+        "JRE is not installed",
+        "User installation could not be completed.",
+        "Error: Unable to create user installation.",
+        "User profile is locked by another instance",
+    ],
+)
+def test_libreoffice_actionable_environment_warnings_fail_qa(diagnostic: str) -> None:
+    with pytest.raises(RuntimeError, match="Java/profile setup needs repair"):
+        assert_libreoffice_environment(diagnostic)
+
+
+@pytest.mark.parametrize(
+    "diagnostic", ["", "error : Unknown IO error", "Using Java Runtime Environment 21"]
+)
+def test_libreoffice_unrelated_diagnostics_are_not_blanket_rejected(diagnostic: str) -> None:
+    assert_libreoffice_environment(diagnostic)
+
+
+@pytest.mark.parametrize("stderr", ["", "Warning: failed to launch javaldx"])
+def test_successful_conversion_still_checks_environment_diagnostics(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, stderr: str
+) -> None:
+    docx_path = tmp_path / "resume.docx"
+    docx_path.write_bytes(b"mocked converter input")
+
+    class SuccessfulProcess:
+        returncode = 0
+
+        def communicate(self, *, timeout: int) -> tuple[str, str]:
+            assert timeout == 90
+            return "convert resume.docx -> resume.pdf", stderr
+
+    monkeypatch.setattr(
+        "profile_cv.docx_metadata.subprocess.Popen", lambda *_args, **_kwargs: SuccessfulProcess()
+    )
+    monkeypatch.setattr("profile_cv.docx_metadata._wait_for_stable_file", lambda _: None)
+    monkeypatch.setattr(
+        "profile_cv.docx_metadata._wait_for_pdf", lambda *_args: tmp_path / "resume.pdf"
+    )
+    monkeypatch.setattr("profile_cv.docx_metadata._pdf_pages", lambda _: 3)
+    if stderr:
+        with pytest.raises(RuntimeError, match="Java/profile setup needs repair"):
+            rendered_docx_page_count(docx_path)
+    else:
+        assert rendered_docx_page_count(docx_path) == 3

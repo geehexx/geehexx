@@ -332,28 +332,44 @@ skills:
   - technical due diligence
   - remote-first delivery
 projects:
-- name: geehexx
-  description: Canonical GitHub profile and CV source repo with typed YAML adapters, RenderCV/Pandoc
-    generation, deterministic artifact QA, CI-uploaded review packages, and public/resume contact-boundary
-    policy.
-  url: https://github.com/geehexx/geehexx
+- name: hitl-mcp-cli
+  description: Human-in-the-loop MCP server for explicit approvals and user input in agent workflows.
+  url: https://github.com/geehexx/hitl-mcp-cli
   keywords:
-  - profile automation
-  - resume pipeline
-  - RenderCV
-  - Pandoc
-  - CI quality gates
+  - MCP
+  - human-in-the-loop
+  - terminal UI
+  - approvals
   roles:
   - Owner
   type: open-source
-  highlights: []
+  highlights:
+  - Implemented an async Python service and Textual terminal interface for approval, choice, confirmation,
+    and notification tools, with interaction logging.
+  x_profile:
+    featured: true
+  x_resume:
+    featured: true
+- name: llm-bedrock-converse
+  description: AWS Bedrock Converse integration for the LLM command-line tool.
+  url: https://github.com/geehexx/llm-bedrock-converse
+  keywords:
+  - AWS Bedrock
+  - LLM plugin
+  - tool calling
+  - streaming
+  roles:
+  - Owner
+  type: open-source
+  highlights:
+  - Implemented streaming tool calls, MCP integration, multimodal inputs, and Titan embeddings,
+    with retry handling for throttling.
   x_profile:
     featured: true
   x_resume:
     featured: true
 - name: library-ops
-  description: Live Django/PostgreSQL library-operations demo with Work/Edition/Copy modeling, role boundaries,
-    search, circulation state, Render deployment, and a governed multi-agent SDLC case study.
+  description: Django/PostgreSQL library-operations demo and governed multi-agent delivery case study.
   url: https://github.com/geehexx/library-ops
   keywords:
   - Django
@@ -364,7 +380,9 @@ projects:
   roles:
   - Owner
   type: open-source
-  highlights: []
+  highlights:
+  - Modeled works, editions, and physical copies with role-scoped circulation workflows; documented
+    specifications, decision records, review gates, and human approvals.
   x_profile:
     featured: true
   x_resume:
@@ -386,24 +404,7 @@ projects:
   x_profile:
     featured: true
   x_resume:
-    featured: true
-- name: hitl-mcp-cli
-  description: Human-in-the-loop MCP server and terminal UI for approvals, choices, confirmations, notifications,
-    interaction logging, and async-first workflows.
-  url: https://github.com/geehexx/hitl-mcp-cli
-  keywords:
-  - MCP
-  - human-in-the-loop
-  - terminal UI
-  - approvals
-  roles:
-  - Owner
-  type: open-source
-  highlights: []
-  x_profile:
-    featured: true
-  x_resume:
-    featured: true
+    featured: false
 - name: phraseturner
   description: Text-analysis MCP server with personas, readability/naturalness/tone scoring, semantic
     persona search, and graceful degradation.
@@ -420,7 +421,7 @@ projects:
   x_profile:
     featured: true
   x_resume:
-    featured: true
+    featured: false
 - name: PragmaLens
   description: Evidence-oriented extraction prototype exploring structured outputs, explicit support spans,
     uncertainty, and validation-oriented prompt design.
@@ -438,23 +439,6 @@ projects:
     featured: true
   x_resume:
     featured: false
-- name: llm-bedrock-converse
-  description: LLM plugin for AWS Bedrock Converse with streaming, tool calling, MCP integration, multimodal
-    inputs, embeddings, and retry behavior.
-  url: https://github.com/geehexx/llm-bedrock-converse
-  keywords:
-  - AWS Bedrock
-  - LLM plugin
-  - tool calling
-  - streaming
-  roles:
-  - Owner
-  type: open-source
-  highlights: []
-  x_profile:
-    featured: true
-  x_resume:
-    featured: true
 - name: msteams-mcp
   description: 'MCP server for Microsoft Teams interaction: message search, replies, thread access, authentication,
     and assistant-facing collaboration workflows.'
@@ -483,6 +467,25 @@ projects:
   roles:
   - Fork contributor
   type: fork work
+  highlights: []
+  x_profile:
+    featured: true
+  x_resume:
+    featured: false
+- name: geehexx
+  description: Canonical GitHub profile and CV source repo with typed YAML adapters, RenderCV/Pandoc
+    generation, deterministic artifact QA, CI-uploaded review packages, and public/resume contact-boundary
+    policy.
+  url: https://github.com/geehexx/geehexx
+  keywords:
+  - profile automation
+  - resume pipeline
+  - RenderCV
+  - Pandoc
+  - CI quality gates
+  roles:
+  - Owner
+  type: open-source
   highlights: []
   x_profile:
     featured: true

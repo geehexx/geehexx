@@ -25,10 +25,14 @@
 - {{ highlight }}
 {% endfor %}
 {% endfor -%}
-## Selected Public Work
+## Selected Projects
 
 {% for project in view.resume_projects -%}
-- **{% if project.url %}[{{ project.name }}]({{ project.url }}){% else %}{{ project.name }}{% endif %}:** {{ project.description }}
+**{% if project.url %}[{{ project.name }}]({{ project.url }}){% else %}{{ project.name }}{% endif %}** - {{ project.description }}
+
+{% for highlight in project.highlights -%}
+- {{ highlight }}
+{% endfor %}
 {% endfor %}
 ## Education
 

@@ -250,6 +250,7 @@ def rendered_docx_page_count(docx_path: Path) -> int:
             last_returncode = proc.returncode
             pdf_path = _wait_for_pdf(out_dir, docx_path.stem)
             if proc.returncode == 0 and pdf_path is not None:
+                assert_libreoffice_environment(stderr)
                 return _pdf_pages(pdf_path)
             if attempt < 3:
                 time.sleep(0.75 * attempt)
@@ -257,6 +258,32 @@ def rendered_docx_page_count(docx_path: Path) -> int:
             f"LibreOffice did not render {docx_path} after 3 attempts "
             f"(last return code {last_returncode})\n"
             f"STDOUT:\n{last_stdout}\nSTDERR:\n{last_stderr}"
+        )
+
+
+def assert_libreoffice_environment(stderr: str) -> None:
+    """Reject known Java/profile setup failures even when conversion returns success.
+
+    LibreOffice also emits harmless diagnostics on some systems. Keep this list
+    narrow rather than treating every stderr line or generic 'warning' as fatal.
+    """
+    patterns = (
+        r"javaldx.*(?:failed|could not|cannot|error)",
+        r"(?:failed|could not|cannot|unable).*javaldx",
+        r"(?:no|missing|could not find|cannot find).*java runtime environment",
+        r"(?:java runtime environment|jre).*(?:not found|not installed|unavailable)",
+        r"user installation.*(?:could not|cannot|failed|not completed)",
+        r"(?:failed|could not|cannot|unable).*user installation",
+        r"user profile.*(?:locked|read.only|not writable|cannot|failed)",
+    )
+    problems = [
+        line.strip()
+        for line in stderr.splitlines()
+        if any(re.search(pattern, line, re.IGNORECASE) for pattern in patterns)
+    ]
+    if problems:
+        raise RuntimeError(
+            "LibreOffice Java/profile setup needs repair before artifact QA: " + "\n".join(problems)
         )
 
 
