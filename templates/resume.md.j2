@@ -2,33 +2,37 @@
 
 {{ view.label }}
 
-{{ view.contact_line }} - LinkedIn: {{ view.linkedin_url }} - GitHub: {{ view.github_url }}
+{% if view.email %}{{ view.contact_line | replace(view.email, '[' ~ view.email ~ '](mailto:' ~ view.email ~ ')') }}{% else %}{{ view.contact_line }}{% endif %} - LinkedIn: [{{ view.linkedin_url }}]({{ view.linkedin_url }}) - GitHub: [{{ view.github_url }}]({{ view.github_url }})
 
 ## Summary
 
 {{ view.summary }}
 
+## Experience
+
+{% for item in view.resume_work -%}
+### {{ item.position }}, {{ item.name }} - {{ item.location }}
+
+{{ item.date_label }}
+
+{% for highlight in item.highlights -%}
+- {{ highlight }}
+{% endfor %}
+{% endfor -%}
 ## Technologies
 
 {% for skill in view.skills -%}
 **{{ skill.name }}:** {{ skill.keywords | join(', ') }}
 
 {% endfor -%}
-## Experience
-
-{% for item in view.resume_work -%}
-### {{ item.name }} | {{ item.position }}
-
-{{ item.location }} | {{ item.date_label }}
-
-{% for highlight in item.highlights -%}
-- {{ highlight }}
-{% endfor %}
-{% endfor -%}
-## Selected Public Work
+## Selected Projects
 
 {% for project in view.resume_projects -%}
-- **{{ project.name }}:** {{ project.description }}
+**{% if project.url %}[{{ project.name }}]({{ project.url }}){% else %}{{ project.name }}{% endif %}** - {{ project.description }}
+
+{% for highlight in project.highlights -%}
+- {{ highlight }}
+{% endfor %}
 {% endfor %}
 ## Education
 

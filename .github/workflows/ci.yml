@@ -19,20 +19,24 @@ defaults:
 
 env:
   UV_VERSION: "0.10.0"
+  PANDOC_VERSION: "3.1.11.1"
+  PANDOC_SHA256: "07635f6953201ee261bf90e821b8fe36c045e5a6fbae2ae6b1c2127715432942" # pragma: allowlist secret
 
 jobs:
   quality:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
-      - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
         with:
           version: ${{ env.UV_VERSION }}
           enable-cache: true
+          # Preserve the pre-v9 cache footprint instead of retaining downloaded wheels.
+          prune-cache: true
           cache-dependency-glob: |
             pyproject.toml
             uv.lock
@@ -42,7 +46,17 @@ jobs:
       - name: Install system tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends pandoc poppler-utils libreoffice libreoffice-java-common default-jre-headless
+          sudo apt-get install -y --no-install-recommends poppler-utils libreoffice libreoffice-java-common default-jre-headless
+      - name: Install pinned Pandoc
+        run: |
+          archive="${RUNNER_TEMP}/pandoc.tar.gz"
+          curl --fail --location --silent --show-error \
+            "https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/pandoc-${PANDOC_VERSION}-linux-amd64.tar.gz" \
+            --output "${archive}"
+          printf '%s  %s\n' "${PANDOC_SHA256}" "${archive}" | sha256sum --check
+          mkdir -p "${RUNNER_TEMP}/pandoc"
+          tar --extract --gzip --file "${archive}" --strip-components=1 --directory "${RUNNER_TEMP}/pandoc"
+          echo "${RUNNER_TEMP}/pandoc/bin" >> "${GITHUB_PATH}"
       - name: Install project
         run: uv sync --frozen --extra dev
       - name: Secret scan
@@ -67,7 +81,7 @@ jobs:
           uvx yamllint .github/dependabot.yml .github/workflows quality-gates.yaml resume.yaml .yamllint.yml
           uvx zizmor --format plain .
       - name: Integration tests
-        run: uv run pytest -o addopts="" tests/test_build_pipeline.py::test_full_build_pipeline_outputs_all_distribution_formats
+        run: uv run pytest -o addopts="" -m integration
       - name: Repository policy checks
         run: |
           uv run python scripts/check_workflows.py

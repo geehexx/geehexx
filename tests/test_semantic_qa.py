@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from profile_cv.adapters import render_template
-from profile_cv.semantic_qa import assert_semantic_alignment
+from profile_cv.semantic_qa import Surface, assert_semantic_alignment, normalize_text
 from profile_cv.source import load_source
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -29,7 +29,7 @@ def test_generated_ats_markdown_matches_resume_semantic_policy() -> None:
     result = assert_semantic_alignment(text, resume=resume, surface="markdown")
 
     assert result.required_checked > 50
-    assert result.forbidden_checked == 3
+    assert result.forbidden_checked == 6
 
 
 def test_semantic_policy_catches_public_email_leak() -> None:
@@ -40,3 +40,36 @@ def test_semantic_policy_catches_public_email_leak() -> None:
         assert_semantic_alignment(
             f"{text}\n{resume['basics']['email']}", resume=resume, surface="readme"
         )
+
+
+@pytest.mark.parametrize("surface", ["markdown", "pdf", "docx", "html"])
+def test_resume_semantics_reject_stale_work_preferences(surface: Surface) -> None:
+    resume = load_source(RESUME)
+    text = render_template(resume, ROOT / "templates", "resume.md.j2")
+    stale = text.replace(
+        resume["basics"]["x_contact"]["remote"], "Remote (Australia/APAC/EU/UK overlap)"
+    )
+    with pytest.raises(AssertionError, match="missing required facts"):
+        assert_semantic_alignment(stale, resume=resume, surface=surface)
+
+
+@pytest.mark.parametrize(
+    "missing", ["project_description", "project_highlight", "work_highlight", "education"]
+)
+def test_semantic_policy_rejects_missing_source_claims(missing: str) -> None:
+    resume = load_source(RESUME)
+    text = render_template(resume, ROOT / "templates", "resume.md.j2")
+    project = next(item for item in resume["projects"] if item["x_resume"]["featured"])
+    fact = {
+        "project_description": project["description"],
+        "project_highlight": project["highlights"][0],
+        "work_highlight": resume["work"][0]["highlights"][0],
+        "education": resume["education"][0]["institution"],
+    }[missing]
+    assert fact in text
+    with pytest.raises(AssertionError, match="missing required facts"):
+        assert_semantic_alignment(text.replace(fact, ""), resume=resume, surface="markdown")
+
+
+def test_normalize_typographic_quotes() -> None:
+    assert normalize_text("Toptal’s “platform”") == normalize_text('Toptal\'s "platform"')

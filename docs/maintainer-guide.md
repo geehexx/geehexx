@@ -54,9 +54,10 @@ behavior, and QA tooling do not drift between local and CI builds.
 
 `profile-cv doctor` checks the external artifact QA tools used by the full
 pipeline: RenderCV, Pandoc, Poppler, LibreOffice, and Java. On Ubuntu/CI, install
-`pandoc`, `poppler-utils`, `libreoffice`, `libreoffice-java-common`, and
+`poppler-utils`, `libreoffice`, `libreoffice-java-common`, and
 `default-jre-headless`; use `openjdk-21-jre-headless` only if the default
-headless runtime package is unavailable.
+headless runtime package is unavailable. Install the pinned upstream Pandoc
+release described below rather than relying on a distribution-default version.
 
 `profile-cv build` emits reviewed artifacts under `dist/` and a local preview
 site under `site/`. `profile-cv review-package` assembles
@@ -94,9 +95,20 @@ ATS surfaces should remain single-column, text-based, standard-heading documents
 with readable 10-12pt body text, simple bullets, no icons, no tables used for
 layout, no text boxes, and contact details in the main body.
 
-DOCX output is generated from Markdown through Pandoc and finalized by the
-metadata normalizer. Keep the normalizer only while tests prove Pandoc leaves
-stale or incomplete core/extended properties.
+DOCX output is generated from Markdown through Pandoc, then normalized to an
+explicit US Letter page, single-column semantic paragraphs, native bullets, and
+portable serif typography. Its title, margins, body size, and heading hierarchy
+are aligned with the PDF. RenderCV remains the PDF renderer; different layout
+engines and fonts mean line wrapping and pagination need not be identical.
+The DOCX metadata normalizer fixes stale core/extended properties, including
+an OOXML-compatible numeric application version. ZIP/XML/relationship checks
+reject malformed packages, macros, embedded content, and layout text boxes.
+
+Validate the final DOCX with independent text extraction and actual page renders.
+Successful LibreOffice rendering is not proof that every Microsoft Word version
+or ATS accepts the file. When a recipient reports failure, preserve that exact
+file and obtain the application/version and error before claiming a root cause.
+Do not replace live text with images or add tables to force PDF-like placement.
 
 `profile-cv build` syncs vendored Typst preview packages into
 `~/.cache/typst/packages/preview` because the embedded Typst compiler used by
@@ -106,6 +118,16 @@ package directory when the vendored copy differs.
 Artifact QA includes deterministic semantic checks derived from `resume.yaml`.
 Use optional LLM/LangExtract-style review only as a non-blocking reviewer; do not
 make nondeterministic model output a merge gate.
+
+## Checks outside pull requests
+
+The separate `profile-drift` workflow runs on a schedule or manual dispatch, not
+on pull requests. Its substantive checks are `profile-cv validate` and
+`profile-cv render-profile --check`; both also run in PR CI. Run these explicitly
+along with `uv run pre-commit run --all-files` and `uv run pytest -o addopts=""`
+for a full local review (the default pytest command excludes integration tests).
+A failed historical/default-branch run remains failed until a new run; an
+unmerged PR cannot repair the default branch in place.
 
 ## PR Artifact Review
 
@@ -139,3 +161,79 @@ Before distributing a CV/profile build:
 - merge only after current local evidence, current CI evidence, and a recorded
   self-review note. `main` should also require the CI `quality` check through
   branch protection.
+
+## Project selection and build safety
+
+The CV deliberately selects three complementary projects: human approval in
+agent workflows, an AWS Bedrock integration, and a governed delivery case study.
+The GitHub profile retains the full portfolio. Selection and order live in
+`resume.yaml`; project descriptions and highlights must be backed by the linked
+repositories, not invented adoption or impact metrics. This follows
+[Amazon's recruiter guidance](https://www.aboutamazon.com/news/workplace/amazon-job-application-resume-writing-tips)
+on relevance and demonstrated work. Keep text-first, single-column artifacts:
+[Greenhouse documents parsing problems](https://support.greenhouse.io/hc/en-us/articles/200989175-Unsuccessful-resume-parse)
+with complex layouts, image-only documents and contact details in headers or
+text boxes. These choices improve inspectability, not guarantee ATS acceptance.
+
+Semantic QA checks source-derived role highlights, every skill keyword, and
+selected project descriptions/highlights in each CV surface; profile QA checks
+its independently selected copy. Typographic punctuation and whitespace are
+normalized, but substantive missing claims fail. Real calendar dates are
+validated at the supported year, month or day precision.
+
+Output paths are checked before cleanup. Repository/source paths, overlapping
+outputs and symlink paths are rejected. Custom nonempty output directories must
+have build ownership evidence; use a new empty directory for a legacy custom
+output rather than pointing cleanup at arbitrary existing data. Review packaging
+validates an exact staged copy, including the generated README, before replacing
+a previous package. Unexpected site files and site/dist mismatches fail instead
+of being silently published. Successful LibreOffice conversions still fail QA
+when diagnostics report missing Java/JRE or broken profile setup.
+
+## Reproducibility contract
+
+For identical source, source revision and toolchain, generated file bytes must be
+stable across processes, hash seeds and rebuild times. Source YAML mapping order
+and all array orders are intentional; especially RenderCV section order, career
+chronology, project priority and bullet order. Do not alphabetically sort these
+to hide a suspected diff. Cross-process tests cover the actual YAML/JSON writers,
+JSON-LD, README and Markdown. Full integration rebuilds compare every dist/site
+and review-package file under three hash seeds and assert RenderCV does not
+rewrite its input YAML. CI runs all integration tests, not only one named build.
+
+The observed binary instability was DOCX ZIP member timestamps, not shuffled
+source fields. DOCX packaging now uses stable member ordering and ZIP metadata;
+XML content and document reading order are preserved. Source `meta.lastModified`
+must be a valid timezone-aware timestamp, not an implicit current-time fallback.
+Review metadata records this as `source_modified_at_utc`, explicitly not the
+wall-clock build time, and records the revision rather than checkout branch.
+Actual run times remain in GitHub Actions. This follows the
+[Reproducible Builds timestamp guidance](https://reproducible-builds.org/docs/timestamps/).
+The GitHub-hosted download ZIP/container metadata is service-generated and is
+not covered by the generated-file byte contract.
+
+Use the frozen lockfile and documented system tools. Repeatability is tested in
+each environment; arbitrary Pandoc, LibreOffice, compression, font or renderer
+versions are not promised to produce identical bytes or layout. Keep reviewing
+PDF text/tag reading order and actual pages after dependency upgrades. The Typst
+vendor-cache comparison hashes contents, not only size/mtime, so stale cached
+code cannot silently survive an equal-stat replacement.
+
+Custom `build_all(resume_path=...)` inputs are propagated to factual QA. The
+current pipeline intentionally supports only `Andrew_Crozier_Resume` as its
+output basename; unsupported configuration fails before cleanup instead of
+creating mismatched site links.
+
+### Pinned Pandoc renderer
+
+Cross-environment comparison found Ubuntu's Pandoc 3.1.3 and the reviewed local
+3.1.11.1 produce different DOCX defaults and HTML CSS. CI therefore downloads
+[upstream Pandoc 3.1.11.1](https://github.com/jgm/pandoc/releases/tag/3.1.11.1)
+and verifies its Linux amd64 archive SHA-256 before extraction:
+`07635f6953201ee261bf90e821b8fe36c045e5a6fbae2ae6b1c2127715432942`.
+Use the same version locally (upstream provides other platform binaries).
+Build preflight rejects mismatched Pandoc versions before cleaning artifacts.
+The upstream release includes DOCX validity fixes, but this is not evidence that
+the recipient's specific Word/ATS problem has been reproduced or resolved.
+When upgrading, change the reviewed version/hash together and repeat layout,
+extraction and cross-process/cross-environment comparisons.

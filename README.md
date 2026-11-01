@@ -1,6 +1,6 @@
 # Andrew Crozier
 
-### Engineering Manager · Applied AI & Platform Systems
+**Engineering Manager · Applied AI & Platform Systems**
 
 **Technical leadership · Production AI systems · Hybrid retrieval · Distributed platforms · Reliability engineering**
 
@@ -11,19 +11,17 @@
 
 ---
 
-```text
 I build the parts of AI systems that still have to work after the demo: retrieval quality, tool boundaries, stream safety, retry behavior, evaluation loops, human approval gates, observability, infrastructure, and the engineering habits around them.
-```
 
 I work where LLMs meet backend engineering: agent orchestration, RAG, search, evals, governance, distributed systems, platform reliability, and the unglamorous failure paths that decide whether an AI product survives real users.
 
-I am not trying to be a pure people manager. I have led teams, hired engineers, run delivery systems, written RFCs, and handled performance management, but my strongest work is still hands-on technical leadership: shaping systems, debugging hard edges, and helping teams make better engineering decisions.
+I lead engineering teams while staying hands-on with architecture, difficult debugging, and delivery. My experience includes hiring, RFCs, performance management, and helping teams make better engineering decisions.
 
 ---
 
 ## Now
 
-Building production agentic workflows, hybrid retrieval, human-in-the-loop controls, and cloud infrastructure for enterprise decision support.
+Focused on production agentic workflows, hybrid retrieval, human-in-the-loop controls, and cloud infrastructure for enterprise decision support.
 
 | System area | Current focus |
 | --- | --- |
@@ -41,15 +39,15 @@ I use GitHub less as a trophy case and more as a public engineering notebook: to
 
 | Repo / work | What it demonstrates |
 | --- | --- |
-| [`geehexx`](https://github.com/geehexx/geehexx) | Canonical GitHub profile and CV source repo with typed YAML adapters, RenderCV/Pandoc generation, deterministic artifact QA, CI-uploaded review packages, and public/resume contact-boundary policy. |
-| [`library-ops`](https://github.com/geehexx/library-ops) | Live Django/PostgreSQL library-operations demo with Work/Edition/Copy modeling, role boundaries, search, circulation state, Render deployment, and a governed multi-agent SDLC case study. |
+| [`hitl-mcp-cli`](https://github.com/geehexx/hitl-mcp-cli) | Human-in-the-loop MCP server for explicit approvals and user input in agent workflows. |
+| [`llm-bedrock-converse`](https://github.com/geehexx/llm-bedrock-converse) | AWS Bedrock Converse integration for the LLM command-line tool. |
+| [`library-ops`](https://github.com/geehexx/library-ops) | Django/PostgreSQL library-operations demo and governed multi-agent delivery case study. |
 | [`mcp-web`](https://github.com/geehexx/mcp-web) | MCP server for web and local-file summarization: extraction, chunking, streaming summaries, local/cloud LLM support, caching, security controls, metrics, and tests. |
-| [`hitl-mcp-cli`](https://github.com/geehexx/hitl-mcp-cli) | Human-in-the-loop MCP server and terminal UI for approvals, choices, confirmations, notifications, interaction logging, and async-first workflows. |
 | [`phraseturner`](https://github.com/geehexx/phraseturner) | Text-analysis MCP server with personas, readability/naturalness/tone scoring, semantic persona search, and graceful degradation. |
 | [`PragmaLens`](https://github.com/geehexx/PragmaLens) | Evidence-oriented extraction prototype exploring structured outputs, explicit support spans, uncertainty, and validation-oriented prompt design. |
-| [`llm-bedrock-converse`](https://github.com/geehexx/llm-bedrock-converse) | LLM plugin for AWS Bedrock Converse with streaming, tool calling, MCP integration, multimodal inputs, embeddings, and retry behavior. |
 | [`msteams-mcp`](https://github.com/geehexx/msteams-mcp) | MCP server for Microsoft Teams interaction: message search, replies, thread access, authentication, and assistant-facing collaboration workflows. |
 | [`kiro-proxy`](https://github.com/geehexx/kiro-proxy) fork work | Fork work around streaming, retry behavior, quota classification, model-name preservation, regex safety, and failure-mode cleanup. |
+| [`geehexx`](https://github.com/geehexx/geehexx) | Canonical GitHub profile and CV source repo with typed YAML adapters, RenderCV/Pandoc generation, deterministic artifact QA, CI-uploaded review packages, and public/resume contact-boundary policy. |
 
 ---
 
@@ -70,7 +68,7 @@ A lot of applied AI engineering is not prompt cleverness. It is removing ambigui
 
 | Context | Signal |
 | --- | --- |
-| **Stealth Startup** | Lead AI Engineer for production agentic AI, retrieval, governance workflows, and platform infrastructure |
+| **T3** | Lead AI Engineer for production agentic AI, retrieval, governance workflows, and platform infrastructure |
 | **BaxEnergy (a Yokogawa Company)** | Engineering maturity assessment and modernization roadmap across delivery practices, incident response, DORA metrics, and cloud-native migration planning |
 | **Agoda (Booking Holdings)** | Engineering Manager for B2B booking platforms; led multiple squads and supported high-scale booking flows across millions of properties and major enterprise partners |
 | **Toptal** | Senior Software Engineer, Product Manager, and Engineering Manager across talent matching, vetting, ETL, enterprise delivery, and remote engineering systems |
@@ -149,4 +147,4 @@ I am usually useful for:
 - **LinkedIn:** [linkedin.com/in/ancrozier](https://linkedin.com/in/ancrozier)
 - **GitHub:** [github.com/geehexx](https://github.com/geehexx)
 - **Location:** Sydney-based Australian citizen
-- **Open to:** Engineering Manager, applied AI, software engineering, backend/platform engineering, and hands-on technical leadership roles. On-site/hybrid across Australia, remote across APAC / EU / UK overlap preferred
+- **Open to:** Engineering Manager, applied AI, software engineering, backend/platform engineering, and hands-on technical leadership roles. Remote preferred; open to hybrid or on-site roles.

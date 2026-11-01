@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -10,7 +11,7 @@ from jsonschema import Draft7Validator
 
 Resume = dict[str, Any]
 
-DATE_RE = re.compile(r"^([1-2][0-9]{3})(-[0-1][0-9])?(-[0-3][0-9])?$")
+DATE_RE = re.compile(r"([1-2][0-9]{3})(?:-([0-9]{2})(?:-([0-9]{2}))?)?")
 REQUIRED_TOP_LEVEL = ("basics", "work", "education", "skills", "projects", "meta")
 PROFILE_SECTIONS = {"career_snapshot", "earlier_work", "omit"}
 
@@ -94,10 +95,24 @@ def validate_source(resume: Resume, *, schema: Resume | None = None) -> None:
         if project_name not in project_names:
             raise ValueError(f"resume.projects missing {project_name}")
 
+    for section_name in ("education", "projects"):
+        for index, item in enumerate(require_list(resume, section_name)):
+            if not isinstance(item, dict):
+                raise ValueError(f"resume.{section_name}[{index}] must be an object")
+            for key in ("startDate", "endDate"):
+                if item.get(key):
+                    validate_date(str(item[key]), f"{section_name}[{index}].{key}")
+
 
 def validate_date(value: str, field_name: str) -> None:
-    if not DATE_RE.match(value):
+    match = DATE_RE.fullmatch(value)
+    if match is None:
         raise ValueError(f"{field_name} is not JSON Resume ISO-8601-like date: {value}")
+    year, month, day = match.groups()
+    try:
+        date(int(year), int(month) if month is not None else 1, int(day) if day is not None else 1)
+    except ValueError as exc:
+        raise ValueError(f"{field_name} is not a valid calendar date: {value}") from exc
 
 
 def require_mapping(payload: Resume, key: str) -> Resume:

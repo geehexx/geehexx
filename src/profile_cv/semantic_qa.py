@@ -5,7 +5,7 @@ import re
 from dataclasses import dataclass
 from typing import Any, Literal
 
-from .adapters import display_date
+from .adapters import clean_highlights, display_date
 from .source import profile_url
 
 Surface = Literal["readme", "markdown", "pdf", "docx", "html"]
@@ -58,18 +58,33 @@ def surface_facts(resume: dict[str, Any], *, surface: Surface) -> tuple[list[str
         contact = basics.get("x_contact", {})
         if isinstance(contact, dict):
             required.append(str(contact.get("publicLocation", "")))
+        profile = _mapping(_mapping(resume, "meta"), "x_profile")
+        required.append(str(profile.get("openTo", "")))
         required.extend(_profile_facts(resume))
-        required.extend(_project_names(resume, "x_profile"))
+        required.extend(_project_facts(resume, "x_profile", include_highlights=False))
         forbidden.append(email)
     elif surface in RESUME_SURFACES:
         required.append(email)
+        required.append(str(basics.get("summary", "")))
+        required.append(str(_mapping(basics, "location").get("address", "")))
+        required.append(str(_mapping(basics, "x_contact").get("remote", "")))
         required.extend(_resume_work_facts(resume))
         required.extend(_resume_skill_facts(resume))
-        required.extend(_project_names(resume, "x_resume"))
+        for item in _list(resume, "education"):
+            if isinstance(item, dict):
+                required.extend(
+                    str(item.get(key, "")) for key in ("institution", "studyType", "area")
+                )
+                required.append(display_date(item))
+        required.extend(_project_facts(resume, "x_resume", include_highlights=True))
+        # Omitted project descriptions are unique content; names may also be the
+        # owner's GitHub username (for example geehexx in every contact URL).
         forbidden.extend(
-            project
-            for project in _project_names(resume, "x_profile")
-            if project not in set(_project_names(resume, "x_resume"))
+            str(project.get("description", ""))
+            for project in _list(resume, "projects")
+            if isinstance(project, dict)
+            and project.get("x_profile", {}).get("featured", False)
+            and not project.get("x_resume", {}).get("featured", False)
         )
     else:  # pragma: no cover - Surface typing prevents this branch.
         raise ValueError(f"Unsupported semantic QA surface: {surface}")
@@ -83,6 +98,7 @@ def normalize_text(value: str) -> str:
     value = re.sub(r"https?://(?:www\.)?", "", value)
     value = value.replace("\u2013", "-").replace("\u2014", "-").replace("\u00a0", " ")
     value = value.replace("\u00ad", "").replace("\ufffe", "")
+    value = value.translate(str.maketrans("’‘“”", "''\"\""))
     value = re.sub(r"<[^>]+>", " ", value)
     value = re.sub(r"\s+", " ", value)
     return value.casefold().strip()
@@ -113,6 +129,7 @@ def _resume_work_facts(resume: dict[str, Any]) -> list[str]:
                 display_date(item),
             ]
         )
+        facts.extend(clean_highlights(item.get("highlights", [])))
     return facts
 
 
@@ -122,20 +139,24 @@ def _resume_skill_facts(resume: dict[str, Any]) -> list[str]:
         if not isinstance(skill, dict):
             continue
         facts.append(str(skill.get("name", "")))
-        facts.extend(str(keyword) for keyword in skill.get("keywords", [])[:2])
+        facts.extend(str(keyword) for keyword in skill.get("keywords", []))
     return facts
 
 
-def _project_names(resume: dict[str, Any], surface_key: str) -> list[str]:
-    names: list[str] = []
+def _project_facts(
+    resume: dict[str, Any], surface_key: str, *, include_highlights: bool
+) -> list[str]:
+    facts: list[str] = []
     for project in _list(resume, "projects"):
-        if (
-            isinstance(project, dict)
-            and isinstance(project.get(surface_key), dict)
-            and project[surface_key].get("featured", False)
-        ):
-            names.append(str(project.get("name", "")))
-    return names
+        if not isinstance(project, dict):
+            continue
+        policy = project.get(surface_key, {})
+        if not isinstance(policy, dict) or not policy.get("featured", False):
+            continue
+        facts.extend([str(project.get("name", "")), str(project.get("description", ""))])
+        if include_highlights:
+            facts.extend(clean_highlights(project.get("highlights", [])))
+    return facts
 
 
 def _clean_facts(values: list[str]) -> list[str]:

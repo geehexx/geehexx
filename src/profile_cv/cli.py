@@ -10,12 +10,12 @@ from .build import (
     DEFAULT_REVIEW_PACKAGE,
     build_all,
     build_review_package,
+    load_validated_resume,
     render_profile,
     run_quality_gates,
 )
 from .paths import project_root
-from .qa import doctor
-from .source import load_repo_schema, load_source, validate_source
+from .qa import assert_doctor, doctor
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -67,13 +67,13 @@ def main(argv: list[str] | None = None) -> int:
             status = doctor()
             for name, ok in status.items():
                 print(f"{name}: {'ok' if ok else 'missing'}")
-            return 0 if all(status.values()) else 1
+            if not all(status.values()):
+                return 1
+            assert_doctor()
+            return 0
 
         if args.command == "validate":
-            validate_source(
-                load_source(root / "resume.yaml"),
-                schema=load_repo_schema(root),
-            )
+            load_validated_resume(root, root / "resume.yaml")
             print("resume.yaml: ok")
             return 0
 

@@ -10,8 +10,8 @@ ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW_DIR = ROOT / ".github" / "workflows"
 DEPENDABOT = ROOT / ".github" / "dependabot.yml"
 EXPECTED_UV_VERSION = "0.10.0"
-SETUP_UV_REF = "astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b"
-CHECKOUT_REF = "actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0"
+SETUP_UV_REF = "astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9"
+CHECKOUT_REF = "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
 UPLOAD_ARTIFACT_REF = "actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a"
 
 
@@ -112,6 +112,8 @@ def _setup_uv_errors(path: Path, index: int, uses: str, step: dict[str, Any]) ->
         errors.append(f"{path}: setup-uv step {index} must use env-pinned uv version")
     if with_block.get("enable-cache") != "true":
         errors.append(f"{path}: setup-uv step {index} must enable cache")
+    if with_block.get("prune-cache") != "true":
+        errors.append(f"{path}: setup-uv step {index} must explicitly prune cache")
     cache_glob = str(with_block.get("cache-dependency-glob", ""))
     if "uv.lock" not in cache_glob:
         errors.append(f"{path}: setup-uv step {index} cache key must include uv.lock")
@@ -147,6 +149,7 @@ def _ci_review_package_errors(path: Path, job: object) -> list[str]:
     required_tokens = (
         "uv sync --frozen --extra dev",
         "libreoffice-java-common",
+        "sha256sum --check",
         "default-jre-headless",
         "uv run profile-cv build --clean --no-profile-check",
         "uv run profile-cv review-package",

@@ -4,18 +4,15 @@ basics:
   name: Andrew Crozier
   label: Engineering Manager - Applied AI & Platform Systems
   email: andrewcrozier86@gmail.com
-  summary: 'Engineering Manager and hands-on software engineer with 15+ years building backend, platform,
-    data, and AI systems across marketplaces, travel, fintech, talent matching, retrieval, and enterprise
-    decision support.
-    Current focus: production agent workflows, RAG/search quality, governance controls, AWS infrastructure,
-    and reliability. Led multiple teams and dozens of engineers while staying close to architecture and
-    delivery; shipped systems supporting 100K+ RPM booking flows, millions of properties, 200K+ annual
-    applicants, and enterprise decision-support products.'
+  summary: Engineering Manager and hands-on software engineer with 15+ years building backend,
+    platform, data, and AI systems. Led multiple teams and dozens of engineers while staying close
+    to architecture and delivery. Focused on production agent workflows, retrieval quality,
+    governance, and reliability, with experience in high-volume booking and talent-matching platforms.
   location:
     address: Sydney, Australia
     city: Sydney
     countryCode: AU
-    region: APAC
+    region: New South Wales
   profiles:
   - network: LinkedIn
     username: ancrozier
@@ -24,15 +21,16 @@ basics:
     username: geehexx
     url: https://github.com/geehexx
   x_contact:
-    remote: Remote (Australia/APAC/EU/UK overlap)
-    publicLocation: Sydney-based Australian citizen; remote APAC/EU/UK overlap
+    remote: Remote preferred; open to hybrid or on-site roles
+    publicLocation: Sydney-based Australian citizen
     publicEmail: false
     workAuthorization: Australian citizen
 work:
-- name: Stealth Startup
+- name: T3
   position: Lead AI Engineer
   location: Remote / UK client
   startDate: 2026-02
+  endDate: 2026-06
   summary: ''
   highlights:
   - Designed and implemented a production multi-agent AI platform using PydanticAI and AWS Bedrock, with
@@ -49,7 +47,7 @@ work:
     WAF, and cdk-nag controls, moving deployments from scripts toward CloudFormation-managed state and
     rollback-friendly delivery.
   x_display:
-    dateLabel: Feb 2026 - Present
+    dateLabel: Feb 2026 - Jun 2026
   x_profile:
     section: career_snapshot
     signal: Lead AI Engineer for production agentic AI, retrieval, governance workflows, and platform
@@ -331,28 +329,44 @@ skills:
   - technical due diligence
   - remote-first delivery
 projects:
-- name: geehexx
-  description: Canonical GitHub profile and CV source repo with typed YAML adapters, RenderCV/Pandoc
-    generation, deterministic artifact QA, CI-uploaded review packages, and public/resume contact-boundary
-    policy.
-  url: https://github.com/geehexx/geehexx
+- name: hitl-mcp-cli
+  description: Human-in-the-loop MCP server for explicit approvals and user input in agent workflows.
+  url: https://github.com/geehexx/hitl-mcp-cli
   keywords:
-  - profile automation
-  - resume pipeline
-  - RenderCV
-  - Pandoc
-  - CI quality gates
+  - MCP
+  - human-in-the-loop
+  - terminal UI
+  - approvals
   roles:
   - Owner
   type: open-source
-  highlights: []
+  highlights:
+  - Implemented an async Python service and Textual terminal interface for approval, choice, confirmation,
+    and notification tools, with interaction logging.
+  x_profile:
+    featured: true
+  x_resume:
+    featured: true
+- name: llm-bedrock-converse
+  description: AWS Bedrock Converse integration for the LLM command-line tool.
+  url: https://github.com/geehexx/llm-bedrock-converse
+  keywords:
+  - AWS Bedrock
+  - LLM plugin
+  - tool calling
+  - streaming
+  roles:
+  - Owner
+  type: open-source
+  highlights:
+  - Implemented streaming tool calls, MCP integration, multimodal inputs, and Titan embeddings,
+    with retry handling for throttling.
   x_profile:
     featured: true
   x_resume:
     featured: true
 - name: library-ops
-  description: Live Django/PostgreSQL library-operations demo with Work/Edition/Copy modeling, role boundaries,
-    search, circulation state, Render deployment, and a governed multi-agent SDLC case study.
+  description: Django/PostgreSQL library-operations demo and governed multi-agent delivery case study.
   url: https://github.com/geehexx/library-ops
   keywords:
   - Django
@@ -363,7 +377,9 @@ projects:
   roles:
   - Owner
   type: open-source
-  highlights: []
+  highlights:
+  - Modeled works, editions, and physical copies with role-scoped circulation workflows; documented
+    specifications, decision records, review gates, and human approvals.
   x_profile:
     featured: true
   x_resume:
@@ -385,24 +401,7 @@ projects:
   x_profile:
     featured: true
   x_resume:
-    featured: true
-- name: hitl-mcp-cli
-  description: Human-in-the-loop MCP server and terminal UI for approvals, choices, confirmations, notifications,
-    interaction logging, and async-first workflows.
-  url: https://github.com/geehexx/hitl-mcp-cli
-  keywords:
-  - MCP
-  - human-in-the-loop
-  - terminal UI
-  - approvals
-  roles:
-  - Owner
-  type: open-source
-  highlights: []
-  x_profile:
-    featured: true
-  x_resume:
-    featured: true
+    featured: false
 - name: phraseturner
   description: Text-analysis MCP server with personas, readability/naturalness/tone scoring, semantic
     persona search, and graceful degradation.
@@ -419,7 +418,7 @@ projects:
   x_profile:
     featured: true
   x_resume:
-    featured: true
+    featured: false
 - name: PragmaLens
   description: Evidence-oriented extraction prototype exploring structured outputs, explicit support spans,
     uncertainty, and validation-oriented prompt design.
@@ -437,23 +436,6 @@ projects:
     featured: true
   x_resume:
     featured: false
-- name: llm-bedrock-converse
-  description: LLM plugin for AWS Bedrock Converse with streaming, tool calling, MCP integration, multimodal
-    inputs, embeddings, and retry behavior.
-  url: https://github.com/geehexx/llm-bedrock-converse
-  keywords:
-  - AWS Bedrock
-  - LLM plugin
-  - tool calling
-  - streaming
-  roles:
-  - Owner
-  type: open-source
-  highlights: []
-  x_profile:
-    featured: true
-  x_resume:
-    featured: true
 - name: msteams-mcp
   description: 'MCP server for Microsoft Teams interaction: message search, replies, thread access, authentication,
     and assistant-facing collaboration workflows.'
@@ -487,6 +469,25 @@ projects:
     featured: true
   x_resume:
     featured: false
+- name: geehexx
+  description: Canonical GitHub profile and CV source repo with typed YAML adapters, RenderCV/Pandoc
+    generation, deterministic artifact QA, CI-uploaded review packages, and public/resume contact-boundary
+    policy.
+  url: https://github.com/geehexx/geehexx
+  keywords:
+  - profile automation
+  - resume pipeline
+  - RenderCV
+  - Pandoc
+  - CI quality gates
+  roles:
+  - Owner
+  type: open-source
+  highlights: []
+  x_profile:
+    featured: true
+  x_resume:
+    featured: false
 languages:
 - language: English
   fluency: Native / professional
@@ -495,7 +496,7 @@ references: []
 meta:
   canonical: https://github.com/geehexx/geehexx/blob/main/resume.yaml
   version: 1.0.0
-  lastModified: '2026-07-01T00:00:00+07:00'
+  lastModified: '2026-11-01T00:00:00Z'
   x_source:
     baseRepository: https://github.com/geehexx/geehexx
     sourceResume: Andrew Crozier - Master Resume v1(3).docx
@@ -514,11 +515,11 @@ meta:
     - 'I work where LLMs meet backend engineering: agent orchestration, RAG, search, evals, governance,
       distributed systems, platform reliability, and the unglamorous failure paths that decide whether
       an AI product survives real users.'
-    - 'I am not trying to be a pure people manager. I have led teams, hired engineers, run delivery systems,
-      written RFCs, and handled performance management, but my strongest work is still hands-on technical
-      leadership: shaping systems, debugging hard edges, and helping teams make better engineering decisions.'
+    - 'I lead engineering teams while staying hands-on with architecture, difficult debugging, and
+      delivery. My experience includes hiring, RFCs, performance management, and helping teams make
+      better engineering decisions.'
     now:
-      summary: Building production agentic workflows, hybrid retrieval, human-in-the-loop controls, and
+      summary: Focused on production agentic workflows, hybrid retrieval, human-in-the-loop controls, and
         cloud infrastructure for enterprise decision support.
       areas:
       - system: Agentic architecture
@@ -582,8 +583,7 @@ meta:
     - leading backend / platform teams without drifting away from the code
     - diagnosing reliability failures across infrastructure, code, process, and team boundaries
     openTo: Engineering Manager, applied AI, software engineering, backend/platform engineering, and hands-on
-      technical leadership roles. Remote across Australia / APAC / EU / UK overlap preferred; other on-site
-      arrangements possible for the right role.
+      technical leadership roles. Remote preferred; open to hybrid or on-site roles.
   x_rendercv:
     design:
       theme: engineeringresumes
@@ -668,7 +668,7 @@ meta:
     locale:
       language: english
     settings:
-      current_date: '2026-07-01'
+      current_date: '2026-11-01'
       render_command:
         output_folder: dist/rendercv
         design: null
