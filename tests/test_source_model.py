@@ -21,7 +21,7 @@ def test_canonical_yaml_resume_validates_and_contains_portable_sections() -> Non
 
     assert resume["basics"]["name"] == "Andrew Crozier"
     assert resume["basics"]["label"] == "Engineering Manager - Applied AI & Platform Systems"
-    assert resume["basics"]["phone"] == "+66963780780"
+    assert "phone" not in resume["basics"]
     assert resume["basics"]["profiles"][0]["network"] == "LinkedIn"
     assert resume["basics"]["x_contact"]["workAuthorization"] == "Australian citizen"
     assert resume["meta"]["version"] == "1.0.0"
@@ -51,7 +51,12 @@ def test_generated_readme_is_public_safe_and_source_aligned() -> None:
     assert "+66963780780" not in current
     assert "library-ops" in current
     assert "mcp-web" in current
-    assert "Thailand-based Australian citizen" in current
+    assert "Sydney-based Australian citizen" in current
+    assert "Thailand-based" not in current
+    assert "Remote across Australia / APAC / EU / UK overlap preferred" in current
+    assert "open to hybrid or on-site roles" in current
+    assert "**T3**" in current
+    assert "Stealth Startup" not in current
     assert "Australia relocation" not in current
     assert "open to Australia relocation" not in current
     assert "## Engineering Biases" in current
@@ -73,12 +78,12 @@ def test_rendercv_adapter_preserves_resume_sections_without_becoming_canonical()
     sections = rendercv["cv"]["sections"]
 
     assert rendercv["design"]["theme"] == "engineeringresumes"
-    assert rendercv["cv"]["phone"] == "+66963780780"
+    assert rendercv["cv"]["phone"] is None
     assert any(
         connection["placeholder"] == "Australian citizen"
         for connection in rendercv["cv"]["custom_connections"]
     )
-    assert sections["Experience"][0]["company"] == "Stealth Startup"
+    assert sections["Experience"][0]["company"] == "T3"
     assert sections["Selected Public Work"][0]["name"].startswith("[geehexx](")
     assert "data/resume.rendercv.yaml" not in serialize_source(rendercv)
     for item in sections["Experience"]:
@@ -102,3 +107,20 @@ def test_canonical_source_controls_project_inclusion_across_outputs() -> None:
     assert profile_sections["Toptal"] in {"career_snapshot", "omit"}
     assert profile_sections["Agoda"] == "omit"
     assert profile_sections["Independent Freelance / Contract Engagements"] == "earlier_work"
+
+
+def test_t3_engagement_has_consistent_completed_dates_across_resume_outputs() -> None:
+    resume = load_source(RESUME)
+    engagement = resume["work"][0]
+    assert engagement["name"] == "T3"
+    assert engagement["startDate"] == "2026-02"
+    assert engagement["endDate"] == "2026-06"
+    assert engagement["x_display"]["dateLabel"] == "Feb 2026 - Jun 2026"
+    markdown = render_template(resume, ROOT / "templates", "resume.md.j2")
+    assert "T3" in markdown
+    assert "Feb 2026 - Jun 2026" in markdown
+    assert "Feb 2026 - Present" not in markdown
+    rendercv = to_rendercv(resume)
+    experience = rendercv["cv"]["sections"]["Experience"][0]
+    assert experience["company"] == "T3"
+    assert experience["date"] == "Feb 2026 - Jun 2026"

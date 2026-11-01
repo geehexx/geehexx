@@ -29,10 +29,11 @@ basics:
     publicEmail: false
     workAuthorization: Australian citizen
 work:
-- name: Stealth Startup
+- name: T3
   position: Lead AI Engineer
   location: Remote / UK client
   startDate: 2026-02
+  endDate: 2026-06
   summary: ''
   highlights:
   - Designed and implemented a production multi-agent AI platform using PydanticAI and AWS Bedrock, with
@@ -49,7 +50,7 @@ work:
     WAF, and cdk-nag controls, moving deployments from scripts toward CloudFormation-managed state and
     rollback-friendly delivery.
   x_display:
-    dateLabel: Feb 2026 - Present
+    dateLabel: Feb 2026 - Jun 2026
   x_profile:
     section: career_snapshot
     signal: Lead AI Engineer for production agentic AI, retrieval, governance workflows, and platform
@@ -582,8 +583,8 @@ meta:
     - leading backend / platform teams without drifting away from the code
     - diagnosing reliability failures across infrastructure, code, process, and team boundaries
     openTo: Engineering Manager, applied AI, software engineering, backend/platform engineering, and hands-on
-      technical leadership roles. Remote across Australia / APAC / EU / UK overlap preferred; other on-site
-      arrangements possible for the right role.
+      technical leadership roles. Remote across Australia / APAC / EU / UK overlap preferred; open to
+      hybrid or on-site roles.
   x_rendercv:
     design:
       theme: engineeringresumes

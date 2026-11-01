@@ -70,7 +70,7 @@ A lot of applied AI engineering is not prompt cleverness. It is removing ambigui
 
 | Context | Signal |
 | --- | --- |
-| **Stealth Startup** | Lead AI Engineer for production agentic AI, retrieval, governance workflows, and platform infrastructure |
+| **T3** | Lead AI Engineer for production agentic AI, retrieval, governance workflows, and platform infrastructure |
 | **BaxEnergy (a Yokogawa Company)** | Engineering maturity assessment and modernization roadmap across delivery practices, incident response, DORA metrics, and cloud-native migration planning |
 | **Agoda (Booking Holdings)** | Engineering Manager for B2B booking platforms; led multiple squads and supported high-scale booking flows across millions of properties and major enterprise partners |
 | **Toptal** | Senior Software Engineer, Product Manager, and Engineering Manager across talent matching, vetting, ETL, enterprise delivery, and remote engineering systems |
@@ -148,5 +148,5 @@ I am usually useful for:
 
 - **LinkedIn:** [linkedin.com/in/ancrozier](https://linkedin.com/in/ancrozier)
 - **GitHub:** [github.com/geehexx](https://github.com/geehexx)
-- **Location:** Sydney-based Australian citizen
-- **Open to:** Engineering Manager, applied AI, software engineering, backend/platform engineering, and hands-on technical leadership roles. On-site/hybrid across Australia, remote across APAC / EU / UK overlap preferred
+- **Location:** Sydney-based Australian citizen; remote APAC/EU/UK overlap
+- **Open to:** Engineering Manager, applied AI, software engineering, backend/platform engineering, and hands-on technical leadership roles. Remote across Australia / APAC / EU / UK overlap preferred; open to hybrid or on-site roles.
