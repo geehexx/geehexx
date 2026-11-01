@@ -188,3 +188,37 @@ validates an exact staged copy, including the generated README, before replacing
 a previous package. Unexpected site files and site/dist mismatches fail instead
 of being silently published. Successful LibreOffice conversions still fail QA
 when diagnostics report missing Java/JRE or broken profile setup.
+
+## Reproducibility contract
+
+For identical source, source revision and toolchain, generated file bytes must be
+stable across processes, hash seeds and rebuild times. Source YAML mapping order
+and all array orders are intentional; especially RenderCV section order, career
+chronology, project priority and bullet order. Do not alphabetically sort these
+to hide a suspected diff. Cross-process tests cover the actual YAML/JSON writers,
+JSON-LD, README and Markdown. Full integration rebuilds compare every dist/site
+and review-package file under three hash seeds and assert RenderCV does not
+rewrite its input YAML. CI runs all integration tests, not only one named build.
+
+The observed binary instability was DOCX ZIP member timestamps, not shuffled
+source fields. DOCX packaging now uses stable member ordering and ZIP metadata;
+XML content and document reading order are preserved. Source `meta.lastModified`
+must be a valid timezone-aware timestamp, not an implicit current-time fallback.
+Review metadata records this as `source_modified_at_utc`, explicitly not the
+wall-clock build time, and records the revision rather than checkout branch.
+Actual run times remain in GitHub Actions. This follows the
+[Reproducible Builds timestamp guidance](https://reproducible-builds.org/docs/timestamps/).
+The GitHub-hosted download ZIP/container metadata is service-generated and is
+not covered by the generated-file byte contract.
+
+Use the frozen lockfile and documented system tools. Repeatability is tested in
+each environment; arbitrary Pandoc, LibreOffice, compression, font or renderer
+versions are not promised to produce identical bytes or layout. Keep reviewing
+PDF text/tag reading order and actual pages after dependency upgrades. The Typst
+vendor-cache comparison hashes contents, not only size/mtime, so stale cached
+code cannot silently survive an equal-stat replacement.
+
+Custom `build_all(resume_path=...)` inputs are propagated to factual QA. The
+current pipeline intentionally supports only `Andrew_Crozier_Resume` as its
+output basename; unsupported configuration fails before cleanup instead of
+creating mismatched site links.

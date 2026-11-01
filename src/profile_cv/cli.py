@@ -10,12 +10,12 @@ from .build import (
     DEFAULT_REVIEW_PACKAGE,
     build_all,
     build_review_package,
+    load_validated_resume,
     render_profile,
     run_quality_gates,
 )
 from .paths import project_root
 from .qa import doctor
-from .source import load_repo_schema, load_source, validate_source
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -70,10 +70,7 @@ def main(argv: list[str] | None = None) -> int:
             return 0 if all(status.values()) else 1
 
         if args.command == "validate":
-            validate_source(
-                load_source(root / "resume.yaml"),
-                schema=load_repo_schema(root),
-            )
+            load_validated_resume(root, root / "resume.yaml")
             print("resume.yaml: ok")
             return 0
 

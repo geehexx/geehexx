@@ -83,7 +83,9 @@ def normalize_docx_metadata(
     if not docx_path.exists():
         raise FileNotFoundError(docx_path)
     stats = compute_docx_stats(docx_path, render_pages=True)
-    normalized_modified = _to_utc_naive(modified or datetime.now(UTC))
+    # Standalone callers without source metadata still get repeatable bytes.
+    # The build pipeline always passes the validated canonical source timestamp.
+    normalized_modified = _to_utc_naive(modified or datetime(1980, 1, 1, tzinfo=UTC))
     with zipfile.ZipFile(docx_path) as zin:
         entries = {info.filename: zin.read(info.filename) for info in zin.infolist()}
     if CORE_PROPS not in entries or APP_PROPS not in entries:
@@ -364,11 +366,14 @@ def count_custom_properties(docx_path: Path) -> int:
 def modified_from_resume(resume: Mapping[str, object]) -> datetime:
     meta = resume.get("meta", {})
     if not isinstance(meta, Mapping):
-        return datetime.now(UTC)
+        raise ValueError("resume.meta.lastModified must be a timezone-aware ISO timestamp")
     raw = meta.get("lastModified")
     if not isinstance(raw, str) or not raw:
-        return datetime.now(UTC)
-    return _parse_datetime(raw)
+        raise ValueError("resume.meta.lastModified must be a timezone-aware ISO timestamp")
+    try:
+        return _parse_datetime(raw)
+    except ValueError as exc:
+        raise ValueError("resume.meta.lastModified must be a timezone-aware ISO timestamp") from exc
 
 
 def _patch_core_properties(
@@ -444,9 +449,18 @@ def _rewrite_zip(docx_path: Path, entries: Mapping[str, bytes]) -> None:
     ) as tmp_file:
         tmp_path = Path(tmp_file.name)
     try:
-        with zipfile.ZipFile(tmp_path, "w", compression=zipfile.ZIP_DEFLATED) as zout:
-            for name, content in entries.items():
-                zout.writestr(name, content)
+        with zipfile.ZipFile(tmp_path, "w") as zout:
+            # The package contains source-backed core timestamps already. ZIP
+            # metadata must not add wall-clock time or input-member ordering to
+            # the final bytes. Never reorder the XML itself: that carries the
+            # document's reading order, relationships, and formatting.
+            for name in sorted(entries):
+                info = zipfile.ZipInfo(name, date_time=(1980, 1, 1, 0, 0, 0))
+                info.create_system = 3
+                info.external_attr = 0o100644 << 16
+                zout.writestr(
+                    info, entries[name], compress_type=zipfile.ZIP_DEFLATED, compresslevel=9
+                )
         shutil.move(str(tmp_path), docx_path)
     finally:
         if tmp_path.exists():
@@ -504,7 +518,7 @@ def _parse_datetime(value: str) -> datetime:
     normalized = value.replace("Z", "+00:00")
     parsed = datetime.fromisoformat(normalized)
     if parsed.tzinfo is None:
-        return parsed.replace(tzinfo=UTC)
+        raise ValueError("timestamp must specify a timezone")
     return parsed.astimezone(UTC)
 
 

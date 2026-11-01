@@ -8,12 +8,6 @@
 
 {{ view.summary }}
 
-## Technologies
-
-{% for skill in view.skills -%}
-**{{ skill.name }}:** {{ skill.keywords | join(', ') }}
-
-{% endfor -%}
 ## Experience
 
 {% for item in view.resume_work -%}
@@ -24,6 +18,12 @@
 {% for highlight in item.highlights -%}
 - {{ highlight }}
 {% endfor %}
+{% endfor -%}
+## Technologies
+
+{% for skill in view.skills -%}
+**{{ skill.name }}:** {{ skill.keywords | join(', ') }}
+
 {% endfor -%}
 ## Selected Projects
 

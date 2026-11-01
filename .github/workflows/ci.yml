@@ -25,14 +25,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
-      - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
         with:
           version: ${{ env.UV_VERSION }}
           enable-cache: true
+          # Preserve the pre-v9 cache footprint instead of retaining downloaded wheels.
+          prune-cache: true
           cache-dependency-glob: |
             pyproject.toml
             uv.lock
@@ -67,7 +69,7 @@ jobs:
           uvx yamllint .github/dependabot.yml .github/workflows quality-gates.yaml resume.yaml .yamllint.yml
           uvx zizmor --format plain .
       - name: Integration tests
-        run: uv run pytest -o addopts="" tests/test_build_pipeline.py::test_full_build_pipeline_outputs_all_distribution_formats
+        run: uv run pytest -o addopts="" -m integration
       - name: Repository policy checks
         run: |
           uv run python scripts/check_workflows.py

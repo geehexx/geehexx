@@ -8,6 +8,7 @@ import pytest
 from profile_cv import build as build_module
 from profile_cv.build import build_all, build_review_package
 from profile_cv.paths import mark_output, validate_output_directory
+from profile_cv.source import load_source, serialize_source
 
 
 @pytest.fixture
@@ -41,7 +42,7 @@ def test_build_rejects_source_output_before_loading(
     def unexpected(*_args: Any, **_kwargs: Any) -> None:
         pytest.fail("Source loading must not happen before output validation")
 
-    monkeypatch.setattr(build_module, "_load_validated_resume", unexpected)
+    monkeypatch.setattr(build_module, "load_validated_resume", unexpected)
     with pytest.raises(ValueError):
         build_all(
             root=fake_repo,
@@ -153,3 +154,25 @@ def test_default_output_alias_cannot_authorize_source_deletion(fake_repo: Path) 
     with pytest.raises(ValueError, match="symlinks"):
         build_review_package(root=fake_repo, package_dir=fake_repo / "src")
     assert (fake_repo / "src" / "sentinel").read_text() == "keep"
+
+
+def test_unsupported_basename_fails_before_cleaning_outputs(tmp_path: Path) -> None:
+    from_root = Path(__file__).resolve().parents[1]
+    resume = load_source(from_root / "resume.yaml")
+    resume["meta"]["x_outputs"]["defaultResumeBasename"] = "unexpected"
+    custom_source = tmp_path / "custom.yaml"
+    custom_source.write_text(serialize_source(resume), encoding="utf-8")
+    output = tmp_path / "dist"
+    output.mkdir()
+    mark_output(output)
+    sentinel = output / "sentinel"
+    sentinel.write_text("keep", encoding="utf-8")
+    with pytest.raises(ValueError, match="defaultResumeBasename"):
+        build_all(
+            root=from_root,
+            resume_path=custom_source,
+            dist_dir=output,
+            site_dir=tmp_path / "site",
+            clean=True,
+        )
+    assert sentinel.read_text(encoding="utf-8") == "keep"

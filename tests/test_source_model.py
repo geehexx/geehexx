@@ -165,3 +165,14 @@ def test_profile_opener_is_wrapping_prose_not_a_code_block() -> None:
     # A standalone Markdown paragraph wraps in GitHub; fenced code scrolls.
     assert opener in generated.split("\n\n")
     assert "```text\n" + opener not in generated
+
+
+def test_resume_prioritizes_experience_and_profile_has_no_heading_level_jump() -> None:
+    resume = load_source(RESUME)
+    markdown = render_template(resume, ROOT / "templates", "resume.md.j2")
+    assert markdown.index("## Summary") < markdown.index("## Experience")
+    assert markdown.index("## Experience") < markdown.index("## Technologies")
+    profile = render_template(resume, ROOT / "templates", "README.md.j2")
+    first_section = profile.index("## Now")
+    assert "\n### " not in profile[:first_section]
+    assert "not trying to be a pure people manager" not in profile

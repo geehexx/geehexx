@@ -4,13 +4,10 @@ basics:
   name: Andrew Crozier
   label: Engineering Manager - Applied AI & Platform Systems
   email: andrewcrozier86@gmail.com
-  summary: 'Engineering Manager and hands-on software engineer with 15+ years building backend, platform,
-    data, and AI systems across marketplaces, travel, fintech, talent matching, retrieval, and enterprise
-    decision support.
-    Current focus: production agent workflows, RAG/search quality, governance controls, AWS infrastructure,
-    and reliability. Led multiple teams and dozens of engineers while staying close to architecture and
-    delivery; shipped systems supporting 100K+ RPM booking flows, millions of properties, 200K+ annual
-    applicants, and enterprise decision-support products.'
+  summary: Engineering Manager and hands-on software engineer with 15+ years building backend,
+    platform, data, and AI systems. Led multiple teams and dozens of engineers while staying close
+    to architecture and delivery. Focused on production agent workflows, retrieval quality,
+    governance, and reliability, with experience in high-volume booking and talent-matching platforms.
   location:
     address: Sydney, Australia
     city: Sydney
@@ -518,9 +515,9 @@ meta:
     - 'I work where LLMs meet backend engineering: agent orchestration, RAG, search, evals, governance,
       distributed systems, platform reliability, and the unglamorous failure paths that decide whether
       an AI product survives real users.'
-    - 'I am not trying to be a pure people manager. I have led teams, hired engineers, run delivery systems,
-      written RFCs, and handled performance management, but my strongest work is still hands-on technical
-      leadership: shaping systems, debugging hard edges, and helping teams make better engineering decisions.'
+    - 'I lead engineering teams while staying hands-on with architecture, difficult debugging, and
+      delivery. My experience includes hiring, RFCs, performance management, and helping teams make
+      better engineering decisions.'
     now:
       summary: Focused on production agentic workflows, hybrid retrieval, human-in-the-loop controls, and
         cloud infrastructure for enterprise decision support.

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import zipfile
 from pathlib import Path
@@ -12,7 +13,7 @@ from profile_cv import build as build_module
 from profile_cv.build import _build_site_outputs, build_all, build_review_package
 from profile_cv.qa import doctor
 from profile_cv.semantic_qa import assert_semantic_alignment
-from profile_cv.source import load_source
+from profile_cv.source import load_source, serialize_source
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -28,8 +29,13 @@ def test_full_build_pipeline_outputs_all_distribution_formats(tmp_path: Path) ->
     if missing:
         pytest.skip(f"missing external tools: {missing}")
 
+    custom_source = tmp_path / "custom.yaml"
+    custom_resume = load_source(ROOT / "resume.yaml")
+    custom_resume["basics"]["summary"] += " Custom source validation fixture."
+    custom_source.write_text(serialize_source(custom_resume), encoding="utf-8")
     metrics = build_all(
         root=ROOT,
+        resume_path=custom_source,
         dist_dir=tmp_path / "dist",
         site_dir=tmp_path / "site",
         clean=True,
@@ -58,7 +64,7 @@ def test_full_build_pipeline_outputs_all_distribution_formats(tmp_path: Path) ->
         capture_output=True,
         text=True,
     ).stdout
-    assert_semantic_alignment(extracted, resume=load_source(ROOT / "resume.yaml"), surface="docx")
+    assert_semantic_alignment(extracted, resume=custom_resume, surface="docx")
     assert "APAC" not in extracted
     assert "overlap" not in extracted
     with zipfile.ZipFile(outputs["docx"]) as package:
@@ -142,6 +148,10 @@ def test_review_package_fails_when_required_artifact_is_missing(
 
 
 def _write_review_package_sources(root: Path) -> None:
+    root.mkdir(parents=True, exist_ok=True)
+    (root / "resume.yaml").write_text(
+        'meta:\n  lastModified: "2026-11-01T00:00:00Z"\n', encoding="utf-8"
+    )
     dist = root / "dist"
     site = root / "site"
     for directory in (dist, site):
@@ -228,3 +238,17 @@ def test_review_custom_package_can_be_rebuilt(
     assert not (package / ".profile-cv-output").exists()
     build_review_package(root=root, package_dir=package)
     assert (package / "manifest.json").is_file()
+
+
+def test_review_package_rechecks_site_bytes_after_equal_stat_mutation(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _write_review_package_sources(tmp_path)
+    monkeypatch.setattr(build_module, "run_quality_gates", _fake_run_quality_gates)
+    build_review_package(root=tmp_path)
+    artifact = tmp_path / "site/Andrew_Crozier_Resume.pdf"
+    stat = artifact.stat()
+    artifact.write_bytes(b"BAD")
+    os.utime(artifact, ns=(stat.st_atime_ns, stat.st_mtime_ns))
+    with pytest.raises(ValueError, match="Stale review site artifact"):
+        build_review_package(root=tmp_path)

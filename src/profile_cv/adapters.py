@@ -348,11 +348,6 @@ def to_rendercv(resume: Resume) -> dict[str, Any]:
             )
 
     cv["sections"]["Summary"] = [basics["summary"]]
-    cv["sections"]["Technologies"] = [
-        {"label": skill["name"], "details": ", ".join(skill.get("keywords", []))}
-        for skill in resume.get("skills", [])
-        if isinstance(skill, dict) and skill.get("name")
-    ]
     cv["sections"]["Experience"] = [
         {
             "company": item["name"],
@@ -363,6 +358,11 @@ def to_rendercv(resume: Resume) -> dict[str, Any]:
         }
         for item in resume.get("work", [])
         if isinstance(item, dict) and item.get("name") and item.get("position")
+    ]
+    cv["sections"]["Technologies"] = [
+        {"label": skill["name"], "details": ", ".join(skill.get("keywords", []))}
+        for skill in resume.get("skills", [])
+        if isinstance(skill, dict) and skill.get("name")
     ]
     cv["sections"]["Selected Projects"] = [
         {

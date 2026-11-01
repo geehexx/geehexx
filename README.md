@@ -1,6 +1,6 @@
 # Andrew Crozier
 
-### Engineering Manager · Applied AI & Platform Systems
+**Engineering Manager · Applied AI & Platform Systems**
 
 **Technical leadership · Production AI systems · Hybrid retrieval · Distributed platforms · Reliability engineering**
 
@@ -15,7 +15,7 @@ I build the parts of AI systems that still have to work after the demo: retrieva
 
 I work where LLMs meet backend engineering: agent orchestration, RAG, search, evals, governance, distributed systems, platform reliability, and the unglamorous failure paths that decide whether an AI product survives real users.
 
-I am not trying to be a pure people manager. I have led teams, hired engineers, run delivery systems, written RFCs, and handled performance management, but my strongest work is still hands-on technical leadership: shaping systems, debugging hard edges, and helping teams make better engineering decisions.
+I lead engineering teams while staying hands-on with architecture, difficult debugging, and delivery. My experience includes hiring, RFCs, performance management, and helping teams make better engineering decisions.
 
 ---
 

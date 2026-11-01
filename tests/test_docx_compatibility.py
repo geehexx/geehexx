@@ -23,6 +23,7 @@ def test_normalized_docx_has_explicit_page_geometry_and_preserves_reading_order(
     document.add_heading("T3 | Lead AI Engineer", 3)
     document.add_paragraph("Remote / UK client | Feb 2026 - Jun 2026")
     document.add_paragraph("Built production systems", style="List Bullet")
+    document.add_paragraph("Kept reliable delivery", style="List Bullet")
     expected = [paragraph.text for paragraph in document.paragraphs]
     document.save(str(path))
 
@@ -32,6 +33,12 @@ def test_normalized_docx_has_explicit_page_geometry_and_preserves_reading_order(
     assert [paragraph.text for paragraph in actual.paragraphs] == expected
     assert actual.paragraphs[0].style is not None
     assert actual.paragraphs[0].style.name == "Title"
+    assert actual.paragraphs[3].style is not None
+    assert actual.paragraphs[4].style is not None
+    assert actual.paragraphs[3].style.style_id == "Heading1"
+    assert actual.paragraphs[4].style.style_id == "Heading2"
+    assert actual.paragraphs[3].style.font.size.pt == 11
+    assert actual.paragraphs[4].style.font.size.pt == 10
     assert actual.styles["Title"].font.size.pt == 22
     assert actual.styles["Normal"].font.name == "Times New Roman"
     assert actual.paragraphs[1].paragraph_format.alignment == WD_ALIGN_PARAGRAPH.CENTER
@@ -43,7 +50,14 @@ def test_normalized_docx_has_explicit_page_geometry_and_preserves_reading_order(
     assert section.left_margin.twips == Inches(0.58).twips
     assert section.right_margin.twips == Inches(0.58).twips
     assert actual.paragraphs[5].paragraph_format.keep_with_next is True
+    assert actual.paragraphs[6].paragraph_format.keep_with_next is True
+    assert actual.paragraphs[7].paragraph_format.keep_with_next is False
     assert not actual.tables
+    normalize_docx_layout(path)
+    repeated = Document(str(path))
+    assert [p.style.style_id if p.style is not None else None for p in repeated.paragraphs] == [
+        p.style.style_id if p.style is not None else None for p in actual.paragraphs
+    ]
 
 
 def test_structure_check_rejects_broken_relationship(tmp_path: Path) -> None:

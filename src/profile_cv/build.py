@@ -7,7 +7,6 @@ import json
 import shutil
 import subprocess
 import tempfile
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -61,7 +60,7 @@ def build_all(
         raise ValueError("Build dist and site output directories must not overlap")
     template_dir = root / "templates"
     styles_dir = root / "styles"
-    resume = _load_validated_resume(root, resume_path)
+    resume = load_validated_resume(root, resume_path)
 
     assert_doctor()
     if clean and dist_dir.exists():
@@ -100,14 +99,20 @@ def build_all(
 
     metrics: dict[str, Any] = {"outputs": {key: str(path) for key, path in outputs.items()}}
     if run_qa:
-        metrics["qa"] = run_quality_gates(root=root, outputs=outputs)
+        metrics["qa"] = run_quality_gates(root=root, outputs=outputs, resume=resume)
     return metrics
 
 
-def _load_validated_resume(root: Path, resume_path: Path) -> dict[str, Any]:
+def load_validated_resume(root: Path, resume_path: Path) -> dict[str, Any]:
     schema = load_repo_schema(root)
     resume = load_source(resume_path)
     validate_source(resume, schema=schema)
+    modified_from_resume(resume)  # Validate deterministic timestamp before cleanup.
+    basename = (
+        resume.get("meta", {}).get("x_outputs", {}).get("defaultResumeBasename", DEFAULT_BASENAME)
+    )
+    if basename != DEFAULT_BASENAME:
+        raise ValueError(f"Only defaultResumeBasename={DEFAULT_BASENAME} is supported")
     return resume
 
 
@@ -249,7 +254,9 @@ def _build_site_outputs(
         shutil.copy2(outputs[key], site_dir / outputs[key].name)
 
 
-def run_quality_gates(*, root: Path, outputs: dict[str, Path] | None = None) -> dict[str, Any]:
+def run_quality_gates(
+    *, root: Path, outputs: dict[str, Path] | None = None, resume: dict[str, Any] | None = None
+) -> dict[str, Any]:
     outputs = outputs or {
         "pdf": root / DEFAULT_DIST / f"{DEFAULT_BASENAME}.pdf",
         "docx": root / DEFAULT_DIST / f"{DEFAULT_BASENAME}.docx",
@@ -257,7 +264,8 @@ def run_quality_gates(*, root: Path, outputs: dict[str, Path] | None = None) -> 
         "html": root / DEFAULT_DIST / f"{DEFAULT_BASENAME}.html",
         "readme": root / "README.md",
     }
-    resume = load_source(root / DEFAULT_RESUME)
+    if resume is None:
+        resume = load_validated_resume(root, root / DEFAULT_RESUME)
     expectations = expectations_from_resume(resume)
     return {
         "pdf": qa_pdf(outputs["pdf"], expectations=expectations, resume=resume),
@@ -271,7 +279,7 @@ def run_quality_gates(*, root: Path, outputs: dict[str, Path] | None = None) -> 
 
 
 def render_profile(*, root: Path, check: bool = False) -> Path:
-    resume = _load_validated_resume(root, root / DEFAULT_RESUME)
+    resume = load_validated_resume(root, root / DEFAULT_RESUME)
     readme = render_template(resume, root / "templates", "README.md.j2")
     path = root / "README.md"
     if check:
@@ -339,9 +347,7 @@ def build_review_package(
             raise FileNotFoundError(f"Review package source is missing: {site_dir / name}")
     # Ensure the preview represents the same artifacts, not a stale earlier build.
     for source, _ in required_files:
-        if source.name in site_names and not filecmp.cmp(
-            source, site_dir / source.name, shallow=False
-        ):
+        if source.name in site_names and _sha256(source) != _sha256(site_dir / source.name):
             raise ValueError(f"Stale review site artifact: {site_dir / source.name}")
 
     package_dir.parent.mkdir(parents=True, exist_ok=True)
@@ -372,14 +378,14 @@ def build_review_package(
 def _write_review_package_metadata(
     *, root: Path, package_dir: Path, qa: dict[str, Any]
 ) -> dict[str, Any]:
-    generated_at = datetime.now(UTC).isoformat(timespec="seconds").replace("+00:00", "Z")
+    source_modified = modified_from_resume(load_source(root / DEFAULT_RESUME))
+    source_timestamp = source_modified.isoformat(timespec="seconds").replace("+00:00", "Z")
     manifest: dict[str, Any] = {
         "generator": "profile-cv review-package",
-        "generated_at_utc": generated_at,
+        "source_modified_at_utc": source_timestamp,
         "source": {
             "resume": str(DEFAULT_RESUME),
             "head_sha": _git_output(root, "rev-parse", "HEAD"),
-            "branch": _git_output(root, "branch", "--show-current"),
         },
         "entrypoints": {
             "markdown": "REVIEW.md",
@@ -444,7 +450,7 @@ def _review_markdown(manifest: dict[str, Any]) -> str:
         [
             "# Profile/CV Review Package",
             "",
-            f"Generated: {manifest['generated_at_utc']}",
+            f"Source modified: {manifest['source_modified_at_utc']}",
             f"Head: `{manifest['source']['head_sha'] or 'unknown'}`",
             "",
             "## Review Entrypoints",
@@ -514,7 +520,7 @@ def _review_index_html(manifest: dict[str, Any]) -> str:
 </head>
 <body>
   <h1>Profile/CV Review Package</h1>
-  <p>Generated {html.escape(str(manifest["generated_at_utc"]))} from
+  <p>Source modified {html.escape(str(manifest["source_modified_at_utc"]))}; revision
   <code>{html.escape(str(manifest["source"]["head_sha"] or "unknown"))}</code>.</p>
   <h2>Entrypoints</h2>
   <ul>
@@ -647,9 +653,11 @@ def ensure_typst_package_cache(root: Path) -> None:
 
 
 def _directory_matches(left: Path, right: Path) -> bool:
-    if not right.exists():
+    if not left.is_dir() or not right.is_dir():
         return False
     comparison = filecmp.dircmp(left, right)
-    if comparison.left_only or comparison.right_only or comparison.diff_files:
+    if comparison.left_only or comparison.right_only or comparison.common_funny:
+        return False
+    if any(_sha256(left / name) != _sha256(right / name) for name in comparison.common_files):
         return False
     return all(_directory_matches(left / name, right / name) for name in comparison.common_dirs)
