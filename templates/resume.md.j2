@@ -2,7 +2,7 @@
 
 {{ view.label }}
 
-{{ view.contact_line }} - LinkedIn: {{ view.linkedin_url }} - GitHub: {{ view.github_url }}
+{% if view.email %}{{ view.contact_line | replace(view.email, '[' ~ view.email ~ '](mailto:' ~ view.email ~ ')') }}{% else %}{{ view.contact_line }}{% endif %} - LinkedIn: [{{ view.linkedin_url }}]({{ view.linkedin_url }}) - GitHub: [{{ view.github_url }}]({{ view.github_url }})
 
 ## Summary
 

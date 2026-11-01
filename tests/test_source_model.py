@@ -70,6 +70,9 @@ def test_generated_ats_markdown_uses_plain_contact_separators() -> None:
     first_lines = "\n".join(generated.splitlines()[:5])
     assert " | " not in first_lines
     assert " - LinkedIn:" in first_lines
+    assert "[andrewcrozier86@gmail.com](mailto:andrewcrozier86@gmail.com)" in first_lines
+    assert "[https://linkedin.com/in/ancrozier](https://linkedin.com/in/ancrozier)" in first_lines
+    assert "[https://github.com/geehexx](https://github.com/geehexx)" in first_lines
 
 
 def test_rendercv_adapter_preserves_resume_sections_without_becoming_canonical() -> None:

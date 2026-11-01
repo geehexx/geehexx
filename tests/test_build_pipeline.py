@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import json
 import subprocess
+import zipfile
 from pathlib import Path
+from xml.etree import ElementTree as ET
 
 import pytest
 
@@ -58,6 +60,17 @@ def test_full_build_pipeline_outputs_all_distribution_formats(tmp_path: Path) ->
     assert_semantic_alignment(extracted, resume=load_source(ROOT / "resume.yaml"), surface="docx")
     assert "APAC" not in extracted
     assert "overlap" not in extracted
+    with zipfile.ZipFile(outputs["docx"]) as package:
+        relationships = ET.fromstring(package.read("word/_rels/document.xml.rels"))
+    targets = {
+        item.attrib["Target"]
+        for item in relationships
+        if item.attrib.get("Type", "").endswith("/hyperlink")
+    }
+    resume = load_source(ROOT / "resume.yaml")
+    assert f"mailto:{resume['basics']['email']}" in targets
+    assert "https://linkedin.com/in/ancrozier" in targets
+    assert "https://github.com/geehexx" in targets
 
 
 def test_site_output_is_self_contained(tmp_path: Path) -> None:
