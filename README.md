@@ -11,9 +11,7 @@
 
 ---
 
-```text
 I build the parts of AI systems that still have to work after the demo: retrieval quality, tool boundaries, stream safety, retry behavior, evaluation loops, human approval gates, observability, infrastructure, and the engineering habits around them.
-```
 
 I work where LLMs meet backend engineering: agent orchestration, RAG, search, evals, governance, distributed systems, platform reliability, and the unglamorous failure paths that decide whether an AI product survives real users.
 

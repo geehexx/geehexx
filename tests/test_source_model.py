@@ -156,3 +156,12 @@ def test_ats_markdown_preserves_featured_project_links() -> None:
     for project in resume["projects"]:
         if project["x_resume"]["featured"] and project.get("url"):
             assert f"[{project['name']}]({project['url']})" in generated
+
+
+def test_profile_opener_is_wrapping_prose_not_a_code_block() -> None:
+    resume = load_source(RESUME)
+    generated = render_template(resume, ROOT / "templates", "README.md.j2")
+    opener = resume["meta"]["x_profile"]["opener"]
+    # A standalone Markdown paragraph wraps in GitHub; fenced code scrolls.
+    assert opener in generated.split("\n\n")
+    assert "```text\n" + opener not in generated
